@@ -1,0 +1,69 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+/* columnTask.jsx */
+.column-container {
+  display: flex;
+  justify-content: center;
+  margin: 0 20px;
+  margin-bottom: 20px;
+}
+.column {
+  background-color: #fafafa;
+  border: 0.01rem solid #8d918d84;
+  border-radius: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  flex: 1;
+  max-width: calc(100% / var(--days-to-display)-20px);
+  width: 100%;
+  min-height: 24rem;
+  margin: 0 0.3rem;
+  overflow: hidden;
+}
+.column-header {
+  margin: 0.2rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+li:hover {
+}
+
+/* task.jsx */
+.input {
+  display: flex;
+  /* flex: 1 1 10px; */
+  text-align: start;
+  align-items: center;
+  border: 0.01rem solid rgb(180, 180, 180);
+  background-color: white;
+  width: 95%;
+  height: 30px;
+  height: 100%;
+  border-radius: 0.3rem;
+  padding: 4px 25px 4px 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+}
+.tasks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
