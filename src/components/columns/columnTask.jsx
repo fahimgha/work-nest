@@ -4,15 +4,12 @@ import Task from "../tasks/task";
 import { AddTaskButton } from "../ui/buttons";
 import { AddTaskInput } from "../tasks/taskInput";
 
-export default function ColumnTask({ date }) {
+export default function ColumnTask({ date, tasks, onAddTask }) {
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
-  const [tasks, setTasks] = useState([]);
 
-  console.log("ColumnTask", "render");
-
-  const addTask = useCallback((newTask) => {
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+  const handleAddTask = useCallback((newTask) => {
+    onAddTask(newTask);
     setIsAddingTask(false);
   }, []);
 
@@ -34,7 +31,7 @@ export default function ColumnTask({ date }) {
 
           <div className="tasks">
             {isAddingTask ? (
-              <AddTaskInput setTaskInput={addTask} />
+              <AddTaskInput setTaskInput={handleAddTask} />
             ) : (
               <AddTaskButton onClick={startAddingTask} />
             )}
