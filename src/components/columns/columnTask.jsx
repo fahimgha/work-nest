@@ -1,14 +1,25 @@
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Task from "../tasks/task";
+import { AddTaskButton } from "../ui/buttons";
+import { AddTaskInput } from "../tasks/taskInput";
 
 export default function ColumnTask({ date }) {
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
+  const [tasks, setTasks] = useState([]);
 
-  const startAddingTask = () => {
+  console.log("ColumnTask", "render");
+
+  const addTask = useCallback((newTask) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setIsAddingTask(false);
+  }, []);
+
+  const startAddingTask = useCallback(() => {
     setIsAddingTask(true);
-  };
+  }, []);
+
   return (
     <>
       <div className="column">
@@ -17,12 +28,18 @@ export default function ColumnTask({ date }) {
           <h2>{day}</h2>
         </div>
         <ol>
-          <Task taskValue="Task 1" />
-        </ol>
+          {tasks.map((task, index) => (
+            <Task key={index} taskValue={task} />
+          ))}
 
-        <div className="tasks">
-          {isAddingTask ? <AddTask /> : <ButtonAdd onClick={startAddingTask} />}
-        </div>
+          <div className="tasks">
+            {isAddingTask ? (
+              <AddTaskInput setTaskInput={addTask} />
+            ) : (
+              <AddTaskButton onClick={startAddingTask} />
+            )}
+          </div>
+        </ol>
       </div>
     </>
   );

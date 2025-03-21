@@ -39,6 +39,9 @@ li {
   box-sizing: border-box;
 }
 li:hover {
+  .del-button {
+    display: flex;
+  }
 }
 
 /* task.jsx */
@@ -66,4 +69,117 @@ li:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.tasks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.todo-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.input:hover {
+  height: 100%;
+}
+
+.input:hover .tasks {
+  white-space: normal; /* Permet au texte de se casser en plusieurs lignes */
+}
+.input-name-task {
+  display: flex;
+  position: relative;
+  align-items: center;
+  background-color: white;
+  border: 0.01rem solid rgb(49, 105, 145);
+  border-radius: 0.1em;
+  appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  padding: 4px 10px;
+  height: 30px;
+  height: 100%;
+  width: 80%;
+}
+
+.addButton {
+  display: flex;
+  background-color: rgba(254, 202, 29, 0.181);
+  border-radius: 0.3rem;
+  border: 0.08rem solid #929292;
+  padding: 0.3rem 0.5rem;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.1rem;
+}
+.addButton:hover {
+  background-color: rgb(243, 213, 112);
+}
+.del-button {
+  margin-left: 0.2rem;
+  background-color: transparent;
+  border: 0.1rem solid #929292;
+  border-radius: 0.1rem;
+  cursor: pointer;
+  padding: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 0.3rem;
+}
+.del-button:hover {
+  background: #cf352e;
+  border-color: #cf352e;
+  .hix-icon {
+    color: white;
+    transition: background 0.2s, stroke-dashoffset 0.3s;
+  }
+}
+
+/* checkbox */
+
+.checkbox {
+  display: flex;
+  margin-right: 0.3rem;
+  cursor: pointer;
+}
+
+.checkbox:hover .checkbox_check {
+  background: #37b2b2;
+}
+
+.checkbox_input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.checkbox_input:checked + .checkbox_check {
+  background: #37b2b2;
+
+  stroke-dashoffset: 0;
+}
+
+.checkbox_check {
+  border: 0.1rem solid #929292;
+  stroke: #f9f9f9;
+  stroke-dasharray: 15;
+  stroke-dashoffset: 15;
+  stroke-linecap: round;
+  stroke-width: 0.1em;
+  border-radius: 0.1em;
+  fill: none;
+  transition: background 0.2s, stroke-dashoffset 0.3s;
 }
