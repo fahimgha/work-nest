@@ -8,7 +8,6 @@ function ColumnTask({ date, column, tasks, onAddTask }) {
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
 
-  console.log("ColumnTask", "render");
   console.log(
     `ColumnTasconsole.log("ColumnTask", "render");k render for date: ${date}`
   );
@@ -49,4 +48,4 @@ function ColumnTask({ date, column, tasks, onAddTask }) {
     </>
   );
 }
-export default React.memo(ColumnTask);
+export default memo(ColumnTask);

@@ -1,16 +1,14 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
 import "./App.css";
 import ColumnTask from "./components/columns/columnTask";
 
 function App() {
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
-  const [daysToDisplay, setDaysToDisplay] = useState(7);
+  let daysToDisplay = 7;
   const [board, setBoard] = useState({
     columns: {},
   });
-
-  console.log("App", "render");
 
   const daysDisplay = useMemo(
     () =>
@@ -23,27 +21,31 @@ function App() {
 
   const addTask = useCallback((columnId, newTaskName) => {
     setBoard((prevBoard) => {
-      const updatedBoard = { ...prevBoard };
+      const prevColumn = prevBoard.columns[columnId] || {
+        id: columnId,
+        name: columnId,
+        tasks: [],
+      };
 
-      // Créer la colonne si elle n'existe pas encore
-      if (!updatedBoard.columns[columnId]) {
-        updatedBoard.columns[columnId] = {
-          id: columnId,
-          name: columnId,
-          tasks: [],
-        };
-      }
+      // Création d'une nouvelle colonne uniquement si nécessaire
+      const updatedColumn = {
+        ...prevColumn,
+        tasks: [
+          ...prevColumn.tasks,
+          {
+            id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            name: newTaskName,
+          },
+        ],
+      };
 
-      // Ajouter la nouvelle tâche
-      const taskId = `task-${Date.now()}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
-      updatedBoard.columns[columnId].tasks.push({
-        id: taskId,
-        name: newTaskName,
-      });
-
-      return updatedBoard;
+      // Retourne un nouvel état en modifiant uniquement la colonne concernée
+      return {
+        columns: {
+          ...prevBoard.columns,
+          [columnId]: updatedColumn, // Seule cette colonne change
+        },
+      };
     });
   }, []);
 
@@ -51,18 +53,28 @@ function App() {
     <section className="column-container">
       {daysDisplay.map((day) => {
         const formattedDate = format(day, "yyyy-MM-dd");
-        const column = board.columns[formattedDate] || {
-          id: formattedDate,
-          name: formattedDate,
-          tasks: [],
-        };
+        const column = useMemo(() => {
+          return (
+            board.columns[formattedDate] || {
+              id: formattedDate,
+              name: formattedDate,
+              tasks: [],
+            }
+          );
+        }, [board.columns[formattedDate]]);
+
+        // Mémoriser la fonction `onAddTask` pour éviter qu'elle change à chaque render
+        const memoizedOnAddTask = useCallback(
+          (newTask) => addTask(formattedDate, newTask),
+          [formattedDate]
+        );
+
         return (
           <ColumnTask
             key={formattedDate}
             column={column}
             tasks={column.tasks}
-            // tasks={tasks[formattedDate] || []}
-            onAddTask={(newTask) => addTask(column.id, newTask)}
+            onAddTask={memoizedOnAddTask}
             date={formattedDate}
           />
         );
