@@ -1,7 +1,8 @@
 import { HiPlus } from "react-icons/hi";
 import { HiX } from "react-icons/hi";
+import React, { memo } from "react";
 
-export const AddTaskButton = ({ onClick }) => {
+const AddTaskButton = ({ onClick }) => {
   return (
     <button className="addButton" onClick={onClick}>
       <HiPlus />
@@ -17,3 +18,4 @@ export const DeleteTaskButton = ({ onClick }) => {
     </button>
   );
 };
+export default memo(AddTaskButton);

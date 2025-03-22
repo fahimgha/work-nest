@@ -1,6 +1,7 @@
+import React, { memo } from "react";
 import { DeleteTaskButton } from "../ui/buttons";
 import Checkbox from "../ui/checkbox";
-export default function Task({ taskValue }) {
+function Task({ taskId, taskValue }) {
   return (
     <>
       <li>
@@ -20,3 +21,4 @@ export default function Task({ taskValue }) {
     </>
   );
 }
+export default memo(Task);
