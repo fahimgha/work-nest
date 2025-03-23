@@ -2,19 +2,27 @@ import { format } from "date-fns";
 import React, { useState, useCallback, memo } from "react";
 import Task from "../tasks/task";
 import AddTaskButton from "../ui/buttons";
-import { AddTaskInput } from "../tasks/taskInput";
+import { AddTaskInput, EditTaskInput } from "../tasks/taskInput";
 
-function ColumnTask({ date, column, tasks, onAddTask }) {
+function ColumnTask({
+  date,
+
+  tasks,
+  onAddTask,
+  onDelete,
+  handleEditTaskSubmit,
+}) {
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
-  console.log(
-    `ColumnTasconsole.log("ColumnTask", "render");k render for date: ${date}`
-  );
-
+  // console.log(
+  //   `ColumnTasconsole.log("ColumnTask", "render");k render for date: ${date}`
+  // );
+  console.log(tasks);
   const handleAddTask = useCallback(
-    (newTask) => {
-      onAddTask(newTask);
+    (task) => {
+      onAddTask(task);
       setIsAddingTask(false);
     },
     [onAddTask]
@@ -22,6 +30,9 @@ function ColumnTask({ date, column, tasks, onAddTask }) {
 
   const startAddingTask = useCallback(() => {
     setIsAddingTask(true);
+  }, []);
+  const startEditingTask = useCallback((taskId) => {
+    setEditingTaskId(taskId);
   }, []);
 
   return (
@@ -32,9 +43,30 @@ function ColumnTask({ date, column, tasks, onAddTask }) {
           <h2>{day}</h2>
         </div>
         <ol>
-          {tasks.map((task) => (
-            <Task key={task.id} taskId={task.id} taskValue={task.name} />
-          ))}
+          {tasks.map((task) => {
+            const isEditing = editingTaskId === task.id;
+            return isEditing ? (
+              <EditTaskInput
+                key={task.id}
+                setEditTaskInput={(editedTask) => {
+                  handleEditTaskSubmit(task.id, { name: editedTask });
+                  setEditingTaskId(false);
+                }}
+              />
+            ) : (
+              <Task
+                key={task.id}
+                taskId={task.id}
+                checked={task.checked}
+                onChange={(checked) =>
+                  handleEditTaskSubmit(task.id, { checked })
+                }
+                taskValue={task.name}
+                onDelete={() => onDelete(task.id)}
+                isEditingTask={() => startEditingTask(task.id)}
+              />
+            );
+          })}
 
           <div className="tasks">
             {isAddingTask ? (

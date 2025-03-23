@@ -1,13 +1,15 @@
 import React, { memo } from "react";
 import { DeleteTaskButton } from "../ui/buttons";
 import Checkbox from "../ui/checkbox";
-function Task({ taskId, taskValue }) {
+
+function Task({ checked, onChange, taskValue, onDelete, isEditingTask }) {
   return (
     <>
       <li>
         <div className="input">
-          <Checkbox checked={false} onChange={() => null} />
+          <Checkbox checked={checked} onChangeCheck={onChange} />
           <div
+            onClick={isEditingTask}
             className="tasks"
             style={{
               textDecoration: "none",
@@ -15,7 +17,7 @@ function Task({ taskId, taskValue }) {
           >
             {taskValue}
           </div>
-          <DeleteTaskButton onClick={() => null} />
+          <DeleteTaskButton onClick={onDelete} />
         </div>
       </li>
     </>

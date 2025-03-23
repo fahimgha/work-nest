@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { format, eachDayOfInterval, addDays } from "date-fns";
+import { useState, useMemo, useCallback } from "react";
+import { format, eachDayOfInterval, addDays, set } from "date-fns";
 import "./App.css";
 import ColumnTask from "./components/columns/columnTask";
 
@@ -19,7 +19,7 @@ function App() {
     [currentStartDate, daysToDisplay]
   );
 
-  const addTask = useCallback((columnId, newTaskName) => {
+  const addTask = useCallback((columnId, task) => {
     setBoard((prevBoard) => {
       const prevColumn = prevBoard.columns[columnId] || {
         id: columnId,
@@ -27,23 +27,63 @@ function App() {
         tasks: [],
       };
 
-      // Création d'une nouvelle colonne uniquement si nécessaire
       const updatedColumn = {
         ...prevColumn,
         tasks: [
           ...prevColumn.tasks,
           {
             id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            name: newTaskName,
+            name: task,
+            checked: false,
           },
         ],
       };
-
       // Retourne un nouvel état en modifiant uniquement la colonne concernée
       return {
         columns: {
           ...prevBoard.columns,
           [columnId]: updatedColumn, // Seule cette colonne change
+        },
+      };
+    });
+  }, []);
+
+  const handleDeleteTask = (formattedDate, taskId) => {
+    const column = board.columns[formattedDate];
+
+    const filteredTask = column.tasks.filter((task) => task.id !== taskId);
+
+    setBoard((prevBoard) => ({
+      columns: {
+        ...prevBoard.columns,
+        [formattedDate]: {
+          ...column,
+          tasks: filteredTask,
+        },
+      },
+    }));
+
+    console.log("filtredTask", filteredTask);
+    console.log("delete task", taskId);
+  };
+
+  const handleEditTask = useCallback((formattedDate, taskId, editedTask) => {
+    setBoard((prevBoard) => {
+      const column = prevBoard.columns[formattedDate];
+      if (!column) return prevBoard;
+
+      const updatedTasks = column.tasks.map((task) =>
+        task.id === taskId ? { ...task, ...editedTask } : task
+      );
+
+      return {
+        ...prevBoard,
+        columns: {
+          ...prevBoard.columns,
+          [formattedDate]: {
+            ...column,
+            tasks: updatedTasks,
+          },
         },
       };
     });
@@ -64,18 +104,29 @@ function App() {
         }, [board.columns[formattedDate]]);
 
         // Mémoriser la fonction `onAddTask` pour éviter qu'elle change à chaque render
+
         const memoizedOnAddTask = useCallback(
-          (newTask) => addTask(formattedDate, newTask),
+          (task) => addTask(formattedDate, task),
           [formattedDate]
+        );
+        const memoizedOnDeleteTask = useCallback(
+          (taskId) => handleDeleteTask(formattedDate, taskId),
+          [board.columns[formattedDate]]
+        );
+        const memoizedOnUpdateTask = useCallback(
+          (taskId, edittask) => handleEditTask(formattedDate, taskId, edittask),
+
+          [board.columns[formattedDate]]
         );
 
         return (
           <ColumnTask
             key={formattedDate}
-            column={column}
             tasks={column.tasks}
             onAddTask={memoizedOnAddTask}
             date={formattedDate}
+            onDelete={memoizedOnDeleteTask}
+            handleEditTaskSubmit={memoizedOnUpdateTask}
           />
         );
       })}

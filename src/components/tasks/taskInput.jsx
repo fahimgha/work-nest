@@ -1,9 +1,11 @@
 export function AddTaskInput({ setTaskInput }) {
   console.log("taskInput", "render");
+
   const onSubmitAddTask = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
-    setTaskInput(data.get("task"));
+    console.log("data", data);
+    setTaskInput(data.get("task"), false);
     e.target.reset();
   };
   return (
@@ -20,14 +22,21 @@ export function AddTaskInput({ setTaskInput }) {
     </>
   );
 }
-export function EditTaskInput({ onSubmitEditTask }) {
+export function EditTaskInput({ setEditTaskInput }) {
+  const onSubmitEditTask = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    setEditTaskInput(data.get("taskEdit"));
+    e.target.reset();
+  };
   return (
     <>
-      <form onSubmit={onSubmitTask} className="todo-input">
+      <form onSubmit={onSubmitEditTask} className="todo-input">
         <input
           className="input-name-task"
+          name="taskEdit"
           type="text"
-          placeholder="Add a task"
+          placeholder="Edit a task"
           autoFocus
         />
       </form>
