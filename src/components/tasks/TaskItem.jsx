@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from "react";
-import Task from "./Task";
-import { TaskInput } from "./taskInput";
+import Task from "./task";
+import TaskInput from "../ui/TaskInput";
 
 function TaskItem({
   task,

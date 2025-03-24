@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 import React, { useState, useCallback, memo } from "react";
 
-import AddTaskButton from "../ui/buttons";
-import { TaskInput } from "../tasks/taskInput";
 import TaskItem from "../tasks/TaskItem";
+import TaskInput from "../ui/TaskInput";
+import AddTaskButton from "../ui/buttons/AddTaskButton";
 
 function DateColumn({
   date,
