@@ -1,14 +1,32 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { format, eachDayOfInterval, addDays, set } from "date-fns";
 import ColumnTask from "./columns/DateColumn";
 import { TaskContext } from "../context/taskContext";
+import Pagination from "./Pagination";
 
 export default function Board() {
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
-  let daysToDisplay = 7;
+  const [daysToDisplay, setDaysToDisplay] = useState(7);
   const [board, setBoard] = useState({
     columns: {},
   });
+
+  // useEffect(() => {
+  //   const updateDaysToDisplay = () => {
+  //     const width = window.innerWidth;
+  //     if (width >= 1300) setDaysToDisplay(7);
+  //     else if (width >= 600) setDaysToDisplay(3);
+  //     else setDaysToDisplay(1);
+  //   };
+  //   // Set initial value
+  //   updateDaysToDisplay();
+
+  //   // Attach event listener
+  //   window.addEventListener("resize", updateDaysToDisplay);
+
+  //   // Cleanup event listener on component unmount
+  //   return () => window.removeEventListener("resize", updateDaysToDisplay);
+  // }, []);
 
   const daysDisplay = useMemo(
     () =>
@@ -86,45 +104,52 @@ export default function Board() {
   }, []);
 
   return (
-    <section className="column-container">
-      {daysDisplay.map((day) => {
-        const formattedDate = format(day, "yyyy-MM-dd");
-        const column = useMemo(() => {
-          return (
-            board.columns[formattedDate] || {
-              id: formattedDate,
-              name: formattedDate,
-              tasks: [],
-            }
+    <>
+      <Pagination
+        currentStartDate={currentStartDate}
+        setCurrentStartDate={setCurrentStartDate}
+      />
+      <section className="column-container">
+        {daysDisplay.map((day) => {
+          const formattedDate = format(day, "yyyy-MM-dd");
+          const column = useMemo(() => {
+            return (
+              board.columns[formattedDate] || {
+                id: formattedDate,
+                name: formattedDate,
+                tasks: [],
+              }
+            );
+          }, [board.columns[formattedDate]]);
+
+          // Mémoriser la fonction `onAddTask` pour éviter qu'elle change à chaque render
+          const memoizedOnAddTask = useCallback(
+            (task) => addTask(formattedDate, task),
+            [formattedDate]
           );
-        }, [board.columns[formattedDate]]);
+          const memoizedOnDeleteTask = useCallback(
+            (taskId) => handleDeleteTask(formattedDate, taskId),
+            [board.columns[formattedDate]]
+          );
+          const memoizedOnUpdateTask = useCallback(
+            (taskId, edittask) =>
+              handleEditTask(formattedDate, taskId, edittask),
 
-        // Mémoriser la fonction `onAddTask` pour éviter qu'elle change à chaque render
-        const memoizedOnAddTask = useCallback(
-          (task) => addTask(formattedDate, task),
-          [formattedDate]
-        );
-        const memoizedOnDeleteTask = useCallback(
-          (taskId) => handleDeleteTask(formattedDate, taskId),
-          [board.columns[formattedDate]]
-        );
-        const memoizedOnUpdateTask = useCallback(
-          (taskId, edittask) => handleEditTask(formattedDate, taskId, edittask),
+            [board.columns[formattedDate]]
+          );
 
-          [board.columns[formattedDate]]
-        );
-
-        return (
-          <ColumnTask
-            key={formattedDate}
-            tasks={column.tasks}
-            onAddTask={memoizedOnAddTask}
-            date={formattedDate}
-            onDelete={memoizedOnDeleteTask}
-            handleEditTaskSubmit={memoizedOnUpdateTask}
-          />
-        );
-      })}
-    </section>
+          return (
+            <ColumnTask
+              key={formattedDate}
+              tasks={column.tasks}
+              onAddTask={memoizedOnAddTask}
+              date={formattedDate}
+              onDelete={memoizedOnDeleteTask}
+              handleEditTaskSubmit={memoizedOnUpdateTask}
+            />
+          );
+        })}
+      </section>
+    </>
   );
 }

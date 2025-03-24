@@ -183,3 +183,26 @@ li:hover {
   fill: none;
   transition: background 0.2s, stroke-dashoffset 0.3s;
 }
+
+.today-button {
+  border: 0;
+  padding: 0.4rem;
+  background-color: rgba(53, 178, 178, 0.9);
+  border-radius: 0.3rem;
+  color: white;
+  cursor: pointer;
+}
+.today-button:hover {
+  background-color: #35b2b2;
+}
+.paginations {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 20px;
+  margin-bottom: 0.5rem;
+}
+.paginations div {
+  display: flex;
+}
