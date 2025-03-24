@@ -1,10 +1,7 @@
 export function AddTaskInput({ setTaskInput }) {
-  console.log("taskInput", "render");
-
   const onSubmitAddTask = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
-    console.log("data", data);
     setTaskInput(data.get("task"), false);
     e.target.reset();
   };
@@ -37,6 +34,29 @@ export function EditTaskInput({ setEditTaskInput }) {
           name="taskEdit"
           type="text"
           placeholder="Edit a task"
+          autoFocus
+        />
+      </form>
+    </>
+  );
+}
+
+export function TaskInput({ setInputTask, isEditing }) {
+  const onSubmitTask = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const inputName = isEditing ? "editInputTask" : "addInputTask";
+    setInputTask(data.get(inputName));
+  };
+  console.log(isEditing, setInputTask);
+  return (
+    <>
+      <form onSubmit={onSubmitTask} className="todo-input">
+        <input
+          className="input-name-task"
+          name={isEditing ? "editInputTask" : "addInputTask"}
+          type="text"
+          placeholder={isEditing ? "Edit Task" : "Add Task"}
           autoFocus
         />
       </form>
