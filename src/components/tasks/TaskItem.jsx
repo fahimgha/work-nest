@@ -33,7 +33,13 @@ function TaskItem({
   );
 
   if (isEditing) {
-    return <TaskInput setInputTask={handleTaskEdit} isEditing={true} />;
+    return (
+      <TaskInput
+        setInputTask={handleTaskEdit}
+        isEditing={true}
+        inputValue={task.name}
+      />
+    );
   }
 
   return (

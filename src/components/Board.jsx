@@ -10,8 +10,6 @@ export default function Board() {
     columns: {},
   });
 
-  //   const valueBoardContext = { board: board.columns, setBoard: setBoard };
-
   const daysDisplay = useMemo(
     () =>
       eachDayOfInterval({
