@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { format, eachDayOfInterval, addDays, set } from "date-fns";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { format, eachDayOfInterval, addDays } from "date-fns";
 import ColumnTask from "./columns/DateColumn";
-import { TaskContext } from "../context/taskContext";
+
 import Pagination from "./Pagination";
 
 export default function Board() {
@@ -10,23 +10,29 @@ export default function Board() {
   const [board, setBoard] = useState({
     columns: {},
   });
+  const prevWidthRef = useRef(window.innerWidth);
 
-  // useEffect(() => {
-  //   const updateDaysToDisplay = () => {
-  //     const width = window.innerWidth;
-  //     if (width >= 1300) setDaysToDisplay(7);
-  //     else if (width >= 600) setDaysToDisplay(3);
-  //     else setDaysToDisplay(1);
-  //   };
-  //   // Set initial value
-  //   updateDaysToDisplay();
+  console.log("render compoenets");
+  useEffect(() => {
+    const updateDaysToDisplay = () => {
+      const width = window.innerWidth;
+      if (Math.abs(prevWidthRef.current - width) < 100) return;
+      prevWidthRef.current = width;
+      if (width >= 1300) setDaysToDisplay(7);
+      else if (width >= 600) setDaysToDisplay(3);
+      else setDaysToDisplay(1);
+    };
+    // Set initial value
+    updateDaysToDisplay();
 
-  //   // Attach event listener
-  //   window.addEventListener("resize", updateDaysToDisplay);
-
-  //   // Cleanup event listener on component unmount
-  //   return () => window.removeEventListener("resize", updateDaysToDisplay);
-  // }, []);
+    // Attach event listener
+    window.addEventListener("resize", updateDaysToDisplay);
+    console.log("render");
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", updateDaysToDisplay);
+    };
+  }, []);
 
   const daysDisplay = useMemo(
     () =>
@@ -103,6 +109,20 @@ export default function Board() {
     });
   }, []);
 
+  const getOnAddTask = useCallback(
+    (formattedDate) => (task) => addTask(formattedDate, task),
+    [addTask]
+  );
+  const getOnDeleteTask = useCallback(
+    (formattedDate) => (taskId) => handleDeleteTask(formattedDate, taskId),
+    [handleDeleteTask]
+  );
+  const getOnUpdateTask = useCallback(
+    (formattedDate) => (taskId, editedTask) =>
+      handleEditTask(formattedDate, taskId, editedTask),
+    [handleEditTask]
+  );
+
   return (
     <>
       <Pagination
@@ -112,40 +132,19 @@ export default function Board() {
       <section className="column-container">
         {daysDisplay.map((day) => {
           const formattedDate = format(day, "yyyy-MM-dd");
-          const column = useMemo(() => {
-            return (
-              board.columns[formattedDate] || {
-                id: formattedDate,
-                name: formattedDate,
-                tasks: [],
-              }
-            );
-          }, [board.columns[formattedDate]]);
-
-          // Mémoriser la fonction `onAddTask` pour éviter qu'elle change à chaque render
-          const memoizedOnAddTask = useCallback(
-            (task) => addTask(formattedDate, task),
-            [formattedDate]
-          );
-          const memoizedOnDeleteTask = useCallback(
-            (taskId) => handleDeleteTask(formattedDate, taskId),
-            [board.columns[formattedDate]]
-          );
-          const memoizedOnUpdateTask = useCallback(
-            (taskId, edittask) =>
-              handleEditTask(formattedDate, taskId, edittask),
-
-            [board.columns[formattedDate]]
-          );
-
+          const column = board.columns[formattedDate] || {
+            id: formattedDate,
+            name: formattedDate,
+            tasks: [],
+          };
           return (
             <ColumnTask
               key={formattedDate}
               tasks={column.tasks}
-              onAddTask={memoizedOnAddTask}
+              onAddTask={getOnAddTask(formattedDate)}
               date={formattedDate}
-              onDelete={memoizedOnDeleteTask}
-              handleEditTaskSubmit={memoizedOnUpdateTask}
+              onDelete={getOnDeleteTask(formattedDate)}
+              handleEditTaskSubmit={getOnUpdateTask(formattedDate)}
             />
           );
         })}
