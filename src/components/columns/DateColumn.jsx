@@ -50,7 +50,7 @@ function DateColumn({
 
           <div className="tasks">
             {isAddingTask ? (
-              <TaskInput setInputTask={handleAddTask} />
+              <TaskInput setInputTask={handleAddTask} isEditing={false} />
             ) : (
               <AddTaskButton onClick={startAddingTask} />
             )}

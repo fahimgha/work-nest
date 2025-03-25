@@ -1,8 +1,6 @@
 import React, { memo } from "react";
 import Checkbox from "../ui/Checkbox";
 import DeleteButton from "../ui/buttons/DeleteTaskButton";
-// import { useContext } from "react";
-// import { TaskContext } from "../../context/taskContext";
 
 function Task({ checked, onChange, task, onDelete, isEditingTask }) {
   return (

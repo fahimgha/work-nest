@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
 import ColumnTask from "./columns/DateColumn";
 
@@ -10,38 +10,29 @@ export default function Board() {
   const [board, setBoard] = useState({
     columns: {},
   });
-  const prevWidthRef = useRef(window.innerWidth);
 
-  console.log("render compoenets");
   useEffect(() => {
     const updateDaysToDisplay = () => {
       const width = window.innerWidth;
-      if (Math.abs(prevWidthRef.current - width) < 100) return;
-      prevWidthRef.current = width;
+      if (Math.abs(width.current - width) < 100) return;
       if (width >= 1300) setDaysToDisplay(7);
       else if (width >= 600) setDaysToDisplay(3);
       else setDaysToDisplay(1);
     };
-    // Set initial value
     updateDaysToDisplay();
 
-    // Attach event listener
     window.addEventListener("resize", updateDaysToDisplay);
     console.log("render");
-    // Cleanup event listener on component unmount
+
     return () => {
       window.removeEventListener("resize", updateDaysToDisplay);
     };
   }, []);
 
-  const daysDisplay = useMemo(
-    () =>
-      eachDayOfInterval({
-        start: currentStartDate,
-        end: addDays(currentStartDate, daysToDisplay - 1),
-      }),
-    [currentStartDate, daysToDisplay]
-  );
+  const daysDisplay = eachDayOfInterval({
+    start: currentStartDate,
+    end: addDays(currentStartDate, daysToDisplay - 1),
+  });
 
   const addTask = useCallback((columnId, task) => {
     setBoard((prevBoard) => {
