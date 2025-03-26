@@ -5,8 +5,10 @@ import React, { memo } from "react";
 const AddTaskButton = ({ onClick }) => {
   return (
     <button className="addButton" onClick={onClick}>
-      <HiPlus />
-      Add Task
+      <div className="focus-content">
+        <HiPlus />
+        Add Task
+      </div>
     </button>
   );
 };

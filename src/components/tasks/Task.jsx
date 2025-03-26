@@ -4,11 +4,11 @@ import DeleteButton from "../ui/buttons/DeleteTaskButton";
 
 function Task({ checked, onChange, task, onDelete, isEditingTask }) {
   return (
-    <div className="input">
+    <div className="task-container">
       <Checkbox checked={checked} onChangeCheck={onChange} />
       <div
         onClick={isEditingTask}
-        className="tasks"
+        className="task"
         style={{ textDecoration: checked ? "line-through" : "none" }}
       >
         {task}

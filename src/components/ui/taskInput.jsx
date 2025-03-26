@@ -11,7 +11,7 @@ export default function TaskInput({ setInputTask, inputValue, isEditing }) {
 
   return (
     <>
-      <form onSubmit={onSubmitTask} className="todo-input">
+      <form onSubmit={onSubmitTask} ref={inputRef} className="todo-input">
         <input
           className="input-name-task"
           name={isEditing ? "editInputTask" : "addInputTask"}
