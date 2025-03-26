@@ -9,7 +9,10 @@ export default function TaskInput({
     e.preventDefault();
     const data = new FormData(e.target);
     const inputName = isEditing ? "editInputTask" : "addInputTask";
-    setInputTask(data.get(inputName));
+
+    if (data.get(inputName)) {
+      setInputTask(data.get(inputName));
+    }
   };
 
   return (

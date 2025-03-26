@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import React, { useState, useRef, useEffect, useCallback, memo } from "react";
-
+import useClickOutside from "../../hooks/useClickOutside";
 import TaskItem from "../tasks/TaskItem";
 import TaskInput from "../ui/TaskInput";
 import AddTaskButton from "../ui/buttons/AddTaskButton";
@@ -12,20 +12,31 @@ function DateColumn({
   onDelete,
   handleEditTaskSubmit,
 }) {
+  const inputRef = useRef(null);
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [isShowingInput, setIsShowedInput] = useState(true);
+
+  useClickOutside(inputRef, () => {
+    if (inputRef.current.querySelector("input").value !== "") {
+      handleAddTask(inputRef.current.querySelector("input").value);
+    }
+    setIsShowedInput(false);
+  });
 
   const handleAddTask = useCallback(
     (task) => {
       onAddTask(task);
       setIsAddingTask(false);
+      setIsShowedInput(false);
     },
     [onAddTask]
   );
 
   const startAddingTask = useCallback(() => {
     setIsAddingTask(true);
+    setIsShowedInput(true);
   }, []);
 
   return (
@@ -49,8 +60,12 @@ function DateColumn({
           ))}
 
           <div className="task">
-            {isAddingTask ? (
-              <TaskInput setInputTask={handleAddTask} isEditing={false} />
+            {isAddingTask && isShowingInput ? (
+              <TaskInput
+                setInputTask={handleAddTask}
+                isEditing={false}
+                inputRef={inputRef}
+              />
             ) : (
               <AddTaskButton onClick={startAddingTask} />
             )}

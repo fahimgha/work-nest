@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useCallback, memo } from "react";
 import Task from "./Task";
 import TaskInput from "../ui/TaskInput";
 import { useState } from "react";
+import useClickOutside from "../../hooks/useClickOutside";
 
 function TaskItem({
   task,
@@ -12,18 +13,16 @@ function TaskItem({
 }) {
   const inputRef = useRef(null);
   const [isShowingInput, setIsShowedInput] = useState(true);
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (inputRef.current && !inputRef.current.contains(event.target)) {
-        setIsShowedInput(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useClickOutside(inputRef, () => {
+    if (
+      inputRef.current.value !== task.name &&
+      inputRef.current.querySelector("input").value !== ""
+    ) {
+      handleTaskEdit(inputRef.current.querySelector("input").value);
+    }
+    setIsShowedInput(false);
+  });
   const handleTaskEdit = useCallback(
     (editedTask) => {
       handleEditTaskSubmit(task.id, { name: editedTask });
