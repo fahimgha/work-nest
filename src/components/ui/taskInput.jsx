@@ -1,11 +1,14 @@
-export default function TaskInput({ setInputTask, inputValue, isEditing }) {
+import { useState, useEffect, useRef } from "react";
+export default function TaskInput({
+  setInputTask,
+  inputValue,
+  isEditing,
+  inputRef,
+}) {
   const onSubmitTask = (e) => {
-    console.log("add");
     e.preventDefault();
     const data = new FormData(e.target);
-
     const inputName = isEditing ? "editInputTask" : "addInputTask";
-
     setInputTask(data.get(inputName));
   };
 

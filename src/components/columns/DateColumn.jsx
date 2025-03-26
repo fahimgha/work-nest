@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import React, { useState, useCallback, memo } from "react";
+import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 
 import TaskItem from "../tasks/TaskItem";
 import TaskInput from "../ui/TaskInput";
@@ -48,7 +48,7 @@ function DateColumn({
             </li>
           ))}
 
-          <div className="tasks">
+          <div className="task">
             {isAddingTask ? (
               <TaskInput setInputTask={handleAddTask} isEditing={false} />
             ) : (

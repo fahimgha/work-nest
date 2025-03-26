@@ -77,11 +77,11 @@ li:hover {
   justify-content: center;
   width: 100%;
 }
-.input:hover {
+.task-container:hover {
   height: 100%;
 }
 
-.input:hover .task {
+.task-container:hover .task {
   white-space: normal; /* Permet au texte de se casser en plusieurs lignes */
 }
 input {

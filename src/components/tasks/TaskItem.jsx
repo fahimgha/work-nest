@@ -1,6 +1,7 @@
-import React, { useCallback, memo } from "react";
+import React, { useEffect, useRef, useCallback, memo } from "react";
 import Task from "./Task";
 import TaskInput from "../ui/TaskInput";
+import { useState } from "react";
 
 function TaskItem({
   task,
@@ -9,9 +10,24 @@ function TaskItem({
   onDelete,
   setEditingTaskId,
 }) {
+  const inputRef = useRef(null);
+  const [isShowingInput, setIsShowedInput] = useState(true);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (inputRef.current && !inputRef.current.contains(event.target)) {
+        setIsShowedInput(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   const handleTaskEdit = useCallback(
     (editedTask) => {
       handleEditTaskSubmit(task.id, { name: editedTask });
+      setIsShowedInput(true);
       setEditingTaskId(null);
     },
     [task.id, handleEditTaskSubmit, setEditingTaskId]
@@ -27,17 +43,18 @@ function TaskItem({
     [task.id, onDelete]
   );
 
-  const startEditing = useCallback(
-    () => setEditingTaskId(task.id),
-    [task.id, setEditingTaskId]
-  );
+  const startEditing = useCallback(() => {
+    setEditingTaskId(task.id);
+    setIsShowedInput(true);
+  }, [task.id, setEditingTaskId]);
 
-  if (isEditing) {
+  if (isEditing && isShowingInput) {
     return (
       <TaskInput
         setInputTask={handleTaskEdit}
         inputValue={task.name}
         isEditing={true}
+        inputRef={inputRef}
       />
     );
   }
