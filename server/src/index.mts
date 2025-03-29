@@ -1,12 +1,24 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { hash, compare } from "bcryptjs";
-import { sign } from "hono/jwt";
+import { sign, verify } from "hono/jwt";
 import "dotenv/config";
 import sql from "./db.mts";
-import type { SignatureKey } from "hono/utils/jwt/jws";
+import { bearerAuth } from "hono/bearer-auth";
+import { logger } from "hono/logger";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
-const app = new Hono();
+type Variables = {
+  user: {
+    id: number;
+    email: string;
+    role: string;
+    exp: number;
+  };
+};
+const app = new Hono<{ Variables: Variables }>();
+
+app.use(logger());
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -79,10 +91,72 @@ app.post("/login", async (c) => {
     };
 
     const token = await sign(payload, secret_key);
-
+    setCookie(c, "token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      path: "/",
+      maxAge: 60 * 5,
+    });
     return c.json({ message: "connexion reussi avec succes", token });
   } catch (error) {
     return c.json({ error: "Erreur lors de la connexion" }, 500);
+  }
+});
+app.post("/logout", (c) => {
+  try {
+    // Supprimer le cookie du token
+    deleteCookie(c, "token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      path: "/",
+    });
+    return c.json({ message: "Déconnexion réussie." });
+  } catch (error) {
+    return c.json({ error: "Erreur lors de la déconnexion" }, 500);
+  }
+});
+
+app.use(
+  "/board/*",
+  bearerAuth({
+    async verifyToken(token, c) {
+      try {
+        const secret = process.env.SECRET_KEY || "";
+
+        const payload = await verify(token, secret);
+
+        c.set("user", payload);
+
+        return token === getCookie(c, "token");
+      } catch (error) {
+        return false;
+      }
+    },
+  })
+);
+
+app.get("/board", async (c) => {
+  const user = c.get("user");
+  try {
+    const board =
+      await sql`SELECT id, name, checked, date FROM tasks WHERE user_id=${user.id}`;
+
+    const columns = board.reduce((acc, task) => {
+      const date = task.date; // assure un format uniforme
+      if (!acc[date]) acc[date] = { id: date, name: date, tasks: [] };
+      acc[date].tasks.push({
+        id: task.id,
+        name: task.name,
+        checked: task.checked,
+      });
+      return acc;
+    }, {});
+    console.log(columns);
+    return c.json({ message: `Bienvenue ${user.email}`, columns });
+  } catch (error) {
+    return c.json({ error: "voici l'erreur" + error }, 500);
   }
 });
 
