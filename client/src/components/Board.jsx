@@ -3,6 +3,7 @@ import { format, eachDayOfInterval, addDays } from "date-fns";
 import ColumnTask from "./columns/DateColumn";
 
 import Pagination from "./Pagination";
+import { getTasks } from "../utils/api";
 
 export default function Board() {
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
@@ -22,7 +23,6 @@ export default function Board() {
     updateDaysToDisplay();
 
     window.addEventListener("resize", updateDaysToDisplay);
-    console.log("render");
 
     return () => {
       window.removeEventListener("resize", updateDaysToDisplay);
@@ -33,6 +33,20 @@ export default function Board() {
     start: currentStartDate,
     end: addDays(currentStartDate, daysToDisplay - 1),
   });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getTasks();
+
+        setBoard(data.columns);
+
+        console.log("data", data.columns);
+      } catch (error) {
+        console.log("erreur lors de la recuperation des données", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const addTask = useCallback((columnId, task) => {
     setBoard((prevBoard) => {
@@ -113,9 +127,10 @@ export default function Board() {
       handleEditTask(formattedDate, taskId, editedTask),
     [handleEditTask]
   );
-
+  console.log(board);
   return (
     <>
+      <div></div>
       <Pagination
         currentStartDate={currentStartDate}
         setCurrentStartDate={setCurrentStartDate}
@@ -123,7 +138,7 @@ export default function Board() {
       <section className="column-container">
         {daysDisplay.map((day) => {
           const formattedDate = format(day, "yyyy-MM-dd");
-          const column = board.columns[formattedDate] || {
+          const column = board[formattedDate] || {
             id: formattedDate,
             name: formattedDate,
             tasks: [],

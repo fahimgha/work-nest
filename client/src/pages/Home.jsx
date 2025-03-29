@@ -1,3 +1,4 @@
-export default function Home() {
-  return <>re</>;
+function Home() {
+  return <>Home</>;
 }
+export default Home;

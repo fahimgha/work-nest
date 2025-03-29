@@ -46,9 +46,9 @@ function DateColumn({
           <h3>{date}</h3>
           <h2>{day}</h2>
         </div>
-        <ol>
+        <ol className="ol-tasks">
           {tasks.map((task) => (
-            <li key={task.id}>
+            <li className="li-tasks" key={task.id}>
               <TaskItem
                 task={task}
                 isEditing={editingTaskId === task.id}

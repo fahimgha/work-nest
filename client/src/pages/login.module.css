@@ -1,0 +1,64 @@
+/* login.module.css */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.loginFormContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+.labelStyle {
+  align-self: flex-start;
+  margin-bottom: 5px;
+}
+
+.inputField {
+  margin-bottom: 10px;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 90%;
+}
+
+.buttonStyle {
+  font-size: 1rem;
+  border: 0;
+  padding: 0.5rem 1.2rem;
+  background-color: rgba(53, 178, 178, 0.9);
+  border-radius: 0.3rem;
+  color: white;
+  cursor: pointer;
+}
+.buttonStyle:hover {
+  background-color: #35b2b2;
+}
+
+.DescApp {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  text-align: start;
+  font-weight: 300;
+  width: 50%;
+  /* align-self: flex-start; */
+  padding: 1rem;
+}
+
+li {
+  position: relative;
+  box-sizing: border-box;
+}

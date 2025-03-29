@@ -4,20 +4,22 @@ import { hash, compare } from "bcryptjs";
 import { sign, verify } from "hono/jwt";
 import "dotenv/config";
 import sql from "./db.mts";
-import { bearerAuth } from "hono/bearer-auth";
+// import { bearerAuth } from "hono/bearer-auth";
 import { logger } from "hono/logger";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { cors } from "hono/cors";
 
 type Variables = {
-  user: {
-    id: number;
-    email: string;
-    role: string;
-    exp: number;
-  };
+  user: { id: number; email: string; role: string; exp: number };
 };
 const app = new Hono<{ Variables: Variables }>();
-
+app.use(
+  "/*",
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(logger());
 
 app.get("/", (c) => {
@@ -118,24 +120,48 @@ app.post("/logout", (c) => {
   }
 });
 
-app.use(
-  "/board/*",
-  bearerAuth({
-    async verifyToken(token, c) {
-      try {
-        const secret = process.env.SECRET_KEY || "";
+// app.use(
+//   "/board",
+//   bearerAuth({
+//     async verifyToken(token, c) {
+//       try {
+//         const secret = process.env.SECRET_KEY || "";
 
-        const payload = await verify(token, secret);
+//         const payload = await verify(token, secret);
+//         console.log("Verified Payload:", payload);
+//         c.set("user", payload);
 
-        c.set("user", payload);
+//         return token === getCookie(c, "token");
+//       } catch (error) {
+//         console.error("Token Verification Error:", error);
+//         return false;
+//       }
+//     },
+//   })
+// );
+app.use("/board", async (c, next) => {
+  const token = getCookie(c, "token");
 
-        return token === getCookie(c, "token");
-      } catch (error) {
-        return false;
-      }
-    },
-  })
-);
+  if (!token) {
+    return c.json({ error: "Non autorisé : token manquant" }, 401);
+  }
+  try {
+    const secret = process.env.SECRET_KEY || "";
+    const payload = await verify(token, secret);
+
+    const userPayload = payload as {
+      id: number;
+      email: string;
+      role: string;
+      exp: number;
+    };
+    c.set("user", userPayload);
+    await next();
+  } catch (err) {
+    console.error("Erreur de vérification du token", err);
+    return c.json({ error: "Token invalide" }, 401);
+  }
+});
 
 app.get("/board", async (c) => {
   const user = c.get("user");
@@ -144,7 +170,10 @@ app.get("/board", async (c) => {
       await sql`SELECT id, name, checked, date FROM tasks WHERE user_id=${user.id}`;
 
     const columns = board.reduce((acc, task) => {
-      const date = task.date; // assure un format uniforme
+      const date =
+        task.date instanceof Date
+          ? task.date.toISOString().split("T")[0] // Si c'est un objet Date
+          : task.date.split("T")[0];
       if (!acc[date]) acc[date] = { id: date, name: date, tasks: [] };
       acc[date].tasks.push({
         id: task.id,
