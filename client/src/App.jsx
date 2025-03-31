@@ -1,10 +1,13 @@
 import "./App.css";
 import Board from "./components/Board";
+import { AuthContextProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <>
-      <Board />
+      <AuthContextProvider>
+        <Board />
+      </AuthContextProvider>
     </>
   );
 }

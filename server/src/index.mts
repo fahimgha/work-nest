@@ -22,10 +22,6 @@ app.use(
 );
 app.use(logger());
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
-
 app.post("/signup", async (c) => {
   const { email, password } = await c.req.json();
   try {
@@ -119,27 +115,30 @@ app.post("/logout", (c) => {
     return c.json({ error: "Erreur lors de la déconnexion" }, 500);
   }
 });
-
-// app.use(
-//   "/board",
-//   bearerAuth({
-//     async verifyToken(token, c) {
-//       try {
-//         const secret = process.env.SECRET_KEY || "";
-
-//         const payload = await verify(token, secret);
-//         console.log("Verified Payload:", payload);
-//         c.set("user", payload);
-
-//         return token === getCookie(c, "token");
-//       } catch (error) {
-//         console.error("Token Verification Error:", error);
-//         return false;
-//       }
-//     },
-//   })
-// );
 app.use("/board", async (c, next) => {
+  const token = getCookie(c, "token");
+
+  if (!token) {
+    return c.json({ error: "Non autorisé : token manquant" }, 401);
+  }
+  try {
+    const secret = process.env.SECRET_KEY || "";
+    const payload = await verify(token, secret);
+
+    const userPayload = payload as {
+      id: number;
+      email: string;
+      role: string;
+      exp: number;
+    };
+    c.set("user", userPayload);
+    await next();
+  } catch (err) {
+    console.error("Erreur de vérification du token", err);
+    return c.json({ error: "Token invalide" }, 401);
+  }
+});
+app.use("/user", async (c, next) => {
   const token = getCookie(c, "token");
 
   if (!token) {
@@ -184,6 +183,20 @@ app.get("/board", async (c) => {
     }, {});
     console.log(columns);
     return c.json({ message: `Bienvenue ${user.email}`, columns });
+  } catch (error) {
+    return c.json({ error: "voici l'erreur" + error }, 500);
+  }
+});
+
+app.get("/user", async (c) => {
+  const userData = c.get("user");
+  console.log(userData);
+  try {
+    const user =
+      await sql`SELECT id, email, created_at FROM users WHERE id=${userData.id}`;
+
+    console.log(user);
+    return c.json({ message: `Bienvenue ${userData.email}`, user });
   } catch (error) {
     return c.json({ error: "voici l'erreur" + error }, 500);
   }

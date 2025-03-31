@@ -1,4 +1,11 @@
+import Logout from "../components/Logout";
+
 function Home() {
-  return <>Home</>;
+  return (
+    <>
+      <Logout />
+      zefbuzfzbfzifj
+    </>
+  );
 }
 export default Home;

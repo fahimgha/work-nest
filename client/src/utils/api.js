@@ -31,7 +31,36 @@ export const login = async (email, password) => {
   return await fetchApi("/login", "POST", { email, password });
 };
 
+export const logout = async () => {
+  try {
+    await fetchApi("/logout", "POST"); // Supprime le cookie côté serveur
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion", error);
+  }
+};
+
 // Fonction pour récupérer les tâches de l'utilisateur
 export const getTasks = async () => {
   return await fetchApi("/board");
+};
+
+export const checkAuth = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/user`, {
+      method: "GET",
+      credentials: "include", // Assure-toi que les cookies sont bien envoyés
+    });
+
+    if (!response.ok) {
+      return null; // L'utilisateur n'est pas authentifié
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(
+      "Erreur lors de la vérification de l'authentification:",
+      error
+    );
+    return null;
+  }
 };

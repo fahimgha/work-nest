@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./login.module.css";
 import { login } from "../utils/api";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +21,8 @@ export default function Login() {
     }
     try {
       const response = await login(email, password);
+      console.log("login", response);
+      setUser(response);
 
       alert(response.message);
       navigate("/board");

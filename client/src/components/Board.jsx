@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
 import ColumnTask from "./columns/DateColumn";
-
 import Pagination from "./Pagination";
 import { getTasks } from "../utils/api";
+import Logout from "./Logout";
 
 export default function Board() {
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
@@ -11,7 +11,6 @@ export default function Board() {
   const [board, setBoard] = useState({
     columns: {},
   });
-
   useEffect(() => {
     const updateDaysToDisplay = () => {
       const width = window.innerWidth;
@@ -37,10 +36,7 @@ export default function Board() {
     const fetchData = async () => {
       try {
         const data = await getTasks();
-
         setBoard(data.columns);
-
-        console.log("data", data.columns);
       } catch (error) {
         console.log("erreur lors de la recuperation des données", error);
       }
@@ -49,48 +45,47 @@ export default function Board() {
   }, []);
 
   const addTask = useCallback((columnId, task) => {
-    setBoard((prevBoard) => {
-      const prevColumn = prevBoard.columns[columnId] || {
-        id: columnId,
-        name: columnId,
-        tasks: [],
-      };
+    console.log("addTasks");
+    // setBoard((prevBoard) => {
+    //   const prevColumn = prevBoard.columns[columnId] || {
+    //     id: columnId,
+    //     name: columnId,
+    //     tasks: [],
+    //   };
 
-      const updatedColumn = {
-        ...prevColumn,
-        tasks: [
-          ...prevColumn.tasks,
-          {
-            id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            name: task,
-            checked: false,
-          },
-        ],
-      };
-      // Retourne un nouvel état en modifiant uniquement la colonne concernée
-      return {
-        columns: {
-          ...prevBoard.columns,
-          [columnId]: updatedColumn, // Seule cette colonne change
-        },
-      };
-    });
+    //   const updatedColumn = {
+    //     ...prevColumn,
+    //     tasks: [
+    //       ...prevColumn.tasks,
+    //       {
+    //         id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    //         name: task,
+    //         checked: false,
+    //       },
+    //     ],
+    //   };
+    //   // Retourne un nouvel état en modifiant uniquement la colonne concernée
+    //   return {
+    //     columns: {
+    //       ...prevBoard.columns,
+    //       [columnId]: updatedColumn, // Seule cette colonne change
+    //     },
+    //   };
+    // });
   }, []);
 
   const handleDeleteTask = (formattedDate, taskId) => {
-    const column = board.columns[formattedDate];
-
-    const filteredTask = column.tasks.filter((task) => task.id !== taskId);
-
-    setBoard((prevBoard) => ({
-      columns: {
-        ...prevBoard.columns,
-        [formattedDate]: {
-          ...column,
-          tasks: filteredTask,
-        },
-      },
-    }));
+    // const column = board.columns[formattedDate];
+    // const filteredTask = column.tasks.filter((task) => task.id !== taskId);
+    // setBoard((prevBoard) => ({
+    //   columns: {
+    //     ...prevBoard.columns,
+    //     [formattedDate]: {
+    //       ...column,
+    //       tasks: filteredTask,
+    //     },
+    //   },
+    // }));
   };
 
   const handleEditTask = useCallback((formattedDate, taskId, editedTask) => {
@@ -127,14 +122,14 @@ export default function Board() {
       handleEditTask(formattedDate, taskId, editedTask),
     [handleEditTask]
   );
-  console.log(board);
   return (
     <>
-      <div></div>
+      <Logout />
       <Pagination
         currentStartDate={currentStartDate}
         setCurrentStartDate={setCurrentStartDate}
       />
+
       <section className="column-container">
         {daysDisplay.map((day) => {
           const formattedDate = format(day, "yyyy-MM-dd");
