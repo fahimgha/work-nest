@@ -26,6 +26,10 @@ export const signup = async (email, password) => {
   return await fetchApi("/signup", "POST", { email, password });
 };
 
+export const newtask = async (name, checked, date) => {
+  return await fetchApi("/tasks", "POST", { name, checked, date });
+};
+
 // Fonction pour se connecter
 export const login = async (email, password) => {
   return await fetchApi("/login", "POST", { email, password });
@@ -41,7 +45,7 @@ export const logout = async () => {
 
 // Fonction pour récupérer les tâches de l'utilisateur
 export const getTasks = async () => {
-  return await fetchApi("/board");
+  return await fetchApi("/tasks");
 };
 
 export const checkAuth = async () => {

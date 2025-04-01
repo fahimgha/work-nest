@@ -115,7 +115,8 @@ app.post("/logout", (c) => {
     return c.json({ error: "Erreur lors de la déconnexion" }, 500);
   }
 });
-app.use("/board", async (c, next) => {
+app.use("/tasks/*", async (c, next) => {
+  console.log("🔄 Middleware d'authentification exécuté");
   const token = getCookie(c, "token");
 
   if (!token) {
@@ -162,8 +163,9 @@ app.use("/user", async (c, next) => {
   }
 });
 
-app.get("/board", async (c) => {
+app.get("/tasks", async (c) => {
   const user = c.get("user");
+
   try {
     const board =
       await sql`SELECT id, name, checked, date FROM tasks WHERE user_id=${user.id}`;
@@ -199,6 +201,113 @@ app.get("/user", async (c) => {
     return c.json({ message: `Bienvenue ${userData.email}`, user });
   } catch (error) {
     return c.json({ error: "voici l'erreur" + error }, 500);
+  }
+});
+
+app.post("/tasks", async (c) => {
+  const user = c.get("user");
+  const { name, checked, date } = await c.req.json();
+  const isChecked = checked === "true";
+
+  console.log(user);
+  try {
+    const [newTask] =
+      await sql`INSERT INTO tasks(user_id,name,checked, date) VALUES (${user.id},${name},${isChecked},${date})`;
+
+    return c.json({
+      message: `tache ajouter avec succes au user: ${user.id}`,
+      newTask,
+    });
+  } catch (error) {
+    return c.json({ error: "erreur lors de l'ajout d'une tache" + error }, 500);
+  }
+});
+// GET /tasks/:id - Récupérer une tâche spécifique par son ID
+app.get("/tasks/:id", async (c) => {
+  const user = c.get("user");
+  console.log("User dans GET /tasks/:id :", user);
+
+  if (!user) {
+    return c.json({ error: "Authentification requise" }, 401);
+  }
+  const taskId = c.req.param("id");
+
+  try {
+    const task = await sql`
+      SELECT id, name, checked, date FROM tasks 
+      WHERE id = ${taskId} AND user_id = ${user.id}
+    `;
+
+    if (task.length === 0) {
+      return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
+    }
+
+    return c.json(task[0]);
+  } catch (error) {
+    return c.json({ error: "Erreur lors de la récupération de la tâche" }, 500);
+  }
+});
+// PUT /tasks/:id - Mettre à jour une tâche existante
+app.put("/tasks/:id", async (c) => {
+  const user = c.get("user");
+  const taskId = c.req.param("id");
+  const { name, checked, date } = await c.req.json();
+  const isChecked = checked === true || checked === "true";
+
+  try {
+    // Vérifier si la tâche existe et appartient à l'utilisateur
+    const existingTask = await sql`
+      SELECT id FROM tasks WHERE id = ${taskId} AND user_id = ${user.id}
+    `;
+
+    if (existingTask.length === 0) {
+      return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
+    }
+
+    // Mettre à jour la tâche
+    const [updatedTask] = await sql`
+      UPDATE tasks 
+      SET name = ${name}, checked = ${isChecked}, date = ${date}
+      WHERE id = ${taskId} AND user_id = ${user.id}
+      RETURNING id, name, checked, date
+    `;
+
+    return c.json({
+      message: "Tâche mise à jour avec succès",
+      task: updatedTask,
+    });
+  } catch (error) {
+    return c.json({ error: "Erreur lors de la mise à jour de la tâche" }, 500);
+  }
+});
+app.delete("/tasks/:id", async (c) => {
+  const user = c.get("user");
+
+  try {
+    const taskId = c.req.param("id");
+    console.log(
+      `Tentative de suppression de la tâche ${taskId} pour l'utilisateur ${user.id}`
+    );
+
+    // Reste du code...
+    const task = await sql`
+      SELECT id FROM tasks WHERE id = ${taskId} AND user_id = ${user.id}
+    `;
+
+    if (task.length === 0) {
+      return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
+    }
+
+    await sql`DELETE FROM tasks WHERE id = ${taskId}`;
+    return c.json({ message: "Tâche supprimée avec succès" });
+  } catch (error) {
+    console.error("Erreur détaillée:", error);
+    return c.json(
+      {
+        error: "Erreur lors de la suppression de la tâche",
+      },
+      500
+    );
   }
 });
 

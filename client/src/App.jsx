@@ -1,13 +1,16 @@
 import "./App.css";
 import Board from "./components/Board";
 import { AuthContextProvider } from "./context/AuthContext";
+import { TaskProvider } from "./context/TaskContext";
 
 function App() {
   return (
     <>
-      <AuthContextProvider>
-        <Board />
-      </AuthContextProvider>
+      <TaskProvider>
+        <AuthContextProvider>
+          <Board />
+        </AuthContextProvider>
+      </TaskProvider>
     </>
   );
 }
