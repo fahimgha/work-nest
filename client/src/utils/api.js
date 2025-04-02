@@ -37,7 +37,7 @@ export const login = async (email, password) => {
 
 export const logout = async () => {
   try {
-    await fetchApi("/logout", "POST"); // Supprime le cookie côté serveur
+    await fetchApi("/logout", "POST");
   } catch (error) {
     console.error("Erreur lors de la déconnexion", error);
   }
@@ -47,16 +47,24 @@ export const logout = async () => {
 export const getTasks = async () => {
   return await fetchApi("/tasks");
 };
+// Fonction pour modifier une tâche de l'utilisateur
+export const putTask = async (taskId, name, checked, date) => {
+  return await fetchApi(`/tasks/${taskId}`, "PUT", { name, checked, date });
+};
+// Fonction pour supprimer une tâche de l'utilisateur
+export const deleteTask = async (taskId) => {
+  return await fetchApi(`/tasks/${taskId}`, "DELETE");
+};
 
 export const checkAuth = async () => {
   try {
     const response = await fetch(`${BASE_URL}/user`, {
       method: "GET",
-      credentials: "include", // Assure-toi que les cookies sont bien envoyés
+      credentials: "include",
     });
 
     if (!response.ok) {
-      return null; // L'utilisateur n'est pas authentifié
+      return null;
     }
 
     return await response.json();

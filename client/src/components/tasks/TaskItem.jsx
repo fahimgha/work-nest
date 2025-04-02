@@ -25,7 +25,7 @@ function TaskItem({
   });
   const handleTaskEdit = useCallback(
     (editedTask) => {
-      handleEditTaskSubmit(task.id, { name: editedTask });
+      handleEditTaskSubmit(task.id, { ...task, name: editedTask });
       setIsShowedInput(true);
       setEditingTaskId(null);
     },
@@ -33,8 +33,8 @@ function TaskItem({
   );
 
   const handleStatusChange = useCallback(
-    (checked) => handleEditTaskSubmit(task.id, { checked }),
-    [task.id, handleEditTaskSubmit]
+    (checked) => handleEditTaskSubmit(task.id, { ...task, checked }),
+    [task, handleEditTaskSubmit]
   );
 
   const handleDelete = useCallback(

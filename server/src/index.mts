@@ -282,9 +282,8 @@ app.put("/tasks/:id", async (c) => {
 });
 app.delete("/tasks/:id", async (c) => {
   const user = c.get("user");
-
+  const taskId = c.req.param("id");
   try {
-    const taskId = c.req.param("id");
     console.log(
       `Tentative de suppression de la tâche ${taskId} pour l'utilisateur ${user.id}`
     );

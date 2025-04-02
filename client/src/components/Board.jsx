@@ -6,7 +6,8 @@ import Logout from "./Logout";
 import { useTasks } from "../context/TaskContext";
 
 export default function Board() {
-  const { tasks, loading, error, fetchTasks, addTask } = useTasks();
+  const { tasks, loading, error, fetchTasks, addTask, removeTask, editTask } =
+    useTasks();
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
   const [daysToDisplay, setDaysToDisplay] = useState(7);
 
@@ -35,23 +36,23 @@ export default function Board() {
     start: currentStartDate,
     end: addDays(currentStartDate, daysToDisplay - 1),
   });
-  const handleDeleteTask = (formattedDate, taskId) => {};
-
-  const handleEditTask = useCallback((formattedDate, taskId, editedTask) => {},
-  []);
 
   const getOnAddTask = useCallback(
     (formattedDate) => (task) => addTask(formattedDate, task),
     [addTask]
   );
-  const getOnDeleteTask = useCallback(
-    (formattedDate) => (taskId) => handleDeleteTask(formattedDate, taskId),
-    [handleDeleteTask]
+  const onDeleteTask = useCallback(
+    (taskId) => {
+      removeTask(taskId);
+    },
+    [removeTask]
   );
   const getOnUpdateTask = useCallback(
-    (formattedDate) => (taskId, editedTask) =>
-      handleEditTask(formattedDate, taskId, editedTask),
-    [handleEditTask]
+    (taskId, editedTask) => {
+      editTask(taskId, editedTask);
+      console.log(taskId, editedTask);
+    },
+    [tasks, editTask]
   );
 
   if (loading) return <div>Chargement...</div>;
@@ -78,8 +79,8 @@ export default function Board() {
               tasks={column.tasks}
               onAddTask={getOnAddTask(formattedDate)}
               date={formattedDate}
-              onDelete={getOnDeleteTask(formattedDate)}
-              handleEditTaskSubmit={getOnUpdateTask(formattedDate)}
+              onDelete={onDeleteTask}
+              handleEditTaskSubmit={getOnUpdateTask}
             />
           );
         })}
