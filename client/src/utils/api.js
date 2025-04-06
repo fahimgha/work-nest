@@ -25,7 +25,13 @@ const fetchApi = async (endpoint, method = "GET", body = null) => {
 export const signup = async (email, password) => {
   return await fetchApi("/signup", "POST", { email, password });
 };
+export const getProjects = async () => {
+  return await fetchApi("/projects");
+};
 
+export const newProject = async (name, description) => {
+  return await fetchApi("/projects", "POST", { name, description });
+};
 export const newtask = async (name, checked, date) => {
   return await fetchApi("/tasks", "POST", { name, checked, date });
 };

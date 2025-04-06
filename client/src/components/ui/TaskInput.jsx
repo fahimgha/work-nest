@@ -1,8 +1,4 @@
-const projects = [
-  { id: "1", name: "Work Nest" },
-  { id: "2", name: "Rando Spot" },
-  { id: "3", name: "Relax App" },
-];
+import { useTasks } from "../../context/TaskContext";
 
 export default function TaskInput({
   setInputTask,
@@ -10,6 +6,7 @@ export default function TaskInput({
   isEditing,
   inputRef,
 }) {
+  const { projects } = useTasks();
   const onSubmitTask = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
@@ -33,7 +30,7 @@ export default function TaskInput({
         />
         <select name="project" className="todo-select">
           <option value="">Aucun projet</option>
-          {projects.map((project) => (
+          {projects?.map((project) => (
             <option key={project.id} value={project.id}>
               {project.name}
             </option>

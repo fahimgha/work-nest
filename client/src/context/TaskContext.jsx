@@ -1,16 +1,28 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
-import { deleteTask, getTasks, newtask, putTask } from "../utils/api";
+import {
+  deleteTask,
+  getProjects,
+  getTasks,
+  newProject,
+  newtask,
+  putTask,
+} from "../utils/api";
 
 const TaskContext = createContext();
 
 const initialState = {
   tasks: {},
+  projects: [],
   loading: false,
   error: null,
 };
 
 function taskReducer(state, action) {
   switch (action.type) {
+    case "FETCH_PROJECTS":
+      return { ...state, projects: action.payload };
+    case "ADD_PROJECT":
+      return state;
     case "FETCH_TASKS_START":
       return { ...state, loading: true, error: null };
     case "FETCH_TASKS_SUCCESS":
@@ -33,6 +45,29 @@ function taskReducer(state, action) {
 }
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      const data = await getProjects();
+      console.log("📦 Projets récupérés depuis l'API:", data);
+      dispatch({ type: "FETCH_PROJECTS", payload: data.projects });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const addProject = useCallback(
+    async (name, description) => {
+      try {
+        await newProject(name, description);
+        dispatch({ type: "ADD_PROJECT" });
+        fetchProjects();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [fetchProjects]
+  );
 
   const fetchTasks = useCallback(async () => {
     dispatch({ type: "FETCH_TASKS_START" });
@@ -120,8 +155,11 @@ export function TaskProvider({ children }) {
 
   const value = {
     tasks: state.tasks,
+    projects: state.projects,
     loading: state.loading,
     error: state.error,
+    fetchProjects,
+    addProject,
     fetchTasks,
     addTask,
     removeTask,

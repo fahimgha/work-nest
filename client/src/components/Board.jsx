@@ -8,18 +8,26 @@ import { useTasks } from "../context/TaskContext";
 import AddProject from "./ui/AddProject";
 
 export default function Board() {
-  const { tasks, loading, error, fetchTasks, addTask, removeTask, editTask } =
-    useTasks();
+  const {
+    tasks,
+    projects,
+    loading,
+    error,
+    fetchTasks,
+    fetchProjects,
+    addProject,
+    addTask,
+    removeTask,
+    editTask,
+  } = useTasks();
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
   const [daysToDisplay, setDaysToDisplay] = useState(7);
-  const [isAddingProject, setIsAddingProject] = useState(false);
-
-  const startEditing = () => {
-    setIsAddingProject((prevIsAddingProject) => !prevIsAddingProject);
-  };
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   useEffect(() => {
+    fetchProjects();
     fetchTasks();
   }, []);
+  console.log(projects);
 
   useEffect(() => {
     const updateDaysToDisplay = () => {
@@ -60,15 +68,27 @@ export default function Board() {
     },
     [tasks, editTask]
   );
-
+  const setFormProject = ({ name, description }) => {
+    console.log(name, description);
+    addProject(name, description);
+  };
   if (loading) return <div>Chargement...</div>;
   if (error) return <div>Erreur: {error}</div>;
   return (
     <>
       {/* <Logout /> */}
 
-      <Button onClick={startEditing}>Créer un projet</Button>
-      {isAddingProject ? <AddProject /> : ""}
+      <Button onClick={() => setShowAddProjectModal(true)}>
+        Créer un projet
+      </Button>
+      {showAddProjectModal ? (
+        <AddProject
+          setFormProject={setFormProject}
+          onClose={() => setShowAddProjectModal(false)}
+        />
+      ) : (
+        ""
+      )}
       <Pagination
         currentStartDate={currentStartDate}
         setCurrentStartDate={setCurrentStartDate}

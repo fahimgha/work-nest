@@ -262,7 +262,7 @@ function Promodoro() {
     <Container mode={state.mode}>
       <ModeBadgeContainer>
         <ModeBadge
-          modeType="work"
+          modetype="work"
           isFocused={state.mode === "work"}
           clickable={true}
           onClick={() => changeMode("work")}
@@ -270,7 +270,7 @@ function Promodoro() {
           Travail
         </ModeBadge>
         <ModeBadge
-          modeType="shortBreak"
+          modetype="shortBreak"
           isFocused={state.mode === "shortBreak"}
           clickable={true}
           onClick={() => changeMode("shortBreak")}
@@ -278,7 +278,7 @@ function Promodoro() {
           Pause Courte
         </ModeBadge>
         <ModeBadge
-          modeType="longBreak"
+          modetype="longBreak"
           isFocused={state.mode === "longBreak"}
           clickable={true}
           onClick={() => changeMode("longBreak")}

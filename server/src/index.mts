@@ -163,30 +163,152 @@ app.use("/user", async (c, next) => {
   }
 });
 
-app.get("/tasks", async (c) => {
+app.use("/projects/*", async (c, next) => {
+  const token = getCookie(c, "token");
+
+  if (!token) {
+    return c.json({ error: "Non autorisé : token manquant" }, 401);
+  }
+  try {
+    const secret = process.env.SECRET_KEY || "";
+    const payload = await verify(token, secret);
+
+    const userPayload = payload as {
+      id: number;
+      email: string;
+      role: string;
+      exp: number;
+    };
+    c.set("user", userPayload);
+    await next();
+  } catch (err) {
+    console.error("Erreur de vérification du token", err);
+    return c.json({ error: "Token invalide" }, 401);
+  }
+});
+app.post("/projects", async (c) => {
+  const user = c.get("user");
+  const { name, description } = await c.req.json();
+
+  try {
+    if (!name) {
+      return c.json({ error: "Le nom du projet est requis" }, 400);
+    }
+
+    const [newProject] = await sql`
+      INSERT INTO projects (user_id, name, description) 
+      VALUES (${user.id}, ${name}, ${description || ""})
+      RETURNING id, name, description
+    `;
+
+    return c.json({
+      message: "Projet créé avec succès",
+      project: newProject,
+    });
+  } catch (error) {
+    return c.json(
+      { error: "Erreur lors de la création du projet: " + error },
+      500
+    );
+  }
+});
+
+// GET /projects - Récupérer tous les projets d'un utilisateur
+app.get("/projects", async (c) => {
   const user = c.get("user");
 
   try {
-    const board =
-      await sql`SELECT id, name, checked, date FROM tasks WHERE user_id=${user.id}`;
+    const projects = await sql`
+      SELECT id, name, description 
+      FROM projects 
+      WHERE user_id = ${user.id}
+      ORDER BY id DESC
+    `;
 
-    const columns = board.reduce((acc, task) => {
+    return c.json({ projects });
+  } catch (error) {
+    return c.json(
+      { error: "Erreur lors de la récupération des projets: " + error },
+      500
+    );
+  }
+});
+
+// GET /projects/:id - Récupérer un projet spécifique par son ID
+app.get("/projects/:id", async (c) => {
+  const user = c.get("user");
+  const projectId = c.req.param("id");
+
+  try {
+    const project = await sql`
+      SELECT id, name, description 
+      FROM projects 
+      WHERE id = ${projectId} AND user_id = ${user.id}
+    `;
+
+    if (project.length === 0) {
+      return c.json({ error: "Projet non trouvé ou non autorisé" }, 404);
+    }
+
+    // Récupérer également les tâches associées à ce projet
+    const tasks = await sql`
+      SELECT id, name, checked, date 
+      FROM tasks 
+      WHERE project_id = ${projectId} AND user_id = ${user.id}
+    `;
+
+    return c.json({
+      project: project[0],
+      tasks,
+    });
+  } catch (error) {
+    return c.json(
+      { error: "Erreur lors de la récupération du projet: " + error },
+      500
+    );
+  }
+});
+app.get("/tasks", async (c) => {
+  const user = c.get("user");
+  const projectId = c.req.query("project_id"); // Optionnel: filtrer par projet
+
+  try {
+    let tasks;
+
+    if (projectId) {
+      // Si un project_id est fourni, récupérer seulement les tâches de ce projet
+      tasks = await sql`
+        SELECT id, name, checked, date, project_id 
+        FROM tasks 
+        WHERE user_id=${user.id} AND project_id=${projectId}
+      `;
+    } else {
+      // Sinon récupérer toutes les tâches de l'utilisateur
+      tasks = await sql`
+        SELECT id, name, checked, date, project_id 
+        FROM tasks 
+        WHERE user_id=${user.id}
+      `;
+    }
+
+    const columns = tasks.reduce((acc, task) => {
       const date =
         task.date instanceof Date
-          ? task.date.toISOString().split("T")[0] // Si c'est un objet Date
+          ? task.date.toISOString().split("T")[0]
           : task.date.split("T")[0];
       if (!acc[date]) acc[date] = { id: date, name: date, tasks: [] };
       acc[date].tasks.push({
         id: task.id,
         name: task.name,
         checked: task.checked,
+        project_id: task.project_id,
       });
       return acc;
     }, {});
-    console.log(columns);
+
     return c.json({ message: `Bienvenue ${user.email}`, columns });
   } catch (error) {
-    return c.json({ error: "voici l'erreur" + error }, 500);
+    return c.json({ error: "Erreur: " + error }, 500);
   }
 });
 
@@ -206,35 +328,46 @@ app.get("/user", async (c) => {
 
 app.post("/tasks", async (c) => {
   const user = c.get("user");
-  const { name, checked, date } = await c.req.json();
-  const isChecked = checked === "true";
+  const { name, checked, date, project_id } = await c.req.json();
+  const isChecked = checked === "true" || checked === true;
 
-  console.log(user);
   try {
-    const [newTask] =
-      await sql`INSERT INTO tasks(user_id,name,checked, date) VALUES (${user.id},${name},${isChecked},${date})`;
+    // Vérifier si le projet existe et appartient à l'utilisateur
+    if (project_id) {
+      const project = await sql`
+        SELECT id FROM projects WHERE id = ${project_id} AND user_id = ${user.id}
+      `;
+
+      if (project.length === 0) {
+        return c.json({ error: "Projet non trouvé ou non autorisé" }, 404);
+      }
+    }
+
+    const [newTask] = await sql`
+      INSERT INTO tasks(user_id, name, checked, date, project_id) 
+      VALUES (${user.id}, ${name}, ${isChecked}, ${date}, ${project_id || null})
+      RETURNING id, name, checked, date, project_id
+    `;
 
     return c.json({
-      message: `tache ajouter avec succes au user: ${user.id}`,
-      newTask,
+      message: `Tâche ajoutée avec succès`,
+      task: newTask,
     });
   } catch (error) {
-    return c.json({ error: "erreur lors de l'ajout d'une tache" + error }, 500);
+    return c.json(
+      { error: "Erreur lors de l'ajout d'une tâche: " + error },
+      500
+    );
   }
 });
 // GET /tasks/:id - Récupérer une tâche spécifique par son ID
 app.get("/tasks/:id", async (c) => {
   const user = c.get("user");
-  console.log("User dans GET /tasks/:id :", user);
-
-  if (!user) {
-    return c.json({ error: "Authentification requise" }, 401);
-  }
   const taskId = c.req.param("id");
 
   try {
     const task = await sql`
-      SELECT id, name, checked, date FROM tasks 
+      SELECT id, name, checked, date, project_id FROM tasks 
       WHERE id = ${taskId} AND user_id = ${user.id}
     `;
 
@@ -251,7 +384,7 @@ app.get("/tasks/:id", async (c) => {
 app.put("/tasks/:id", async (c) => {
   const user = c.get("user");
   const taskId = c.req.param("id");
-  const { name, checked, date } = await c.req.json();
+  const { name, checked, date, project_id } = await c.req.json();
   const isChecked = checked === true || checked === "true";
 
   try {
@@ -264,12 +397,25 @@ app.put("/tasks/:id", async (c) => {
       return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
     }
 
+    // Si un project_id est fourni, vérifier que le projet existe et appartient à l'utilisateur
+    if (project_id) {
+      const project = await sql`
+        SELECT id FROM projects WHERE id = ${project_id} AND user_id = ${user.id}
+      `;
+
+      if (project.length === 0) {
+        return c.json({ error: "Projet non trouvé ou non autorisé" }, 404);
+      }
+    }
+
     // Mettre à jour la tâche
     const [updatedTask] = await sql`
       UPDATE tasks 
-      SET name = ${name}, checked = ${isChecked}, date = ${date}
+      SET name = ${name}, checked = ${isChecked}, date = ${date}, project_id = ${
+      project_id || null
+    }
       WHERE id = ${taskId} AND user_id = ${user.id}
-      RETURNING id, name, checked, date
+      RETURNING id, name, checked, date, project_id
     `;
 
     return c.json({

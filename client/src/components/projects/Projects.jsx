@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useTasks } from "../../context/TaskContext";
 
 const Container = styled.div`
   min-width: 900px;
@@ -8,7 +9,23 @@ const Container = styled.div`
   border-radius: 0.4rem;
 `;
 function Project() {
-  return <Container>test</Container>;
+  const { projects } = useTasks();
+
+  console.log(projects);
+  // const column = projects[formattedDate] || {
+  //   id: formattedDate,
+  //   name: formattedDate,
+  //   tasks: [],
+  // };
+  return (
+    <Container>
+      <ol>
+        {projects.map((project) => {
+          return <li key={project.id}>{project.name}</li>;
+        })}
+      </ol>
+    </Container>
+  );
 }
 
 export default Project;
