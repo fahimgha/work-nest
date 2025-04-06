@@ -2,15 +2,21 @@ import { useState, useEffect, useCallback } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
 import ColumnTask from "./columns/DateColumn";
 import Pagination from "./Pagination";
+import { Button } from "./ui/buttons/Button";
 import Logout from "./Logout";
 import { useTasks } from "../context/TaskContext";
+import AddProject from "./ui/AddProject";
 
 export default function Board() {
   const { tasks, loading, error, fetchTasks, addTask, removeTask, editTask } =
     useTasks();
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
   const [daysToDisplay, setDaysToDisplay] = useState(7);
+  const [isAddingProject, setIsAddingProject] = useState(false);
 
+  const startEditing = () => {
+    setIsAddingProject((prevIsAddingProject) => !prevIsAddingProject);
+  };
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -59,7 +65,10 @@ export default function Board() {
   if (error) return <div>Erreur: {error}</div>;
   return (
     <>
-      <Logout />
+      {/* <Logout /> */}
+
+      <Button onClick={startEditing}>Créer un projet</Button>
+      {isAddingProject ? <AddProject /> : ""}
       <Pagination
         currentStartDate={currentStartDate}
         setCurrentStartDate={setCurrentStartDate}

@@ -1,3 +1,9 @@
+const projects = [
+  { id: "1", name: "Work Nest" },
+  { id: "2", name: "Rando Spot" },
+  { id: "3", name: "Relax App" },
+];
+
 export default function TaskInput({
   setInputTask,
   inputValue,
@@ -25,6 +31,14 @@ export default function TaskInput({
           placeholder={isEditing ? "Edit Task" : "Add Task"}
           autoFocus
         />
+        <select name="project" className="todo-select">
+          <option value="">Aucun projet</option>
+          {projects.map((project) => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
       </form>
     </>
   );

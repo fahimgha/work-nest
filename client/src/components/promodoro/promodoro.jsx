@@ -32,7 +32,7 @@ const ModeBadgeContainer = styled.div`
 `;
 
 const ModeBadge = styled.div`
-  padding: 0.5rem 0.75rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 0.4rem;
   font-weight: 500;
   color: ${(props) => {
