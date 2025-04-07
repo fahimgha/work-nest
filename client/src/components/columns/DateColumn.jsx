@@ -4,15 +4,11 @@ import useClickOutside from "../../hooks/useClickOutside";
 import TaskItem from "../tasks/TaskItem";
 import TaskInput from "../ui/TaskInput";
 import AddTaskButton from "../ui/buttons/AddTaskButton";
+import { useTasks } from "../../context/TaskContext";
 
-function DateColumn({
-  date,
-  tasks,
-  onAddTask,
-  onDelete,
-  handleEditTaskSubmit,
-}) {
+function DateColumn({ date, tasks }) {
   const inputRef = useRef(null);
+  const { addTask } = useTasks();
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -27,11 +23,11 @@ function DateColumn({
 
   const handleAddTask = useCallback(
     (taskData) => {
-      onAddTask(taskData);
+      addTask(date, taskData);
       setIsAddingTask(false);
       setIsShowedInput(false);
     },
-    [onAddTask]
+    [addTask, date]
   );
 
   const startAddingTask = useCallback(() => {
@@ -52,8 +48,6 @@ function DateColumn({
               <TaskItem
                 task={task}
                 isEditing={editingTaskId === task.id}
-                handleEditTaskSubmit={handleEditTaskSubmit}
-                onDelete={onDelete}
                 setEditingTaskId={setEditingTaskId}
               />
             </li>

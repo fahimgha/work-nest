@@ -8,18 +8,8 @@ import { useTasks } from "../context/TaskContext";
 import AddProject from "./ui/AddProject";
 
 export default function Board() {
-  const {
-    tasks,
-    projects,
-    loading,
-    error,
-    fetchTasks,
-    fetchProjects,
-    addProject,
-    addTask,
-    removeTask,
-    editTask,
-  } = useTasks();
+  const { tasks, loading, error, fetchTasks, fetchProjects, addProject } =
+    useTasks();
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
   const [daysToDisplay, setDaysToDisplay] = useState(7);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -49,24 +39,6 @@ export default function Board() {
     start: currentStartDate,
     end: addDays(currentStartDate, daysToDisplay - 1),
   });
-
-  const getOnAddTask = useCallback(
-    (formattedDate) => (taskData) => addTask(formattedDate, taskData),
-    [addTask]
-  );
-  const onDeleteTask = useCallback(
-    (taskId) => {
-      removeTask(taskId);
-    },
-    [removeTask]
-  );
-  const getOnUpdateTask = useCallback(
-    (taskId, editedTask) => {
-      editTask(taskId, editedTask);
-      console.log("board", taskId, editedTask);
-    },
-    [tasks, editTask]
-  );
   const setFormProject = ({ name, description }) => {
     addProject(name, description);
   };
@@ -104,10 +76,7 @@ export default function Board() {
             <ColumnTask
               key={formattedDate}
               tasks={column.tasks}
-              onAddTask={getOnAddTask(formattedDate)}
               date={formattedDate}
-              onDelete={onDeleteTask}
-              handleEditTaskSubmit={getOnUpdateTask}
             />
           );
         })}

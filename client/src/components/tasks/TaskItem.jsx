@@ -3,14 +3,10 @@ import Task from "./Task";
 import TaskInput from "../ui/TaskInput";
 import { useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
+import { useTasks } from "../../context/TaskContext";
 
-function TaskItem({
-  task,
-  isEditing,
-  handleEditTaskSubmit,
-  onDelete,
-  setEditingTaskId,
-}) {
+function TaskItem({ task, isEditing, setEditingTaskId }) {
+  const { editTask } = useTasks();
   const inputRef = useRef(null);
   const [isShowingInput, setIsShowedInput] = useState(true);
 
@@ -28,7 +24,7 @@ function TaskItem({
   });
   const handleTaskEdit = useCallback(
     (editedTaskData) => {
-      handleEditTaskSubmit(task.id, {
+      editTask(task.id, {
         ...task,
         name: editedTaskData.name,
         project_id: editedTaskData.project_id,
@@ -36,19 +32,13 @@ function TaskItem({
       setIsShowedInput(true);
       setEditingTaskId(null);
     },
-    [task.id, handleEditTaskSubmit, setEditingTaskId]
+    [task, editTask, setEditingTaskId]
   );
 
   const handleStatusChange = useCallback(
-    (checked) => handleEditTaskSubmit(task.id, { ...task, checked }),
-    [task, handleEditTaskSubmit]
+    (checked) => editTask(task.id, { ...task, checked }),
+    [task, editTask]
   );
-
-  const handleDelete = useCallback(
-    () => onDelete(task.id),
-    [task.id, onDelete]
-  );
-
   const startEditing = useCallback(() => {
     setEditingTaskId(task.id);
     setIsShowedInput(true);
@@ -69,9 +59,9 @@ function TaskItem({
   return (
     <Task
       task={task.name}
+      taskId={task.id}
       checked={task.checked}
       onChange={handleStatusChange}
-      onDelete={handleDelete}
       isEditingTask={startEditing}
     />
   );
