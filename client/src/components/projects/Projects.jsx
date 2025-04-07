@@ -1,30 +1,27 @@
-import styled from "styled-components";
+import styles from "./project.module.css";
 import { useTasks } from "../../context/TaskContext";
 
-const Container = styled.div`
-  min-width: 900px;
-
-  padding: 1rem 0;
-  background: #fafafa;
-  border-radius: 0.4rem;
-`;
 function Project() {
   const { projects } = useTasks();
 
   console.log(projects);
-  // const column = projects[formattedDate] || {
-  //   id: formattedDate,
-  //   name: formattedDate,
-  //   tasks: [],
-  // };
   return (
-    <Container>
-      <ol>
+    <div className={styles.container}>
+      <h2>Mes Projets</h2>
+      <ol className={styles.olProject}>
         {projects.map((project) => {
-          return <li key={project.id}>{project.name}</li>;
+          return (
+            <li className={styles.liProject} key={project.id}>
+              <div className={styles.imageProject}></div>
+              <div>
+                {project.name}
+                <h3>{project.description}</h3>
+              </div>
+            </li>
+          );
         })}
       </ol>
-    </Container>
+    </div>
   );
 }
 

@@ -27,7 +27,6 @@ export default function Board() {
     fetchProjects();
     fetchTasks();
   }, []);
-  console.log(projects);
 
   useEffect(() => {
     const updateDaysToDisplay = () => {
@@ -52,7 +51,7 @@ export default function Board() {
   });
 
   const getOnAddTask = useCallback(
-    (formattedDate) => (task) => addTask(formattedDate, task),
+    (formattedDate) => (taskData) => addTask(formattedDate, taskData),
     [addTask]
   );
   const onDeleteTask = useCallback(
@@ -64,12 +63,11 @@ export default function Board() {
   const getOnUpdateTask = useCallback(
     (taskId, editedTask) => {
       editTask(taskId, editedTask);
-      console.log(taskId, editedTask);
+      console.log("board", taskId, editedTask);
     },
     [tasks, editTask]
   );
   const setFormProject = ({ name, description }) => {
-    console.log(name, description);
     addProject(name, description);
   };
   if (loading) return <div>Chargement...</div>;

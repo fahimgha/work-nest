@@ -49,7 +49,6 @@ export function TaskProvider({ children }) {
   const fetchProjects = useCallback(async () => {
     try {
       const data = await getProjects();
-      console.log("📦 Projets récupérés depuis l'API:", data);
       dispatch({ type: "FETCH_PROJECTS", payload: data.projects });
     } catch (error) {
       console.log(error);
@@ -83,7 +82,7 @@ export function TaskProvider({ children }) {
     async (columnId, task) => {
       dispatch({ type: "ADD_TASK_START" });
       try {
-        await newtask(task, false, columnId);
+        await newtask(task.name, false, columnId, task.projectId);
         dispatch({ type: "ADD_TASK_SUCCESS" });
         fetchTasks();
       } catch (error) {
@@ -95,6 +94,7 @@ export function TaskProvider({ children }) {
 
   const editTask = useCallback(
     async (taskId, editedTask) => {
+      console.log(editedTask);
       dispatch({ type: "EDIT_TASK_START" });
       try {
         let existingTask = null;
@@ -118,12 +118,13 @@ export function TaskProvider({ children }) {
             }
           }
         }
-
+        console.log(updatedTask);
         await putTask(
           taskId,
           updatedTask.name,
           updatedTask.checked,
-          updatedTask.date
+          updatedTask.date,
+          updatedTask.project_id
         );
 
         dispatch({ type: "EDIT_TASK_SUCCESS" });

@@ -19,13 +19,20 @@ function TaskItem({
       inputRef.current.value !== task.name &&
       inputRef.current.querySelector("input").value !== ""
     ) {
-      handleTaskEdit(inputRef.current.querySelector("input").value);
+      handleTaskEdit({
+        name: inputElement.value,
+        project_id: selectElement.value,
+      });
     }
     setIsShowedInput(false);
   });
   const handleTaskEdit = useCallback(
-    (editedTask) => {
-      handleEditTaskSubmit(task.id, { ...task, name: editedTask });
+    (editedTaskData) => {
+      handleEditTaskSubmit(task.id, {
+        ...task,
+        name: editedTaskData.name,
+        project_id: editedTaskData.project_id,
+      });
       setIsShowedInput(true);
       setEditingTaskId(null);
     },
@@ -52,6 +59,7 @@ function TaskItem({
       <TaskInput
         setInputTask={handleTaskEdit}
         inputValue={task.name}
+        projectId={task.project_id}
         isEditing={true}
         inputRef={inputRef}
       />

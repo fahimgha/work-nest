@@ -32,8 +32,8 @@ export const getProjects = async () => {
 export const newProject = async (name, description) => {
   return await fetchApi("/projects", "POST", { name, description });
 };
-export const newtask = async (name, checked, date) => {
-  return await fetchApi("/tasks", "POST", { name, checked, date });
+export const newtask = async (name, checked, date, project_id) => {
+  return await fetchApi("/tasks", "POST", { name, checked, date, project_id });
 };
 
 // Fonction pour se connecter
@@ -54,8 +54,13 @@ export const getTasks = async () => {
   return await fetchApi("/tasks");
 };
 // Fonction pour modifier une tâche de l'utilisateur
-export const putTask = async (taskId, name, checked, date) => {
-  return await fetchApi(`/tasks/${taskId}`, "PUT", { name, checked, date });
+export const putTask = async (taskId, name, checked, date, project_id) => {
+  return await fetchApi(`/tasks/${taskId}`, "PUT", {
+    name,
+    checked,
+    date,
+    project_id,
+  });
 };
 // Fonction pour supprimer une tâche de l'utilisateur
 export const deleteTask = async (taskId) => {

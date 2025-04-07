@@ -26,8 +26,8 @@ function DateColumn({
   });
 
   const handleAddTask = useCallback(
-    (task) => {
-      onAddTask(task);
+    (taskData) => {
+      onAddTask(taskData);
       setIsAddingTask(false);
       setIsShowedInput(false);
     },

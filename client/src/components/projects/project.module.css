@@ -1,0 +1,55 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  min-width: 900px;
+  max-height: 300px;
+  padding: 1rem;
+  background: #fafafa;
+  border-radius: 0.4rem;
+}
+.olProject {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  row-gap: 0.5rem;
+  column-gap: 0.5rem;
+  /* min-width: 200px; */
+  width: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+.liProject {
+  display: flex;
+  align-items: center;
+
+  gap: 1rem;
+  padding: 0.4rem 0.4rem;
+  background-color: #ffffff;
+  border-radius: 0.4rem;
+  width: 350px;
+  text-align: start;
+  height: 80px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.imageProject {
+  padding: 1.75rem;
+  background-color: rgb(143, 105, 178);
+  border-radius: 1rem;
+  flex-shrink: 0;
+}
+/* .liProject > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+} */
+/* .liProject > div h3 {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85rem;
+  color: #666;
+} */
