@@ -47,23 +47,23 @@ export default function Board() {
   return (
     <>
       {/* <Logout /> */}
-
-      <Button onClick={() => setShowAddProjectModal(true)}>
-        Créer un projet
-      </Button>
-      {showAddProjectModal ? (
-        <AddProject
-          setFormProject={setFormProject}
-          onClose={() => setShowAddProjectModal(false)}
+      <div className="header">
+        <Pagination
+          currentStartDate={currentStartDate}
+          setCurrentStartDate={setCurrentStartDate}
         />
-      ) : (
-        ""
-      )}
-      <Pagination
-        currentStartDate={currentStartDate}
-        setCurrentStartDate={setCurrentStartDate}
-      />
-
+        <Button onClick={() => setShowAddProjectModal(true)}>
+          Créer un projet
+        </Button>
+        {showAddProjectModal ? (
+          <AddProject
+            setFormProject={setFormProject}
+            onClose={() => setShowAddProjectModal(false)}
+          />
+        ) : (
+          ""
+        )}
+      </div>
       <section className="column-container">
         {daysDisplay.map((day) => {
           const formattedDate = format(day, "yyyy-MM-dd");

@@ -203,6 +203,11 @@ Button {
   transition: background 0.2s, stroke-dashoffset 0.3s;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
 .today-button {
   border: 0;
   padding: 0.4rem;
@@ -217,10 +222,11 @@ Button {
 .paginations {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  margin: 0 20px;
-  margin-bottom: 0.5rem;
+  /* margin: 0 20px; */
+  /* margin-bottom: 0.5rem; */
+  gap: 1rem;
 }
 .paginations div {
   display: flex;

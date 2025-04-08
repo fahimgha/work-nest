@@ -17,11 +17,12 @@ const initialState = {
 
 // Composants stylisés
 const Container = styled.div`
-  max-width: 400px;
-
+  width: 100%;
+  max-width: 100%;
   padding: 1rem 0;
   background: #fafafa;
   border-radius: 0.4rem;
+  overflow: hidden;
 `;
 
 const ModeBadgeContainer = styled.div`

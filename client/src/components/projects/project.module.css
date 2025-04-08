@@ -2,12 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: start;
-  min-width: 900px;
-  max-height: 300px;
+  width: 100%;
+  min-width: 350px;
+  height: 320px;
   padding: 1rem;
   background: #fafafa;
   border-radius: 0.4rem;
 }
+
+/* font-size: clamp(2rem, 5vw, 4rem); */
 .olProject {
   display: flex;
   flex-wrap: wrap;
@@ -18,12 +21,12 @@
   width: 100%;
   overflow: auto;
   box-sizing: border-box;
+  padding-left: 1rem;
 }
 
 .liProject {
   display: flex;
   align-items: center;
-
   gap: 1rem;
   padding: 0.4rem 0.4rem;
   background-color: #ffffff;
@@ -34,9 +37,22 @@
   overflow: hidden;
   box-sizing: border-box;
 }
+@media (max-width: 768px) {
+  .liProject {
+    width: 100%; /* Un seul projet par ligne sur petit écran */
+  }
+}
 .imageProject {
   padding: 1.75rem;
   background-color: rgb(143, 105, 178);
   border-radius: 1rem;
   flex-shrink: 0;
+}
+
+.liProject h3 {
+  font-size: 0.9rem;
+  margin: 0.2rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Empêche le texte de passer à la ligne */
 }

@@ -24,23 +24,26 @@ export default function Pagination({ currentStartDate, setCurrentStartDate }) {
 
   return (
     <div className="paginations">
-      <div className="pagination-previous">
-        <div onClick={() => goToPreviousPage(7)}>
-          <HiChevronDoubleLeft />
-        </div>
-        <div onClick={() => goToPreviousPage(1)}>
-          <HiChevronLeft />
-        </div>
-      </div>
       <button className="today-button" onClick={goToday}>
         Today
       </button>
-      <div className="pagination-next">
-        <div onClick={() => goToNextPage(1)}>
-          <HiChevronRight />
+      <div>
+        <div className="pagination-previous">
+          <div onClick={() => goToPreviousPage(7)}>
+            <HiChevronDoubleLeft />
+          </div>
+          <div onClick={() => goToPreviousPage(1)}>
+            <HiChevronLeft />
+          </div>
         </div>
-        <div onClick={() => goToNextPage(7)}>
-          <HiChevronDoubleRight />
+
+        <div className="pagination-next">
+          <div onClick={() => goToNextPage(1)}>
+            <HiChevronRight />
+          </div>
+          <div onClick={() => goToNextPage(7)}>
+            <HiChevronDoubleRight />
+          </div>
         </div>
       </div>
     </div>
