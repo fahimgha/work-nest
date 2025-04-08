@@ -4,7 +4,6 @@ import { hash, compare } from "bcryptjs";
 import { sign, verify } from "hono/jwt";
 import "dotenv/config";
 import sql from "./db.mts";
-// import { bearerAuth } from "hono/bearer-auth";
 import { logger } from "hono/logger";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
