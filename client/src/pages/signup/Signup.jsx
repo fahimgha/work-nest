@@ -1,13 +1,12 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import styles from "./login.module.css";
-import { login } from "../utils/api";
-import { AuthContext } from "../context/AuthContext";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import styles from "../login/login.module.css";
+import { signup } from "../../utils/api.js";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Signup() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,17 +14,16 @@ export default function Login() {
     const email = data.get("email");
     const password = data.get("password");
 
+    // Vérification si l'email et le mot de passe sont remplis
     if (!email || !password) {
       setError("L'email et le mot de passe sont requis.");
       return;
     }
-    try {
-      const response = await login(email, password);
-      console.log("login", response);
-      setUser(response);
 
+    try {
+      const response = await signup(email, password);
       alert(response.message);
-      navigate("/board");
+      navigate("/login");
     } catch (err) {
       setError(err.message);
       alert(error);
@@ -34,11 +32,21 @@ export default function Login() {
 
   return (
     <div className={styles.container}>
+      <section className={styles.DescApp}>
+        <h1>Work Nest</h1>
+        <h2>
+          Gérez vos tâches avec la planification hebdomadaire & Pomodoro. 📅
+        </h2>
+        <ol>
+          <li>Organiser par semaine ⏳</li>
+          <li>Focus avec Pomodoro</li>
+        </ol>
+      </section>
       <div className={styles.loginFormContainer}>
-        <h2>Se connecter</h2>
+        <h2>Créer votre compte</h2>
         <p>
-          Si vous n'avez pas de compte, cliquer <Link to="/signup">ici </Link>
-          pour en créer un
+          Si vous avez déjà un compte, cliquer <Link to="/login">ici </Link>
+          pour vous connecter.
         </p>
         <form className={styles.loginForm} onSubmit={handleLogin}>
           <label className={styles.labelStyle} htmlFor="email">
@@ -62,7 +70,7 @@ export default function Login() {
           />
 
           <button className={styles.buttonStyle} type="submit">
-            Connexion
+            Creer mon compte
           </button>
         </form>
       </div>

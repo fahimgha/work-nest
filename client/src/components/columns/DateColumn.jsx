@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import TaskItem from "../tasks/TaskItem";
-import TaskInput from "../ui/TaskInput";
+import TaskInput from "../tasks/TaskInput.jsx";
 import AddTaskButton from "../ui/buttons/AddTaskButton";
 import { useTasks } from "../../context/TaskContext";
 

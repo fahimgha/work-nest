@@ -1,4 +1,4 @@
-import styles from "./project.module.css";
+import styles from "./projects.module.css";
 import { useTasks } from "../../context/TaskContext";
 
 function Project() {

@@ -1,4 +1,4 @@
-import { useTasks } from "../../context/TaskContext";
+import { useTasks } from "../../context/TaskContext.jsx";
 
 export default function TaskInput({
   setInputTask,

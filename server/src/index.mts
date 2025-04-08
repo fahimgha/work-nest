@@ -319,7 +319,7 @@ app.get("/user", async (c) => {
       await sql`SELECT id, email, created_at FROM users WHERE id=${userData.id}`;
 
     console.log(user);
-    return c.json({ message: `Bienvenue ${userData.email}`, user });
+    return c.json({ message: `Bienvenue ${userData.email}`, user: [user] });
   } catch (error) {
     return c.json({ error: "voici l'erreur" + error }, 500);
   }

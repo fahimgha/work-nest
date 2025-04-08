@@ -1,15 +1,14 @@
 import "./App.css";
-import Board from "./components/Board";
+import Board from "./pages/Board.jsx";
 import Project from "./components/projects/Projects";
-import Promodoro from "./components/promodoro/promodoro";
-import { AuthContextProvider } from "./context/AuthContext";
+import Promodoro from "./components/promodoro/Promodoro.jsx";
+
 import { TaskProvider } from "./context/TaskContext";
 
 function App() {
   return (
     <>
       <TaskProvider>
-        <AuthContextProvider>
           <Board />
           <div
             style={{
@@ -39,7 +38,7 @@ function App() {
               <Project />
             </section>
           </div>
-        </AuthContextProvider>
+
       </TaskProvider>
     </>
   );

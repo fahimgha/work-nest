@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
-import ColumnTask from "./columns/DateColumn";
-import Pagination from "./Pagination";
-import { Button } from "./ui/buttons/Button";
-import Logout from "./Logout";
-import { useTasks } from "../context/TaskContext";
-import AddProject from "./ui/AddProject";
+import ColumnTask from "../components/columns/DateColumn.jsx";
+import Pagination from "../components/Pagination.jsx";
+import { Button } from "../components/ui/buttons/Button.jsx";
+import Logout from "../components/Logout.jsx";
+import { useTasks } from "../context/TaskContext.jsx";
+import AddProject from "../components/projects/AddProject.jsx";
 
 export default function Board() {
   const { tasks, loading, error, fetchTasks, fetchProjects, addProject } =

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback, memo } from "react";
 import Task from "./Task";
-import TaskInput from "../ui/TaskInput";
+import TaskInput from "./TaskInput.jsx";
 import { useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import { useTasks } from "../../context/TaskContext";

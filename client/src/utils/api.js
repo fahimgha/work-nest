@@ -49,6 +49,10 @@ export const logout = async () => {
   }
 };
 
+export const getUser = async () => {
+return await fetchApi("/user");
+};
+
 // Fonction pour récupérer les tâches de l'utilisateur
 export const getTasks = async () => {
   return await fetchApi("/tasks");
@@ -75,15 +79,18 @@ export const checkAuth = async () => {
     });
 
     if (!response.ok) {
-      return null;
+      if (response.status === 401) {
+        throw new Error("Token expiré ou invalide");
+      }
+      throw new Error("Erreur de vérification d'authentification");
     }
 
     return await response.json();
   } catch (error) {
     console.error(
-      "Erreur lors de la vérification de l'authentification:",
+      "Erreur lors de la vérification de l'authe  ntification:",
       error
     );
-    return null;
+
   }
 };
