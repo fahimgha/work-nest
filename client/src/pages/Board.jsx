@@ -6,6 +6,7 @@ import { Button } from "../components/ui/buttons/Button.jsx";
 import Logout from "../components/Logout.jsx";
 import { useTasks } from "../context/TaskContext.jsx";
 import AddProject from "../components/projects/AddProject.jsx";
+import UserIcon from "../components/user/UserIcon.jsx";
 
 export default function Board() {
   const { tasks, loading, error, fetchTasks, fetchProjects, addProject } =
@@ -63,6 +64,7 @@ export default function Board() {
         ) : (
           ""
         )}
+        <UserIcon/>
       </div>
       <section className="column-container">
         {daysDisplay.map((day) => {
