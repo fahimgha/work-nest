@@ -5,12 +5,16 @@ import "./index.css";
 import App from "./App.jsx";
 import SignUp from "./pages/signup/Signup.jsx";
 import Login from "./pages/login/Login.jsx";
+import Projects from "./components/projects/Projects.jsx";
 import Home from "./pages/Home.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
-// import { AuthProvider } from "./context/AuthContext.jsx";
+import Promodoro from "./components/promodoro/Promodoro.jsx";
+import { TaskProvider } from "./context/TaskContext.jsx";
+import SharedLayout from "./components/SharedLayout.jsx";
+import Board from "./pages/board/Board.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -30,13 +34,28 @@ const router = createBrowserRouter([
       </PublicRoute>
     ),
   },
+
   {
-    path: "/board",
+    path: "/",
     element: (
       <PrivateRoute>
-        <App />
+        <SharedLayout />
       </PrivateRoute>
     ),
+    children: [
+      {
+        path: "board",
+        element: <Board />,
+      },
+      {
+        path: "promodoro",
+        element: <Promodoro />,
+      },
+      {
+        path: "projects",
+        element: <Projects />,
+      },
+    ],
   },
   { path: "*", element: <NotFoundPage /> },
 ]);
@@ -44,7 +63,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <AuthContextProvider>
-    <RouterProvider router={router} />
+    <TaskProvider>
+      <RouterProvider router={router} />
+    </TaskProvider>
   </AuthContextProvider>
   // </StrictMode>
 );
