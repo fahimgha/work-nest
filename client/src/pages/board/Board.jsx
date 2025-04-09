@@ -1,12 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
-import ColumnTask from "../components/columns/DateColumn.jsx";
-import Pagination from "../components/Pagination.jsx";
-import { Button } from "../components/ui/buttons/Button.jsx";
-import Logout from "../components/Logout.jsx";
-import { useTasks } from "../context/TaskContext.jsx";
-import AddProject from "../components/projects/AddProject.jsx";
-import UserIcon from "../components/user/UserIcon.jsx";
+import ColumnTask from "../../components/columns/DateColumn.jsx";
+import Pagination from "../../components/Pagination.jsx";
+import { Button } from "../../components/ui/buttons/Button.jsx";
+
+import { useTasks } from "../../context/TaskContext.jsx";
+import AddProject from "../../components/projects/AddProject.jsx";
+import styles from "./board.module.css";
+import { Title } from "../../components/ui/Title.jsx";
 
 export default function Board() {
   const { tasks, loading, error, fetchTasks, fetchProjects, addProject } =
@@ -47,15 +48,17 @@ export default function Board() {
   if (error) return <div>Erreur: {error}</div>;
   return (
     <>
-      {/* <Logout /> */}
-      <div className="header">
-        <Pagination
-          currentStartDate={currentStartDate}
-          setCurrentStartDate={setCurrentStartDate}
-        />
-        <Button onClick={() => setShowAddProjectModal(true)}>
-          Créer un projet
-        </Button>
+      <div className={styles.header}>
+        <Title>My Board</Title>
+        <div>
+          <Pagination
+            currentStartDate={currentStartDate}
+            setCurrentStartDate={setCurrentStartDate}
+          />
+          <Button onClick={() => setShowAddProjectModal(true)}>
+            Créer un projet
+          </Button>
+        </div>
         {showAddProjectModal ? (
           <AddProject
             setFormProject={setFormProject}
@@ -64,9 +67,8 @@ export default function Board() {
         ) : (
           ""
         )}
-        <UserIcon/>
       </div>
-      <section className="column-container">
+      <section className={styles.columnContainer}>
         {daysDisplay.map((day) => {
           const formattedDate = format(day, "yyyy-MM-dd");
           const column = tasks[formattedDate] || {

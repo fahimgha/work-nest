@@ -13,6 +13,7 @@ function DateColumn({ date, tasks }) {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [isShowingInput, setIsShowedInput] = useState(true);
+  const emptyLinesCount = 7;
 
   useClickOutside(inputRef, () => {
     if (inputRef.current.querySelector("input").value !== "") {
@@ -35,6 +36,18 @@ function DateColumn({ date, tasks }) {
     setIsShowedInput(true);
   }, []);
 
+  const renderEmptyLines = () => {
+    const linesToShow = Math.max(0, emptyLinesCount - tasks.length);
+
+    return Array(linesToShow)
+      .fill(0)
+      .map((_, index) => (
+        <li className="li-tasks empty-line" key={`empty-line-${index}`}>
+          <div className="notebook-line"></div>
+        </li>
+      ));
+  };
+
   return (
     <>
       <div className="column">
@@ -42,29 +55,34 @@ function DateColumn({ date, tasks }) {
           <h3>{date}</h3>
           <h2>{day}</h2>
         </div>
-        <ol className="ol-tasks">
-          {tasks.map((task) => (
-            <li className="li-tasks" key={task.id}>
-              <TaskItem
-                task={task}
-                isEditing={editingTaskId === task.id}
-                setEditingTaskId={setEditingTaskId}
-              />
-            </li>
-          ))}
+        <div className="tasks-scroll-container">
+          <ol className="ol-tasks">
+            {tasks.map((task) => (
+              <li className="li-tasks" key={task.id}>
+                <TaskItem
+                  task={task}
+                  isEditing={editingTaskId === task.id}
+                  setEditingTaskId={setEditingTaskId}
+                />
+              </li>
+            ))}
 
-          <div className="task">
-            {isAddingTask && isShowingInput ? (
-              <TaskInput
-                setInputTask={handleAddTask}
-                isEditing={false}
-                inputRef={inputRef}
-              />
-            ) : (
-              <AddTaskButton onClick={startAddingTask} />
-            )}
-          </div>
-        </ol>
+            <div className="task">
+              {isAddingTask && isShowingInput ? (
+                <TaskInput
+                  setInputTask={handleAddTask}
+                  isEditing={false}
+                  inputRef={inputRef}
+                />
+              ) : (
+                <AddTaskButton onClick={startAddingTask} />
+              )}
+            </div>
+
+            {/* Render empty notebook lines */}
+            {renderEmptyLines()}
+          </ol>
+        </div>
       </div>
     </>
   );
