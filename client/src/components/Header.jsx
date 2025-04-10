@@ -3,7 +3,7 @@ import UserIcon from "./user/UserIcon";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header({children}) {
   const { user } = useContext(AuthContext);
 
   return (
@@ -20,6 +20,9 @@ export default function Header() {
             <li>Promodoro</li>
           </Link>
         </ol>
+        <div style={{display: "flex", alignItems: "center",justifyContent:"space-between", gap: "1rem"}}>
+       {children}
+
         {user ? (
           <UserIcon />
         ) : (
@@ -32,8 +35,8 @@ export default function Header() {
             </Link>
           </ol>
         )}
+        </div>
       </div>
-      <div className="line"></div>
     </nav>
   );
 }

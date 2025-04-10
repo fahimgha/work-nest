@@ -4,6 +4,7 @@ import { Title } from "../ui/Title";
 import { useState } from "react";
 import { Button } from "../ui/buttons/Button";
 import AddProject from "./AddProject";
+import Header from "../Header.jsx";
 
 function Projects() {
   const { projects, addProject } = useTasks();
@@ -17,12 +18,14 @@ function Projects() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Title>My Projects</Title>
+        <Header>
         <div>
           <Button onClick={() => setShowAddProjectModal(true)}>
             Créer un projet
           </Button>
         </div>
+        </Header>
+
         {showAddProjectModal ? (
           <AddProject
             setFormProject={setFormProject}
@@ -32,6 +35,7 @@ function Projects() {
           ""
         )}
       </div>
+      <Title>All my Projects</Title>
       {projects.length > 0 ? (
         <ol className={styles.olProject}>
           {projects.map((project) => {

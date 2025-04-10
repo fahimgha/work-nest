@@ -4,7 +4,7 @@ import Header from "./Header";
 function SharedLayout() {
   return (
     <>
-      <Header />
+
       <Outlet />
     </>
   );
