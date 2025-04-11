@@ -9,6 +9,7 @@ import AddProject from "../../components/projects/AddProject.jsx";
 import styles from "./board.module.css";
 import { Title } from "../../components/ui/Title.jsx";
 import Header from "../../components/Header.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 export default function Board() {
   const { tasks, loading, error, fetchTasks, fetchProjects, addProject } =
@@ -52,13 +53,13 @@ export default function Board() {
       <div className={styles.header}>
         <Header>
           <Pagination
-              currentStartDate={currentStartDate}
-              setCurrentStartDate={setCurrentStartDate}
+            currentStartDate={currentStartDate}
+            setCurrentStartDate={setCurrentStartDate}
           />
           <Button onClick={() => setShowAddProjectModal(true)}>
             Créer un projet
           </Button>
-       </Header>
+        </Header>
 
         {showAddProjectModal ? (
           <AddProject

@@ -7,6 +7,8 @@ import sql from "./db.mts";
 import { logger } from "hono/logger";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
+import { Resend } from "resend";
+import { EmailTemplate } from "./emails/EmailTemplate.tsx";
 
 type Variables = {
   user: { id: number; email: string; role: string; exp: number };
@@ -20,12 +22,13 @@ app.use(
   })
 );
 app.use(logger());
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.post("/signup", async (c) => {
-  const { email, password } = await c.req.json();
+  const { name, email, password } = await c.req.json();
   try {
-    if (!email || !password) {
-      return c.json({ error: "email et mot de passe sont requis " }, 400);
+    if (!email || !password || !name) {
+      return c.json({ error: "email, mot de passe et nom sont requis " }, 400);
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -39,22 +42,115 @@ app.post("/signup", async (c) => {
     }
     const existingUser = await sql`SELECT * FROM users WHERE email = ${email}`;
     console.log("Existing User:", existingUser);
+
     if (existingUser.length > 0) {
       return c.json({ error: "l'utilisateur existe deja" }, 400);
     }
 
     const hashedPassword = await hash(password, 12);
 
-    await sql`INSERT INTO users(email,password) VALUES (${email}, ${hashedPassword})`;
+    const user = await sql`
+      INSERT INTO users(name, email, password) 
+      VALUES (${name}, ${email}, ${hashedPassword})
+      RETURNING *
+    `;
 
-    return c.json({ message: "utilisateur crée avec succés " });
+    const secret_key = process.env.SECRET_KEY;
+
+    const payload = {
+      id: user[0].id,
+      email: user[0].email,
+      role: "user",
+      exp: Math.floor(Date.now() / 1000) + 60 * 5,
+    };
+
+    if (!secret_key) {
+      return c.json(
+        {
+          error: "La clé secrète n'est pas définie dans l'environnement",
+        },
+        500
+      );
+    }
+    const token = await sign(payload, secret_key);
+
+    await sql`
+      INSERT INTO activate_tokens(user_id, token) 
+      VALUES (${user[0].id}, ${token})
+    `;
+    // Envoi du mail de vérification via Resend
+    const { data, error } = await resend.emails.send({
+      from: `${process.env.DOMAIN}`,
+      to: email,
+      subject: "Verify Email",
+      text: `Please activate your account by clicking the following link: 
+      http://localhost:5173/activate/${token}`,
+    });
+
+    if (error) {
+      console.log("Erreur lors de l'envoi de l'email:", error);
+      return c.json({ error: error.message }, 400);
+    }
+
+    return c.json({
+      message: "Inscription réussie. Un email de vérification a été envoyé.",
+      data: data,
+    });
   } catch (error) {
+    console.error("Erreur lors de la création de l'utilisateur:", error);
     return c.json(
       { error: "Erreur lors de la création de l'utilisateur" },
       500
     );
   }
 });
+app.get("/activate/:token", async (c) => {
+  const token = c.req.param("token");
+
+  try {
+    // Vérifier si le token existe dans la base de données
+    const tokenData = await sql`
+      SELECT * FROM activate_tokens WHERE token = ${token}
+    `;
+
+    if (tokenData.length === 0) {
+      return c.json({ error: "Lien d'activation invalide ou expiré" }, 400);
+    }
+
+    const userId = tokenData[0].user_id;
+
+    // Vérifier si l'utilisateur existe
+    const user = await sql`
+      SELECT * FROM users WHERE id = ${userId}
+    `;
+
+    if (user.length === 0) {
+      return c.json({ error: "Utilisateur non trouvé" }, 404);
+    }
+
+    // Si l'utilisateur est déjà actif
+    if (user[0].activeToken) {
+      return c.text(
+        "Votre compte est déjà vérifié. Veuillez vous connecter.",
+        200
+      );
+    }
+
+    await sql`
+      UPDATE users SET activeToken = true WHERE id = ${userId}
+    `;
+
+    // await sql`
+    //   DELETE FROM activate_tokens WHERE token = ${token}
+    // `;
+
+    return c.json({ success: true, message: "Compte activé avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de l'activation du compte:", error);
+    return c.json({ error: "Erreur lors de l'activation du compte" }, 500);
+  }
+});
+
 app.post("/login", async (c) => {
   const { email, password } = await c.req.json();
 
@@ -63,13 +159,21 @@ app.post("/login", async (c) => {
       return c.json({ error: "email et mot de passe sont requis" }, 400);
     }
     const user = await sql`SELECT * FROM users WHERE email = ${email}`;
+    const result = user[0];
+    console.log(result);
 
     if (user.length === 0) {
       return c.json({ error: "cette utilisateur n'existe pas " }, 400);
     }
+
     const passwordMatch = await compare(password, user[0].password);
     if (!passwordMatch) {
       return c.json({ error: "mot de passe n'est pas correct" }, 400);
+    }
+
+    // Email trouvé mais pas encore vérifié
+    if (!result.activetoken) {
+      return c.json({ error: "Votre email n’est pas encore vérifié." }, 400);
     }
     const secret_key = process.env.SECRET_KEY;
 
@@ -95,7 +199,7 @@ app.post("/login", async (c) => {
       path: "/",
       maxAge: 60 * 5,
     });
-    return c.json({ message: "connexion reussi avec succes", token });
+    return c.json({ message: "connexion reussi avec succes", user });
   } catch (error) {
     return c.json({ error: "Erreur lors de la connexion" }, 500);
   }
@@ -315,10 +419,13 @@ app.get("/user", async (c) => {
   const userData = c.get("user");
   console.log(userData);
   try {
-    const user =
-      await sql`SELECT id, email, created_at FROM users WHERE id=${userData.id}`;
+    const [user] =
+      await sql`SELECT id, name, email, created_at FROM users WHERE id=${userData.id}`;
 
-    console.log(user);
+    if (!user) {
+      return c.json({ error: "Utilisateur non trouvé" }, 404);
+    }
+
     return c.json({ message: `Bienvenue ${userData.email}`, user: [user] });
   } catch (error) {
     return c.json({ error: "voici l'erreur" + error }, 500);

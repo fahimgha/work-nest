@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./login.module.css";
-import { login, getUser } from "../../utils/api.js";
+import { login } from "../../utils/api.js";
 import { AuthContext } from "../../context/AuthContext.jsx";
 
 export default function Login() {
@@ -21,8 +21,7 @@ export default function Login() {
     }
     try {
       const response = await login(email, password);
-
-      setUser(response);
+      setUser(response.user);
 
       alert(response.message);
       navigate("/board");

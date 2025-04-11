@@ -15,6 +15,8 @@ import Promodoro from "./components/promodoro/Promodoro.jsx";
 import { TaskProvider } from "./context/TaskContext.jsx";
 import SharedLayout from "./components/SharedLayout.jsx";
 import Board from "./pages/board/Board.jsx";
+import AccountActivated from "./pages/EmailVerification/AccountActivated.jsx";
+import EmailVerification from "./pages/EmailVerification/EmailVerification.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -26,6 +28,23 @@ const router = createBrowserRouter([
       </PublicRoute>
     ),
   },
+  {
+    path: "/email-verification",
+    element: (
+      <PublicRoute>
+        <EmailVerification />
+      </PublicRoute>
+    ),
+  },
+  {
+    path: "/activate/:token",
+    element: (
+      <PublicRoute>
+        <AccountActivated />
+      </PublicRoute>
+    ),
+  },
+
   {
     path: "/login",
     element: (

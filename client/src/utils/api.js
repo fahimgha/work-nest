@@ -22,8 +22,12 @@ const fetchApi = async (endpoint, method = "GET", body = null) => {
 };
 
 // Fonction pour s'inscrire
-export const signup = async (email, password) => {
-  return await fetchApi("/signup", "POST", { email, password });
+export const signup = async (name, email, password) => {
+  return await fetchApi("/signup", "POST", {
+    name,
+    email,
+    password,
+  });
 };
 export const getProjects = async () => {
   return await fetchApi("/projects");
@@ -50,7 +54,7 @@ export const logout = async () => {
 };
 
 export const getUser = async () => {
-return await fetchApi("/user");
+  return await fetchApi("/user");
 };
 
 // Fonction pour récupérer les tâches de l'utilisateur
@@ -91,6 +95,5 @@ export const checkAuth = async () => {
       "Erreur lors de la vérification de l'authe  ntification:",
       error
     );
-
   }
 };
