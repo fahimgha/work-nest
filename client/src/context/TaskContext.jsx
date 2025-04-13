@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
+
 import {
   deleteTask,
   getProjects,
@@ -6,6 +7,8 @@ import {
   newProject,
   newtask,
   putTask,
+  getTasksWithoutProject,
+  getTasksNextWeek,
 } from "../utils/api";
 
 const TaskContext = createContext();
@@ -13,6 +16,8 @@ const TaskContext = createContext();
 const initialState = {
   tasks: {},
   projects: [],
+  tasksWithoutProject: [],
+  tasksNextWeek: [],
   loading: false,
   error: null,
 };
@@ -29,6 +34,12 @@ function taskReducer(state, action) {
       return { ...state, tasks: action.payload, loading: false };
     case "FETCH_TASKS_ERROR":
       return { ...state, error: action.payload, loading: false };
+    case "FETCH_TASKS_WITHOUT_PROJECT_SUCCESS":
+      return { ...state, tasksWithoutProject: action.payload, loading: false };
+    case "FETCH_TASKS_THIS_WEEK_SUCCESS":
+      return { ...state, tasksThisWeek: action.payload, loading: false };
+    case "FETCH_TASKS_NEXT_WEEK_SUCCESS":
+      return { ...state, tasksNextWeek: action.payload, loading: false };
     case "ADD_TASK_START":
       return state;
     case "DELETE_TASK_START":
@@ -43,6 +54,7 @@ function taskReducer(state, action) {
       return state;
   }
 }
+
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
 
@@ -78,6 +90,34 @@ export function TaskProvider({ children }) {
     }
   }, []);
 
+  const fetchTasksWithoutProject = useCallback(async () => {
+    dispatch({ type: "FETCH_TASKS_START" });
+    try {
+      const data = await getTasksWithoutProject();
+      dispatch({
+        type: "FETCH_TASKS_WITHOUT_PROJECT_SUCCESS",
+        payload: data,
+      });
+      fetchTasks();
+    } catch (error) {
+      dispatch({ type: "FETCH_TASKS_ERROR", payload: error.message });
+    }
+  }, []);
+
+  const fetchTasksNextWeek = useCallback(async () => {
+    dispatch({ type: "FETCH_TASKS_START" });
+    try {
+      const data = await getTasksNextWeek();
+      dispatch({
+        type: "FETCH_TASKS_NEXT_WEEK_SUCCESS",
+        payload: data,
+      });
+      fetchTasks();
+    } catch (error) {
+      dispatch({ type: "FETCH_TASKS_ERROR", payload: error.message });
+    }
+  }, []);
+
   const addTask = useCallback(
     async (columnId, task) => {
       dispatch({ type: "ADD_TASK_START" });
@@ -94,7 +134,6 @@ export function TaskProvider({ children }) {
 
   const editTask = useCallback(
     async (taskId, editedTask) => {
-      console.log(editedTask);
       dispatch({ type: "EDIT_TASK_START" });
       try {
         let existingTask = null;
@@ -118,7 +157,7 @@ export function TaskProvider({ children }) {
             }
           }
         }
-        console.log(updatedTask);
+
         await putTask(
           taskId,
           updatedTask.name,
@@ -156,12 +195,16 @@ export function TaskProvider({ children }) {
 
   const value = {
     tasks: state.tasks,
+    tasksWithoutProject: state.tasksWithoutProject,
+    tasksNextWeek: state.tasksNextWeek,
     projects: state.projects,
     loading: state.loading,
     error: state.error,
     fetchProjects,
     addProject,
     fetchTasks,
+    fetchTasksWithoutProject,
+    fetchTasksNextWeek,
     addTask,
     removeTask,
     editTask,
@@ -169,6 +212,7 @@ export function TaskProvider({ children }) {
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 }
+
 export function useTasks() {
   return useContext(TaskContext);
 }

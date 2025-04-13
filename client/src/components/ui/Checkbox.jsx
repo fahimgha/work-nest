@@ -1,6 +1,8 @@
-import { set } from "date-fns";
+function Checkbox({ checked, onChangeCheck, hideCheckbox }) {
+  if (hideCheckbox) {
+    return null;
+  }
 
-function Checkbox({ checked, onChangeCheck }) {
   const onChange = (e) => {
     const check = e.target.checked;
     onChangeCheck(check);

@@ -1,19 +1,20 @@
 import { format } from "date-fns";
 import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
-import TaskItem from "../tasks/TaskItem";
+// import TaskItem from "../tasks/TaskItem";
 import TaskInput from "../tasks/TaskInput.jsx";
 import AddTaskButton from "../ui/buttons/AddTaskButton";
 import { useTasks } from "../../context/TaskContext";
+import Task from "../tasks/Task.jsx";
+import { EmptyLines } from "../ui/EmptyLines.jsx";
 
 function DateColumn({ date, tasks }) {
   const inputRef = useRef(null);
   const { addTask } = useTasks();
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
-  const [editingTaskId, setEditingTaskId] = useState(null);
+  // const [editingTaskId, setEditingTaskId] = useState(null);
   const [isShowingInput, setIsShowedInput] = useState(true);
-  const emptyLinesCount = 7;
 
   useClickOutside(inputRef, () => {
     if (inputRef.current.querySelector("input").value !== "") {
@@ -36,18 +37,6 @@ function DateColumn({ date, tasks }) {
     setIsShowedInput(true);
   }, []);
 
-  const renderEmptyLines = () => {
-    const linesToShow = Math.max(0, emptyLinesCount - tasks.length);
-
-    return Array(linesToShow)
-      .fill(0)
-      .map((_, index) => (
-        <li className="li-tasks empty-line" key={`empty-line-${index}`}>
-          <div className="notebook-line"></div>
-        </li>
-      ));
-  };
-
   return (
     <>
       <div className="column">
@@ -59,15 +48,16 @@ function DateColumn({ date, tasks }) {
           <ol className="ol-tasks">
             {tasks.map((task) => (
               <li className="li-tasks" key={task.id}>
-                <TaskItem
-                  task={task}
-                  isEditing={editingTaskId === task.id}
-                  setEditingTaskId={setEditingTaskId}
+                <Task
+                  taskId={task.id}
+                  task={task.name}
+                  checked={task.checked}
+                  className="task"
                 />
               </li>
             ))}
 
-            <div className="task">
+            <li className="li-tasks">
               {isAddingTask && isShowingInput ? (
                 <TaskInput
                   setInputTask={handleAddTask}
@@ -77,10 +67,11 @@ function DateColumn({ date, tasks }) {
               ) : (
                 <AddTaskButton onClick={startAddingTask} />
               )}
-            </div>
+            </li>
 
             {/* Render empty notebook lines */}
-            {renderEmptyLines()}
+            <EmptyLines tasks={tasks} />
+            {/* {renderEmptyLines()} */}
           </ol>
         </div>
       </div>

@@ -1,0 +1,78 @@
+.container {
+  width: 96%;
+  align-self: center;
+}
+
+.MenuList {
+  display: flex;
+  gap: 1rem;
+}
+.MenuList li {
+  padding: 0.25rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.activeMenuItem {
+  background-color: rgba(53, 178, 178, 0.9);
+  color: white;
+}
+
+.inactiveMenuItem {
+  background-color: transparent;
+  color: black;
+}
+
+.MenuList li:hover {
+  background-color: rgba(200, 200, 200, 0.5);
+}
+
+.listsContainer {
+  display: flex;
+  align-self: center;
+  align-items: flex-start;
+  height: 100%;
+  margin-top: 0.5rem;
+  border-top: 1px solid #ddd;
+  border-radius: 0.1rem;
+}
+
+.taskList {
+  /* flex: 0 1 250px; */
+  width: 400px;
+  padding: 1rem 0.5rem;
+}
+.taskListTitle {
+  /* font-size: 1.2rem; */
+  font-weight: 500;
+  margin-bottom: 10px;
+  text-align: start;
+}
+
+.taskListItems {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  row-gap: 10px;
+}
+
+.taskListEmpty {
+  padding: 10px;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .listsContainer {
+    flex-direction: column;
+  }
+
+  .taskList {
+    margin: 10px 0;
+  }
+}

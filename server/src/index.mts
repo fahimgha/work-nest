@@ -404,6 +404,7 @@ app.get("/tasks", async (c) => {
         id: task.id,
         name: task.name,
         checked: task.checked,
+        date: task.date,
         project_id: task.project_id,
       });
       return acc;

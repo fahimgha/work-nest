@@ -97,3 +97,56 @@ export const checkAuth = async () => {
     );
   }
 };
+
+// AJOUT DES FONCTIONS POUR LES LISTES SPÉCIFIQUES
+
+/**
+ * Récupérer les tâches sans projet
+ * @returns {Promise<Array>} Liste des tâches sans projet
+ */
+export const getTasksWithoutProject = async () => {
+  const tasks = await getTasks();
+  return Object.values(tasks.columns).flatMap((column) =>
+    column.tasks.filter((task) => !task.project_id)
+  );
+};
+
+/**
+ * Récupérer les tâches de cette semaine
+ * @returns {Promise<Array>} Liste des tâches de cette semaine
+ */
+export const getTasksThisWeek = async () => {
+  const tasks = await getTasks();
+  const now = new Date();
+  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // Début de la semaine
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 7); // Fin de la semaine
+
+  return Object.values(tasks.columns).flatMap((column) =>
+    column.tasks.filter((task) => {
+      const taskDate = new Date(task.date);
+      return taskDate >= startOfWeek && taskDate <= endOfWeek;
+    })
+  );
+};
+
+/**
+ * Récupérer les tâches de la semaine prochaine
+ * @returns {Promise<Array>} Liste des tâches de la semaine prochaine
+ */
+export const getTasksNextWeek = async () => {
+  const tasks = await getTasks();
+  const now = new Date();
+  const startOfNextWeek = new Date(
+    now.setDate(now.getDate() - now.getDay() + 7)
+  ); // Début de la semaine prochaine
+  const endOfNextWeek = new Date(startOfNextWeek);
+  endOfNextWeek.setDate(startOfNextWeek.getDate() + 7); // Fin de la semaine prochaine
+
+  return Object.values(tasks.columns).flatMap((column) =>
+    column.tasks.filter((task) => {
+      const taskDate = new Date(task.date);
+      return taskDate >= startOfNextWeek && taskDate <= endOfNextWeek;
+    })
+  );
+};

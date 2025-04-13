@@ -1,13 +1,9 @@
-import { useTasks } from "../../context/TaskContext.jsx";
-
 export default function TaskInput({
   setInputTask,
   inputValue,
-  projectId,
   isEditing,
   inputRef,
 }) {
-  const { projects } = useTasks();
   const onSubmitTask = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
@@ -34,18 +30,6 @@ export default function TaskInput({
           placeholder={isEditing ? "Edit Task" : "Add Task"}
           autoFocus
         />
-        <select
-          name="project"
-          defaultValue={projectId || ""}
-          className="todo-select"
-        >
-          <option value="">Aucun projet</option>
-          {projects?.map((project) => (
-            <option key={project.id} value={project.id}>
-              {project.name}
-            </option>
-          ))}
-        </select>
       </form>
     </>
   );

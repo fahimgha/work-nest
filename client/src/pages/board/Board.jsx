@@ -10,14 +10,26 @@ import styles from "./board.module.css";
 import { Title } from "../../components/ui/Title.jsx";
 import Header from "../../components/Header.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
+import Lists from "../../components/list/Lists.jsx";
 
 export default function Board() {
-  const { tasks, loading, error, fetchTasks, fetchProjects, addProject } =
-    useTasks();
+  const {
+    tasks,
+    loading,
+    error,
+    fetchTasks,
+    fetchProjects,
+    addProject,
+    fetchTasksWithoutProject,
+    fetchTasksThisWeek,
+    fetchTasksNextWeek,
+  } = useTasks();
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
   const [daysToDisplay, setDaysToDisplay] = useState(7);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   useEffect(() => {
+    fetchTasksWithoutProject();
+    fetchTasksNextWeek();
     fetchProjects();
     fetchTasks();
   }, []);
@@ -87,6 +99,7 @@ export default function Board() {
           );
         })}
       </section>
+      <Lists />
     </>
   );
 }
