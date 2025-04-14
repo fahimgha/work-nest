@@ -48,7 +48,7 @@ function Lists() {
         {shouldDisplay("To Do Next Week") && (
           <TaskList title="To Do Next Week" tasks={tasksNextWeek} />
         )}
-        {shouldDisplay("My Pomodoro") && <Pomodoro />}
+        {/* {shouldDisplay("My Pomodoro") && <Pomodoro />} */}
       </div>
     </div>
   );
@@ -71,7 +71,7 @@ function TaskList({ title, tasks, className, hideCheckbox }) {
                 />
               </li>
             ))}
-          <EmptyLines tasks={tasks} />
+          <EmptyLines tasks={tasks} minTotalItems={8} />
         </ol>
       </div>
     </div>

@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { format, eachDayOfInterval, addDays } from "date-fns";
 import ColumnTask from "../../components/columns/DateColumn.jsx";
 import Pagination from "../../components/Pagination.jsx";
 import { Button } from "../../components/ui/buttons/Button.jsx";
-
 import { useTasks } from "../../context/TaskContext.jsx";
 import AddProject from "../../components/projects/AddProject.jsx";
 import styles from "./board.module.css";
-import { Title } from "../../components/ui/Title.jsx";
 import Header from "../../components/Header.jsx";
-import { AuthContext } from "../../context/AuthContext.jsx";
 import Lists from "../../components/list/Lists.jsx";
 
 export default function Board() {
@@ -58,6 +55,21 @@ export default function Board() {
   const setFormProject = ({ name, description }) => {
     addProject(name, description);
   };
+
+  const maxTaskCount = useMemo(() => {
+    // Utiliser daysDisplay au lieu de dates qui n'existe pas
+    return Math.max(
+      ...daysDisplay.map((day) => {
+        const formattedDate = format(day, "yyyy-MM-dd");
+        // Accéder aux tâches pour cette date
+
+        console.log((tasks[formattedDate]?.tasks || []).length);
+        return (tasks[formattedDate]?.tasks || []).length;
+      }),
+      0 // Valeur par défaut si aucune tâche
+    );
+  }, [daysDisplay, tasks]);
+
   if (loading) return <div>Chargement...</div>;
   if (error) return <div>Erreur: {error}</div>;
   return (
@@ -95,6 +107,7 @@ export default function Board() {
               key={formattedDate}
               tasks={column.tasks}
               date={formattedDate}
+              maxTaskCount={maxTaskCount}
             />
           );
         })}

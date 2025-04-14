@@ -1,5 +1,6 @@
 :root {
-  --days-to-display: 7;
+  --max-lines: 9;
+  --task-height: 30px;
 }
 .empty-line {
   height: 30px;
@@ -21,11 +22,19 @@
   flex-direction: column;
   text-align: center;
   flex: 1;
-  max-width: calc(100% / var(--days-to-display)-20px);
+  max-width: calc(100% - 20px);
   width: 100%;
-  min-height: 24rem;
+  /* Hauteur automatique */
+  height: auto;
+  min-height: 300px; /* Hauteur minimale pour des colonnes cohérentes */
   margin: 0 0.3rem;
-  overflow: hidden;
+  overflow: visible; /* Supprime tout défilement */
+}
+
+.tasks-scroll-container {
+  flex: 1;
+  overflow: visible; /* Désactive le défilement */
+  position: relative;
 }
 
 .ol-tasks {
@@ -34,11 +43,6 @@
   width: 100%;
   padding: 0;
   margin: 0;
-}
-.tasks-scroll-container {
-  flex: 1;
-  overflow-y: auto;
-  position: relative;
 }
 
 .column-header {

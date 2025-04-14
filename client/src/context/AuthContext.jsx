@@ -33,10 +33,6 @@ export const AuthContextProvider = ({ children }) => {
     verifyUser();
   }, []);
 
-  useEffect(() => {
-    console.log("État utilisateur actuel:", user);
-  }, [user]);
-
   const valueUserContext = {
     user: user,
     setUser: setUser,

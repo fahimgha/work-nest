@@ -10,10 +10,6 @@ export default function UserIcon() {
   const { user, setUser, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("UserIcon - données utilisateur:", user);
-  }, [user]);
-
   const logoutUser = async () => {
     try {
       await logout();
