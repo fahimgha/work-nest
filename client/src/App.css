@@ -192,6 +192,7 @@ Button {
 .checkbox {
   display: flex;
   margin-right: 0.3rem;
+  margin-left: 0;
   cursor: pointer;
 }
 
@@ -453,7 +454,20 @@ olHeaderRight {
 .form-field {
   margin-bottom: 15px;
 }
+.form-title {
+  text-align: center;
+}
 
+.form-field-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.form-field-checkbox label {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
 .form-field label {
   display: block;
   font-size: 0.9rem;
@@ -462,9 +476,6 @@ olHeaderRight {
 }
 
 .checkbox-field {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
 }
 
 .checkbox-container {
@@ -509,10 +520,11 @@ olHeaderRight {
 .cancel-button:hover {
   background-color: #bbb;
 }
+
 .task-input,
 .select-project {
   width: 100%;
-  padding: 8px;
+  padding: 0.8rem;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 0.9rem;
@@ -529,7 +541,7 @@ olHeaderRight {
   right: 10px; /* Position à droite */
   pointer-events: none; /* Empêche l'icône d'interférer avec les clics */
   color: #999;
-  font-size: 1rem;
+  font-size: 1.25rem;
 }
 .select-project {
   appearance: none;

@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import styles from "./Promodoro.module.css"; // Importer le fichier CSS module
+import styles from "./Pomodoro.module.css"; // Importer le fichier CSS module
 
 const initialState = {
   minutes: 25,
@@ -103,7 +103,7 @@ function TimerReducer(state, action) {
   }
 }
 
-export default function Promodoro() {
+export default function Pomodoro() {
   const [state, dispatch] = useReducer(TimerReducer, initialState);
 
   useEffect(() => {

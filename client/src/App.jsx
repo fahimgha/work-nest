@@ -1,9 +1,5 @@
 import "./App.css";
 import Board from "./pages/board/Board.jsx";
-import Project from "./components/projects/Projects";
-import Promodoro from "./components/promodoro/Promodoro.jsx";
-
-import { TaskProvider } from "./context/TaskContext";
 import Header from "./components/Header.jsx";
 
 function App() {

@@ -4,7 +4,7 @@ import Task from "../tasks/Task";
 import styles from "./lists.module.css";
 import MenuList from "./menuList";
 import { EmptyLines } from "../ui/EmptyLines";
-import Promodoro from "../promodoro/Promodoro";
+import Pomodoro from "../pomodoro/Pomodoro";
 
 function Lists() {
   const { tasksWithoutProject, tasksNextWeek } = useTasks();
@@ -48,7 +48,7 @@ function Lists() {
         {shouldDisplay("To Do Next Week") && (
           <TaskList title="To Do Next Week" tasks={tasksNextWeek} />
         )}
-        {shouldDisplay("My Promodoro") && <Promodoro />}
+        {shouldDisplay("My Pomodoro") && <Pomodoro />}
       </div>
     </div>
   );

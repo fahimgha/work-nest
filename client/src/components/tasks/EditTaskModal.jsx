@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { HiChevronDown } from "react-icons/hi";
 import { useTasks } from "../../context/TaskContext";
+import Checkbox from "../ui/Checkbox";
 
 function EditTaskModal({ task, onSubmit, onClose }) {
   const [name, setName] = useState(task.name);
@@ -29,8 +30,9 @@ function EditTaskModal({ task, onSubmit, onClose }) {
     >
       <div className="modal">
         <form onSubmit={handleSubmit} className="edit-form">
+          <h2 className="form-title">Edit Task</h2>
           <div className="form-field">
-            <label htmlFor="task-name">Task name</label>
+            <label htmlFor="task-name">Name</label>
             <input
               id="task-name"
               type="text"
@@ -42,10 +44,9 @@ function EditTaskModal({ task, onSubmit, onClose }) {
               placeholder="Task name..."
             />
           </div>
-
           {/* Sélecteur de projet */}
           <div className="form-field">
-            <label htmlFor="task-project">Projet</label>
+            <label htmlFor="task-project">Project</label>
             <div className="select-container">
               <select
                 id="task-project"
@@ -53,7 +54,7 @@ function EditTaskModal({ task, onSubmit, onClose }) {
                 onChange={(e) => setProjectId(e.target.value)}
                 className="select-project"
               >
-                <option value="">Sans projet</option>
+                <option value="">Without project</option>
                 {projects &&
                   projects.map((project) => (
                     <option key={project.id} value={project.id}>
@@ -64,12 +65,16 @@ function EditTaskModal({ task, onSubmit, onClose }) {
               <HiChevronDown className="select-icon" />
             </div>
           </div>
+          <div className="form-field-checkbox">
+            <label htmlFor="task-name">Mark as complete</label>
+            <Checkbox />
+          </div>
           <div className="modal-actions">
             <button type="button" className="cancel-button" onClick={onClose}>
-              Annuler
+              Cancel
             </button>
             <button type="submit" className="save-button">
-              Enregistrer
+              Save
             </button>
           </div>
         </form>

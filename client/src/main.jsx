@@ -11,7 +11,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
-import Promodoro from "./components/promodoro/Promodoro.jsx";
+import Pomodoro from "./components/pomodoro/Pomodoro.jsx";
 import { TaskProvider } from "./context/TaskContext.jsx";
 import SharedLayout from "./components/SharedLayout.jsx";
 import Board from "./pages/board/Board.jsx";
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
       },
       {
         path: "promodoro",
-        element: <Promodoro />,
+        element: <Pomodoro />,
       },
       {
         path: "projects",
