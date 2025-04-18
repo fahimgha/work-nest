@@ -18,12 +18,13 @@ export default function Board() {
     fetchProjects,
     addProject,
     fetchTasksWithoutProject,
-    fetchTasksThisWeek,
     fetchTasksNextWeek,
   } = useTasks();
+
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
   const [daysToDisplay, setDaysToDisplay] = useState(7);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
   useEffect(() => {
     fetchTasksWithoutProject();
     fetchTasksNextWeek();
@@ -63,7 +64,6 @@ export default function Board() {
         const formattedDate = format(day, "yyyy-MM-dd");
         // Accéder aux tâches pour cette date
 
-        console.log((tasks[formattedDate]?.tasks || []).length);
         return (tasks[formattedDate]?.tasks || []).length;
       }),
       0 // Valeur par défaut si aucune tâche
@@ -97,15 +97,12 @@ export default function Board() {
       <section className={styles.columnContainer}>
         {daysDisplay.map((day) => {
           const formattedDate = format(day, "yyyy-MM-dd");
-          const column = tasks[formattedDate] || {
-            id: formattedDate,
-            name: formattedDate,
-            tasks: [],
-          };
+          const columnTasks = tasks[formattedDate] || [];
+
           return (
             <ColumnTask
               key={formattedDate}
-              tasks={column.tasks}
+              tasks={columnTasks}
               date={formattedDate}
               maxTaskCount={maxTaskCount}
             />

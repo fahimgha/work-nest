@@ -26,30 +26,51 @@ function taskReducer(state, action) {
   switch (action.type) {
     case "FETCH_PROJECTS":
       return { ...state, projects: action.payload };
-    case "ADD_PROJECT":
+    case "ADD_PROJECTS":
       return state;
-    case "FETCH_TASKS_START":
-      return { ...state, loading: true, error: null };
-    case "FETCH_TASKS_SUCCESS":
+    case "FETCH_TASKS":
       return { ...state, tasks: action.payload, loading: false };
-    case "FETCH_TASKS_ERROR":
-      return { ...state, error: action.payload, loading: false };
-    case "FETCH_TASKS_WITHOUT_PROJECT_SUCCESS":
+    case "ADD_TASK":
+      const newTask = action.payload;
+      const columnId = newTask.columnId || newTask.date;
+      return {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [columnId]: [...(state.tasks[columnId] || []), newTask],
+        },
+        loading: false,
+      };
+    case "DELETE_TASK":
+      const { taskId } = action.payload;
+      const updatedTasks = Object.fromEntries(
+        Object.entries(state.tasks).map(([columnId, tasks]) => [
+          columnId,
+          tasks.filter((task) => task.id !== taskId),
+        ])
+      );
+      return {
+        ...state,
+        tasks: updatedTasks,
+      };
+    case "FETCH_TASKS_WITHOUT_PROJECT":
       return { ...state, tasksWithoutProject: action.payload, loading: false };
-    case "FETCH_TASKS_THIS_WEEK_SUCCESS":
-      return { ...state, tasksThisWeek: action.payload, loading: false };
-    case "FETCH_TASKS_NEXT_WEEK_SUCCESS":
+    case "FETCH_TASKS_NEXT_WEEK":
       return { ...state, tasksNextWeek: action.payload, loading: false };
-    case "ADD_TASK_START":
-      return state;
-    case "DELETE_TASK_START":
-      return state;
-    case "EDIT_TASK_START":
-      return state;
-    case "EDIT_TASK_SUCCESS":
-      return { ...state, loading: false };
-    case "EDIT_TASK_ERROR":
-      return { ...state, error: action.payload, loading: false };
+    case "EDIT_TASK":
+      const { editedTask } = action.payload;
+      console.log("État avant l'édition:", state);
+      console.log("Payload pour l'édition:", action.payload);
+      return {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [oldDate]: state.tasks[oldDate].map((task) =>
+            task.id === editedTaskId ? { ...task, ...editedTask } : task
+          ),
+        },
+        loading: false,
+      };
     default:
       return state;
   }
@@ -71,7 +92,7 @@ export function TaskProvider({ children }) {
     async (name, description) => {
       try {
         await newProject(name, description);
-        dispatch({ type: "ADD_PROJECT" });
+        dispatch({ type: "ADD_PROJECTS" });
         fetchProjects();
       } catch (error) {
         console.error(error);
@@ -81,117 +102,87 @@ export function TaskProvider({ children }) {
   );
 
   const fetchTasks = useCallback(async () => {
-    dispatch({ type: "FETCH_TASKS_START" });
     try {
       const data = await getTasks();
-      dispatch({ type: "FETCH_TASKS_SUCCESS", payload: data.columns });
+      dispatch({ type: "FETCH_TASKS", payload: data.columns });
     } catch (error) {
-      dispatch({ type: "FETCH_TASKS_ERROR", payload: error.message });
+      console.log(error);
     }
   }, []);
 
+  const addTask = useCallback(async (columnId, task) => {
+    try {
+      const response = await newtask(
+        task.name,
+        false,
+        columnId,
+        task.projectId
+      );
+      if (response && response.task) {
+        const newTask = {
+          ...response.task,
+          date: columnId,
+        };
+        dispatch({ type: "ADD_TASK", payload: newTask });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const removeTask = useCallback(async (taskId) => {
+    try {
+      await deleteTask(taskId);
+      dispatch({ type: "DELETE_TASK", payload: { taskId } });
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la tâche:", error);
+    }
+  }, []);
+
+  const editTask = useCallback(
+    async (taskId, editedTask) => {
+      console.log(taskId);
+      try {
+        await putTask(
+          taskId,
+          editedTask.name,
+          editedTask.checked,
+          editedTask.date,
+          editedTask.project_id
+        );
+        dispatch({ type: "EDIT_TASK", payload: { taskId, editedTask } });
+      } catch (error) {
+        console.error("Erreur lors de l'édition de la tâche:", error);
+      }
+    },
+    [state.tasks]
+  );
+
   const fetchTasksWithoutProject = useCallback(async () => {
-    dispatch({ type: "FETCH_TASKS_START" });
     try {
       const data = await getTasksWithoutProject();
       dispatch({
-        type: "FETCH_TASKS_WITHOUT_PROJECT_SUCCESS",
+        type: "FETCH_TASKS_WITHOUT_PROJECT",
         payload: data,
       });
-      fetchTasks();
+      // fetchTasks();
     } catch (error) {
-      dispatch({ type: "FETCH_TASKS_ERROR", payload: error.message });
+      console.log(error);
     }
   }, []);
 
   const fetchTasksNextWeek = useCallback(async () => {
-    dispatch({ type: "FETCH_TASKS_START" });
     try {
       const data = await getTasksNextWeek();
       dispatch({
-        type: "FETCH_TASKS_NEXT_WEEK_SUCCESS",
+        type: "FETCH_TASKS_NEXT_WEEK",
         payload: data,
       });
-      fetchTasks();
+      // fetchTasks();
     } catch (error) {
-      dispatch({ type: "FETCH_TASKS_ERROR", payload: error.message });
+      console.log(error);
     }
   }, []);
-
-  const addTask = useCallback(
-    async (columnId, task) => {
-      dispatch({ type: "ADD_TASK_START" });
-      try {
-        await newtask(task.name, false, columnId, task.projectId);
-        dispatch({ type: "ADD_TASK_SUCCESS" });
-        fetchTasks();
-      } catch (error) {
-        dispatch({ type: "ADD_TASK_ERROR", payload: error.message });
-      }
-    },
-    [fetchTasks]
-  );
-
-  const editTask = useCallback(
-    async (taskId, editedTask) => {
-      dispatch({ type: "EDIT_TASK_START" });
-      try {
-        let existingTask = null;
-        Object.values(state.tasks).forEach((column) => {
-          if (column.tasks) {
-            const found = column.tasks.find((t) => t.id === taskId);
-            if (found) existingTask = found;
-          }
-        });
-        if (!existingTask) {
-          console.error("Tâche non trouvée lors de l'édition:", taskId);
-          throw new Error("Tâche non trouvée");
-        }
-        const updatedTask = { ...existingTask, ...editedTask };
-
-        if (!updatedTask.date) {
-          for (const [columnDate, column] of Object.entries(state.tasks)) {
-            if (column.tasks && column.tasks.some((t) => t.id === taskId)) {
-              updatedTask.date = columnDate;
-              break;
-            }
-          }
-        }
-
-        await putTask(
-          taskId,
-          updatedTask.name,
-          updatedTask.checked,
-          updatedTask.date,
-          updatedTask.project_id
-        );
-
-        dispatch({ type: "EDIT_TASK_SUCCESS" });
-        fetchTasks();
-      } catch (error) {
-        console.error("Erreur lors de l'édition de la tâche:", error);
-        dispatch({ type: "EDIT_TASK_ERROR", payload: error.message });
-      }
-    },
-    [fetchTasks, state.tasks]
-  );
-
-  const removeTask = useCallback(
-    async (taskId) => {
-      dispatch({ type: "DELETE_TASK_START" });
-
-      try {
-        await deleteTask(taskId);
-        dispatch({
-          type: "DELETE_TASK_SUCCESS",
-        });
-        fetchTasks();
-      } catch (error) {
-        dispatch({ type: "DELETE_TASK_ERROR", payload: error.message });
-      }
-    },
-    [fetchTasks]
-  );
 
   const value = {
     tasks: state.tasks,

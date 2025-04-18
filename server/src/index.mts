@@ -399,14 +399,17 @@ app.get("/tasks", async (c) => {
         task.date instanceof Date
           ? task.date.toISOString().split("T")[0]
           : task.date.split("T")[0];
-      if (!acc[date]) acc[date] = { id: date, name: date, tasks: [] };
-      acc[date].tasks.push({
+
+      if (!acc[date]) acc[date] = [];
+
+      acc[date].push({
         id: task.id,
         name: task.name,
         checked: task.checked,
         date: task.date,
         project_id: task.project_id,
       });
+
       return acc;
     }, {});
 

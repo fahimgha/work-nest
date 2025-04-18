@@ -70,7 +70,7 @@ function DateColumn({ date, tasks, maxTaskCount }) {
           <EmptyLines
             tasks={tasks}
             maxTaskCount={maxTaskCount}
-            minTotalItems={15}
+            minTotalItems={8}
           />
         </ol>
       </div>
