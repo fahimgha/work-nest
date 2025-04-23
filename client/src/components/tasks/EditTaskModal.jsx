@@ -67,7 +67,7 @@ function EditTaskModal({ task, onSubmit, onClose }) {
           </div>
           <div className="form-field-checkbox">
             <label htmlFor="task-name">Mark as complete</label>
-            <Checkbox />
+            <Checkbox checked={checked} />
           </div>
           <div className="modal-actions">
             <button type="button" className="cancel-button" onClick={onClose}>

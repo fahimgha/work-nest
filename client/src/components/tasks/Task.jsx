@@ -20,7 +20,12 @@ function Task({ checked, task, taskId, hideCheckbox }) {
     setIsEditing(false);
   };
   const handleCheckboxChange = (isChecked) => {
-    editTask(taskId, { checked: isChecked });
+    editTask(taskId, {
+      name: task,
+      checked: isChecked,
+      date: task.date,
+      project_id: task.project_id,
+    });
   };
   const handleModalClose = () => {
     setIsEditing(false);

@@ -48,18 +48,22 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: (
-      <PublicRoute>
-        <Login />
-      </PublicRoute>
+      <AuthContextProvider>
+        <PublicRoute>
+          <Login />
+        </PublicRoute>
+      </AuthContextProvider>
     ),
   },
 
   {
     path: "/",
     element: (
-      <PrivateRoute>
-        <SharedLayout />
-      </PrivateRoute>
+      <AuthContextProvider>
+        <PrivateRoute>
+          <SharedLayout />
+        </PrivateRoute>
+      </AuthContextProvider>
     ),
     children: [
       {
@@ -81,10 +85,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
-  <AuthContextProvider>
-    <TaskProvider>
-      <RouterProvider router={router} />
-    </TaskProvider>
-  </AuthContextProvider>
+
+  <TaskProvider>
+    <RouterProvider router={router} />
+  </TaskProvider>
+
   // </StrictMode>
 );

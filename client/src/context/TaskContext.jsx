@@ -43,7 +43,7 @@ function taskReducer(state, action) {
       };
     case "DELETE_TASK":
       const { taskId } = action.payload;
-      const updatedTasks = Object.fromEntries(
+      const updatedTasksDelete = Object.fromEntries(
         Object.entries(state.tasks).map(([columnId, tasks]) => [
           columnId,
           tasks.filter((task) => task.id !== taskId),
@@ -51,26 +51,29 @@ function taskReducer(state, action) {
       );
       return {
         ...state,
+        tasks: updatedTasksDelete,
+      };
+    case "EDIT_TASK":
+      const editedTask = action.payload;
+
+      // Créer un nouvel objet tasks avec la tâche modifiée
+      const updatedTasks = {};
+      Object.entries(state.tasks).forEach(([columnId, columnTasks]) => {
+        // Pour chaque colonne, mettre à jour la tâche si elle existe
+        updatedTasks[columnId] = columnTasks.map((task) =>
+          task.id === editedTask.id ? editedTask : task
+        );
+      });
+
+      return {
+        ...state,
         tasks: updatedTasks,
+        loading: false,
       };
     case "FETCH_TASKS_WITHOUT_PROJECT":
       return { ...state, tasksWithoutProject: action.payload, loading: false };
     case "FETCH_TASKS_NEXT_WEEK":
       return { ...state, tasksNextWeek: action.payload, loading: false };
-    case "EDIT_TASK":
-      const { editedTask } = action.payload;
-      console.log("État avant l'édition:", state);
-      console.log("Payload pour l'édition:", action.payload);
-      return {
-        ...state,
-        tasks: {
-          ...state.tasks,
-          [oldDate]: state.tasks[oldDate].map((task) =>
-            task.id === editedTaskId ? { ...task, ...editedTask } : task
-          ),
-        },
-        loading: false,
-      };
     default:
       return state;
   }
@@ -124,6 +127,7 @@ export function TaskProvider({ children }) {
           date: columnId,
         };
         dispatch({ type: "ADD_TASK", payload: newTask });
+        fetchTasksWithoutProject();
       }
     } catch (error) {
       console.log(error);
@@ -134,6 +138,7 @@ export function TaskProvider({ children }) {
     try {
       await deleteTask(taskId);
       dispatch({ type: "DELETE_TASK", payload: { taskId } });
+      fetchTasksWithoutProject();
     } catch (error) {
       console.error("Erreur lors de la suppression de la tâche:", error);
     }
@@ -141,7 +146,6 @@ export function TaskProvider({ children }) {
 
   const editTask = useCallback(
     async (taskId, editedTask) => {
-      console.log(taskId);
       try {
         await putTask(
           taskId,
@@ -150,7 +154,14 @@ export function TaskProvider({ children }) {
           editedTask.date,
           editedTask.project_id
         );
-        dispatch({ type: "EDIT_TASK", payload: { taskId, editedTask } });
+        dispatch({
+          type: "EDIT_TASK",
+          payload: {
+            ...editedTask,
+            id: taskId,
+          },
+        });
+        fetchTasksWithoutProject();
       } catch (error) {
         console.error("Erreur lors de l'édition de la tâche:", error);
       }
@@ -160,12 +171,12 @@ export function TaskProvider({ children }) {
 
   const fetchTasksWithoutProject = useCallback(async () => {
     try {
-      const data = await getTasksWithoutProject();
+      const tasksWithoutProject = await getTasksWithoutProject();
+
       dispatch({
         type: "FETCH_TASKS_WITHOUT_PROJECT",
-        payload: data,
+        payload: tasksWithoutProject,
       });
-      // fetchTasks();
     } catch (error) {
       console.log(error);
     }
@@ -178,7 +189,6 @@ export function TaskProvider({ children }) {
         type: "FETCH_TASKS_NEXT_WEEK",
         payload: data,
       });
-      // fetchTasks();
     } catch (error) {
       console.log(error);
     }

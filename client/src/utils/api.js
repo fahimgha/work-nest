@@ -1,20 +1,59 @@
+import { useNavigate } from "react-router-dom";
 const BASE_URL = "http://localhost:3000"; // L'URL de ton backend
 
+export const refreshAccessToken = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/refresh-token`, {
+      method: "POST",
+      credentials: "include", // Envoi du refresh token stocké dans les cookies
+    });
+
+    if (!response.ok) {
+      throw new Error("Impossible de rafraîchir le token");
+    }
+
+    const data = await response.json();
+    // Sauvegarder le nouveau token d'accès
+    document.cookie = `token=${data.token}; path=/; Secure; HttpOnly; SameSite=Strict`;
+    return true;
+  } catch (error) {
+    console.error("Erreur lors du rafraîchissement du token:", error);
+    return false;
+  }
+};
 // Fonction pour envoyer des requêtes API avec des options par défaut
 const fetchApi = async (endpoint, method = "GET", body = null) => {
   const headers = {
     "Content-Type": "application/json",
   };
+
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     method,
     headers,
-    credentials: "include",
+    credentials: "include", // Assure-toi que le cookie est envoyé
     body: body ? JSON.stringify(body) : null,
   });
 
-  const data = await response.json();
+  let data;
+  try {
+    data = await response.json();
+  } catch (e) {
+    throw new Error("Réponse invalide du serveur");
+  }
 
   if (!response.ok) {
+    if (response.status === 401) {
+      // 🔴 TOKEN EXPIRÉ, tenter de rafraîchir le token
+      const refreshedToken = await refreshAccessToken();
+      if (refreshedToken) {
+        // Si le token a été rafraîchi, refaire la requête
+        return await fetchApi(endpoint, method, body);
+      }
+      // Si le refresh token échoue, rediriger vers la page de login
+      console.log("je suis la ");
+      window.location.href = "/login";
+      throw new Error("Session expirée. Veuillez vous reconnecter.");
+    }
     throw new Error(data.error || "Une erreur s'est produite");
   }
 
@@ -63,12 +102,18 @@ export const getTasks = async () => {
 };
 // Fonction pour modifier une tâche de l'utilisateur
 export const putTask = async (taskId, name, checked, date, project_id) => {
-  return await fetchApi(`/tasks/${taskId}`, "PUT", {
-    name,
-    checked,
-    date,
-    project_id,
-  });
+  try {
+    const response = await fetchApi(`/tasks/${taskId}`, "PUT", {
+      name,
+      checked,
+      date,
+      project_id,
+    });
+    return response;
+  } catch (error) {
+    console.error("Error in putTask:", error);
+    throw error;
+  }
 };
 // Fonction pour supprimer une tâche de l'utilisateur
 export const deleteTask = async (taskId) => {
@@ -84,56 +129,40 @@ export const checkAuth = async () => {
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error("Token expiré ou invalide");
+        return null; // ← Retourne null si pas connecté
       }
       throw new Error("Erreur de vérification d'authentification");
     }
 
     return await response.json();
   } catch (error) {
-    console.error(
-      "Erreur lors de la vérification de l'authe  ntification:",
-      error
-    );
+    // Ne logue que les erreurs inattendues
+    if (error.message !== "Token expiré ou invalide") {
+      console.error(
+        "Erreur lors de la vérification de l'authentification:",
+        error
+      );
+    }
+    return null;
   }
 };
 
 // AJOUT DES FONCTIONS POUR LES LISTES SPÉCIFIQUES
 
-/**
- * Récupérer les tâches sans projet
- * @returns {Promise<Array>} Liste des tâches sans projet
- */
 export const getTasksWithoutProject = async () => {
   const tasks = await getTasks();
-  return Object.values(tasks.columns).flatMap((column) =>
-    column.tasks.filter((task) => !task.project_id)
-  );
+  if (!tasks.columns) {
+    return [];
+  }
+  const allTasks = [];
+
+  // Parcourir chaque colonne
+  Object.values(tasks.columns).forEach((column) => {
+    allTasks.push(...column.filter((task) => !task.project_id));
+  });
+  return allTasks;
 };
 
-/**
- * Récupérer les tâches de cette semaine
- * @returns {Promise<Array>} Liste des tâches de cette semaine
- */
-export const getTasksThisWeek = async () => {
-  const tasks = await getTasks();
-  const now = new Date();
-  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // Début de la semaine
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7); // Fin de la semaine
-
-  return Object.values(tasks.columns).flatMap((column) =>
-    column.tasks.filter((task) => {
-      const taskDate = new Date(task.date);
-      return taskDate >= startOfWeek && taskDate <= endOfWeek;
-    })
-  );
-};
-
-/**
- * Récupérer les tâches de la semaine prochaine
- * @returns {Promise<Array>} Liste des tâches de la semaine prochaine
- */
 export const getTasksNextWeek = async () => {
   const tasks = await getTasks();
   const now = new Date();

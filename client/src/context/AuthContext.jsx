@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { checkAuth } from "../utils/api";
+import { checkAuth, refreshAccessToken } from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext({
   user: {},
@@ -9,27 +10,26 @@ export const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(true); //temporaire !!!
+  const navigate = useNavigate();
   useEffect(() => {
     const verifyUser = async () => {
-      try {
-        const userData = await checkAuth();
-
-        if (userData?.user) {
-          // Si userData.user est un tableau, extrayez l'utilisateur directement
-          if (Array.isArray(userData.user) && userData.user.length > 0) {
-            setUser(userData.user[0]); // Stocke l'objet directement, pas le tableau
-          } else {
-            setUser(userData.user);
-          }
-        } // Vérifiez que `userData.user[0]` contient bien les informations
-      } catch (err) {
-        console.error("Erreur d'authentification:", err);
-      } finally {
-        setLoading(false);
+      const userData = await checkAuth();
+      if (!userData) {
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+          userData = await checkAuth();
+        }
       }
+      if (!userData) {
+        navigate("/login");
+        console.log("Utilisateur non connecté");
+      } else {
+        setUser(userData);
+      }
+      setLoading(false);
     };
+
     verifyUser();
   }, []);
 

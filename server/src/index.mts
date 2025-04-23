@@ -188,7 +188,7 @@ app.post("/login", async (c) => {
       id: user[0].id,
       email: user[0].email,
       role: "user",
-      exp: Math.floor(Date.now() / 1000) + 60 * 5,
+      exp: Math.floor(Date.now() / 1000) + 60 * 15, // expire dans 15 secondes
     };
 
     const token = await sign(payload, secret_key);
@@ -197,17 +197,75 @@ app.post("/login", async (c) => {
       secure: true,
       sameSite: "Strict",
       path: "/",
-      maxAge: 60 * 5,
+
+      maxAge: 60 * 15,
+    });
+    const refreshPayload = {
+      id: user[0].id,
+      email: user[0].email,
+      role: "user",
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // 7 jours
+    };
+
+    const refreshToken = await sign(refreshPayload, secret_key);
+
+    setCookie(c, "refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 jours
     });
     return c.json({ message: "connexion reussi avec succes", user });
   } catch (error) {
     return c.json({ error: "Erreur lors de la connexion" }, 500);
   }
 });
+
+app.post("/refresh-token", async (c) => {
+  const refreshToken = getCookie(c, "refresh_token");
+
+  if (!refreshToken) {
+    return c.json({ error: "Refresh token manquant" }, 401);
+  }
+
+  try {
+    const secret = process.env.SECRET_KEY || "";
+    const payload = await verify(refreshToken, secret);
+
+    const newAccessToken = await sign(
+      {
+        id: payload.id,
+        email: payload.email,
+        role: payload.role,
+        exp: Math.floor(Date.now() / 1000) + 60 * 5, // 5 min
+      },
+      secret
+    );
+
+    setCookie(c, "token", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      path: "/",
+      maxAge: 60 * 5,
+    });
+
+    return c.json({ message: "Token rafraîchi avec succès" });
+  } catch (err) {
+    return c.json({ error: "Refresh token invalide" }, 401);
+  }
+});
 app.post("/logout", (c) => {
   try {
     // Supprimer le cookie du token
     deleteCookie(c, "token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      path: "/",
+    });
+    deleteCookie(c, "refresh_token", {
       httpOnly: true,
       secure: true,
       sameSite: "Strict",
@@ -470,6 +528,7 @@ app.post("/tasks", async (c) => {
     );
   }
 });
+
 // GET /tasks/:id - Récupérer une tâche spécifique par son ID
 app.get("/tasks/:id", async (c) => {
   const user = c.get("user");
@@ -490,25 +549,45 @@ app.get("/tasks/:id", async (c) => {
     return c.json({ error: "Erreur lors de la récupération de la tâche" }, 500);
   }
 });
+
 // PUT /tasks/:id - Mettre à jour une tâche existante
 app.put("/tasks/:id", async (c) => {
   const user = c.get("user");
   const taskId = c.req.param("id");
-  const { name, checked, date, project_id } = await c.req.json();
-  const isChecked = checked === true || checked === "true";
+  const updates = await c.req.json();
 
   try {
     // Vérifier si la tâche existe et appartient à l'utilisateur
-    const existingTask = await sql`
-      SELECT id FROM tasks WHERE id = ${taskId} AND user_id = ${user.id}
+    const existingTaskResult = await sql`
+      SELECT * FROM tasks WHERE id = ${taskId} AND user_id = ${user.id}
     `;
 
-    if (existingTask.length === 0) {
+    if (existingTaskResult.length === 0) {
       return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
     }
 
-    // Si un project_id est fourni, vérifier que le projet existe et appartient à l'utilisateur
-    if (project_id) {
+    const existingTask = existingTaskResult[0];
+
+    // Préparer les données de mise à jour en ne modifiant que les champs fournis
+    const name = updates.name !== undefined ? updates.name : existingTask.name;
+    const checked =
+      updates.checked !== undefined
+        ? updates.checked === true || updates.checked === "true"
+        : existingTask.checked;
+    const date = updates.date !== undefined ? updates.date : existingTask.date;
+    const project_id =
+      updates.project_id !== undefined
+        ? updates.project_id === ""
+          ? null
+          : updates.project_id
+        : existingTask.project_id;
+
+    // Si un project_id est fourni, vérifier qu'il existe et appartient à l'utilisateur
+    if (
+      updates.project_id !== undefined &&
+      updates.project_id !== "" &&
+      updates.project_id !== null
+    ) {
       const project = await sql`
         SELECT id FROM projects WHERE id = ${project_id} AND user_id = ${user.id}
       `;
@@ -518,12 +597,10 @@ app.put("/tasks/:id", async (c) => {
       }
     }
 
-    // Mettre à jour la tâche
+    // Mettre à jour la tâche avec les valeurs fusionnées
     const [updatedTask] = await sql`
       UPDATE tasks 
-      SET name = ${name}, checked = ${isChecked}, date = ${date}, project_id = ${
-      project_id || null
-    }
+      SET name = ${name}, checked = ${checked}, date = ${date}, project_id = ${project_id}
       WHERE id = ${taskId} AND user_id = ${user.id}
       RETURNING id, name, checked, date, project_id
     `;
@@ -533,6 +610,7 @@ app.put("/tasks/:id", async (c) => {
       task: updatedTask,
     });
   } catch (error) {
+    console.error("Erreur lors de la mise à jour:", error);
     return c.json({ error: "Erreur lors de la mise à jour de la tâche" }, 500);
   }
 });
