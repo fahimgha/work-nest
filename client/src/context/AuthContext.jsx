@@ -10,11 +10,12 @@ export const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); //temporaire !!!
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     const verifyUser = async () => {
-      const userData = await checkAuth();
+      let userData = await checkAuth();
+      console.log(userData);
       if (!userData) {
         const refreshed = await refreshAccessToken();
         if (refreshed) {

@@ -44,8 +44,10 @@ function Task({ checked, task, taskId, hideCheckbox }) {
       >
         {task}
       </div>
+
       <EditTaskButton onClick={handleEditClick} />
       <DeleteButton onClick={handleDelete} />
+
       {isEditing && (
         <EditTaskModal
           task={{ id: taskId, name: task, checked }}

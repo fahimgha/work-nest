@@ -1,6 +1,6 @@
 import styles from "./userIcon.module.css";
 import logo from "../../assets/face-portrait.jpg";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../utils/api.js";
@@ -30,12 +30,10 @@ export default function UserIcon() {
     return <div>Chargement...</div>; // Affiche un indicateur de chargement pendant l'initialisation
   }
   let userData = user;
-  if (Array.isArray(user) && user.length > 0) {
-    userData = user[0];
-  }
 
-  const userName = userData.name || userData.username || "Utilisateur";
-  const userEmail = userData.email || "Aucun email";
+  console.log();
+  const userName = userData.user[0].name || "Utilisateur";
+  const userEmail = userData.user[0].email || "Aucun email";
 
   return (
     <div className={styles.profilIconContainer}>

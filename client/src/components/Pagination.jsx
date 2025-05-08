@@ -30,19 +30,19 @@ export default function Pagination({ currentStartDate, setCurrentStartDate }) {
       <div>
         <div className="pagination-previous">
           <div onClick={() => goToPreviousPage(7)}>
-            <HiChevronDoubleLeft />
+            <HiChevronDoubleLeft cursor="pointer" />
           </div>
           <div onClick={() => goToPreviousPage(1)}>
-            <HiChevronLeft />
+            <HiChevronLeft cursor="pointer" />
           </div>
         </div>
 
         <div className="pagination-next">
           <div onClick={() => goToNextPage(1)}>
-            <HiChevronRight />
+            <HiChevronRight cursor="pointer" />
           </div>
           <div onClick={() => goToNextPage(7)}>
-            <HiChevronDoubleRight />
+            <HiChevronDoubleRight cursor="pointer" />
           </div>
         </div>
       </div>

@@ -5,29 +5,6 @@ import { signup } from "../../utils/api.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
-  // const avatarList = [
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-01.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-03.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-05.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-06.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-07.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-09.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-10.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-11.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-18.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-19.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-20.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-22.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-23.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-27.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-28.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-29.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-32.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-33.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-34.svg",
-  //   "/avatars/Artboards_Diversity_Avatars_by_Netguru-35.svg",
-  // ];
-  // const [selectedAvatar, setSelectedAvatar] = useState(avatarList[0]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 

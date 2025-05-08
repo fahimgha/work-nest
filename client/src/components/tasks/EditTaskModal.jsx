@@ -13,7 +13,6 @@ function EditTaskModal({ task, onSubmit, onClose }) {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
@@ -67,7 +66,7 @@ function EditTaskModal({ task, onSubmit, onClose }) {
           </div>
           <div className="form-field-checkbox">
             <label htmlFor="task-name">Mark as complete</label>
-            <Checkbox checked={checked} />
+            <Checkbox checked={checked} onChangeCheck={setChecked} />
           </div>
           <div className="modal-actions">
             <button type="button" className="cancel-button" onClick={onClose}>

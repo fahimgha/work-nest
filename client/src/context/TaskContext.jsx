@@ -128,6 +128,7 @@ export function TaskProvider({ children }) {
         };
         dispatch({ type: "ADD_TASK", payload: newTask });
         fetchTasksWithoutProject();
+        fetchTasksNextWeek();
       }
     } catch (error) {
       console.log(error);
@@ -139,6 +140,7 @@ export function TaskProvider({ children }) {
       await deleteTask(taskId);
       dispatch({ type: "DELETE_TASK", payload: { taskId } });
       fetchTasksWithoutProject();
+      fetchTasksNextWeek();
     } catch (error) {
       console.error("Erreur lors de la suppression de la tâche:", error);
     }
@@ -162,6 +164,7 @@ export function TaskProvider({ children }) {
           },
         });
         fetchTasksWithoutProject();
+        fetchTasksNextWeek();
       } catch (error) {
         console.error("Erreur lors de l'édition de la tâche:", error);
       }
@@ -185,6 +188,7 @@ export function TaskProvider({ children }) {
   const fetchTasksNextWeek = useCallback(async () => {
     try {
       const data = await getTasksNextWeek();
+      console.log(data);
       dispatch({
         type: "FETCH_TASKS_NEXT_WEEK",
         payload: data,

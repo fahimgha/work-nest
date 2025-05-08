@@ -1,22 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./addProject.module.css";
 
 export default function AddProject({ setFormProject, onClose }) {
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const onSubmitProject = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
     const name = data.get("name")?.trim();
     const description = data.get("description")?.trim();
-    // const inputName = isEditing ? "editInputTask" : "addInputTask";
-
     if (name) {
       setFormProject({
         name: name,
         description: description,
       });
-      // setSuccessMessage(`✅ Projet "${name}" créé avec succès !`);
-      // setTimeout(() => setSuccessMessage(""), 4000);
       if (onClose) onClose();
 
       e.target.reset();
@@ -28,7 +34,10 @@ export default function AddProject({ setFormProject, onClose }) {
       {successMessage && (
         <div className={styles.successMessage}>{successMessage}</div>
       )}
-      <div className={styles.modal}>
+      <div
+        className={styles.modal}
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
         <div className={styles.container}>
           <div className={styles.projectFormContainer}>
             <h2>Créer un nouveau projet</h2>
@@ -51,7 +60,6 @@ export default function AddProject({ setFormProject, onClose }) {
                 type="text"
                 placeholder="Nom du projet"
               />
-
               <label className={styles.labelStyle} htmlFor="description">
                 Description
               </label>
@@ -61,10 +69,18 @@ export default function AddProject({ setFormProject, onClose }) {
                 type="text"
                 placeholder="Description"
               />
-
-              <button className={styles.buttonStyle} type="submit">
-                Créer le projet
-              </button>
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
+                <button className="save-button" type="submit">
+                  Créer le projet
+                </button>
+              </div>
             </form>
           </div>
         </div>

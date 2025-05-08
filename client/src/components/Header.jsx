@@ -1,40 +1,63 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import UserIcon from "./user/UserIcon";
 import { AuthContext } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
 
-export default function Header({children}) {
+export default function Header({ children }) {
   const { user } = useContext(AuthContext);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  console.log(menuOpen);
 
   return (
     <nav>
       <div className="navBar">
-        <ol className="olHeaderLeft">
-          <Link to="/board">
+        <div className="menu-toggle">
+          <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
+        </div>
+        <ol className={`olHeaderLeft ${menuOpen ? "show" : ""}`}>
+          <NavLink
+            to="/board"
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+          >
             <li>Home</li>
-          </Link>
-          <Link to="/projects">
+          </NavLink>
+          <NavLink
+            to="/projects"
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+          >
             <li>My Projects</li>
-          </Link>
-          <Link to="/promodoro">
+          </NavLink>
+          <NavLink
+            to="/promodoro"
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+          >
             <li>Promodoro</li>
-          </Link>
+          </NavLink>
         </ol>
-        <div style={{display: "flex", alignItems: "center",justifyContent:"space-between", gap: "1rem"}}>
-       {children}
+        <div
+          className="rightNavBar"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "1rem",
+          }}
+        >
+          {children}
 
-        {user ? (
-          <UserIcon />
-        ) : (
-          <ol className="olHeaderRight">
-            <Link to="/signup">
-              <li>Sign Up</li>
-            </Link>
-            <Link to="/login">
-              <li>Login</li>
-            </Link>
-          </ol>
-        )}
+          {user ? (
+            <UserIcon />
+          ) : (
+            <ol className="olHeaderRight">
+              <Link to="/signup">
+                <li>Sign Up</li>
+              </Link>
+              <Link to="/login">
+                <li>Login</li>
+              </Link>
+            </ol>
+          )}
         </div>
       </div>
     </nav>

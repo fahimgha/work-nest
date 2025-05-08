@@ -19,11 +19,11 @@ function Projects() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Header>
-        <div>
-          <Button onClick={() => setShowAddProjectModal(true)}>
-            Créer un projet
-          </Button>
-        </div>
+          <div>
+            <Button onClick={() => setShowAddProjectModal(true)}>
+              Créer un projet
+            </Button>
+          </div>
         </Header>
 
         {showAddProjectModal ? (
@@ -36,12 +36,16 @@ function Projects() {
         )}
       </div>
       <Title>All my Projects</Title>
+
       {projects.length > 0 ? (
         <ol className={styles.olProject}>
           {projects.map((project) => {
+            const firstLetterOfProject = project.name.substr(0, 1);
             return (
               <li className={styles.liProject} key={project.id}>
-                <div className={styles.imageProject}></div>
+                <div className={styles.imageProject}>
+                  {firstLetterOfProject}
+                </div>
                 <div>
                   {project.name}
                   <h3>{project.description}</h3>

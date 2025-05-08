@@ -41,39 +41,38 @@ function DateColumn({ date, tasks, maxTaskCount }) {
         <h3>{date}</h3>
         <h2>{day}</h2>
       </div>
-      <div className="tasks-scroll-container">
-        <ol className="ol-tasks">
-          {tasks.map((task) => (
-            <li className="li-tasks" key={task.id}>
-              <Task
-                taskId={task.id}
-                task={task.name}
-                checked={task.checked}
-                className="task"
-              />
-            </li>
-          ))}
 
-          <li className="li-tasks">
-            {isAddingTask && isShowingInput ? (
-              <TaskInput
-                setInputTask={handleAddTask}
-                isEditing={false}
-                inputRef={inputRef}
-              />
-            ) : (
-              <AddTaskButton onClick={startAddingTask} />
-            )}
+      <ol className="ol-tasks">
+        {tasks.map((task) => (
+          <li className="li-tasks" key={task.id}>
+            <Task
+              taskId={task.id}
+              task={task.name}
+              checked={task.checked}
+              className="task"
+            />
           </li>
+        ))}
 
-          {/* Render empty notebook lines */}
-          <EmptyLines
-            tasks={tasks}
-            maxTaskCount={maxTaskCount}
-            minTotalItems={8}
-          />
-        </ol>
-      </div>
+        <li className="li-tasks">
+          {isAddingTask && isShowingInput ? (
+            <TaskInput
+              setInputTask={handleAddTask}
+              isEditing={false}
+              inputRef={inputRef}
+            />
+          ) : (
+            <AddTaskButton onClick={startAddingTask} />
+          )}
+        </li>
+
+        {/* Render empty notebook lines */}
+        <EmptyLines
+          tasks={tasks}
+          maxTaskCount={maxTaskCount}
+          minTotalItems={8}
+        />
+      </ol>
     </div>
   );
 }

@@ -166,16 +166,33 @@ export const getTasksWithoutProject = async () => {
 export const getTasksNextWeek = async () => {
   const tasks = await getTasks();
   const now = new Date();
-  const startOfNextWeek = new Date(
-    now.setDate(now.getDate() - now.getDay() + 7)
-  ); // Début de la semaine prochaine
-  const endOfNextWeek = new Date(startOfNextWeek);
-  endOfNextWeek.setDate(startOfNextWeek.getDate() + 7); // Fin de la semaine prochaine
 
-  return Object.values(tasks.columns).flatMap((column) =>
-    column.tasks.filter((task) => {
+  // Cloner la date pour éviter de modifier l'original
+  const startOfNextWeek = new Date(now);
+  startOfNextWeek.setDate(now.getDate() - now.getDay() + 7); // Début de la semaine prochaine (lundi)
+
+  const endOfNextWeek = new Date(startOfNextWeek);
+  endOfNextWeek.setDate(startOfNextWeek.getDate() + 6); // Fin de la semaine prochaine (dimanche)
+
+  // Réinitialiser les heures pour comparer uniquement les dates
+  startOfNextWeek.setHours(0, 0, 0, 0);
+  endOfNextWeek.setHours(23, 59, 59, 999);
+
+  const allNextWeekTasks = [];
+
+  Object.entries(tasks.columns).forEach(([columnId, columnTasks]) => {
+    // Dans certains cas, columnTasks peut être un objet avec une propriété 'tasks'
+    const tasksArray = Array.isArray(columnTasks)
+      ? columnTasks
+      : columnTasks.tasks || [];
+
+    const nextWeekTasks = tasksArray.filter((task) => {
       const taskDate = new Date(task.date);
       return taskDate >= startOfNextWeek && taskDate <= endOfNextWeek;
-    })
-  );
+    });
+
+    allNextWeekTasks.push(...nextWeekTasks);
+  });
+
+  return allNextWeekTasks;
 };

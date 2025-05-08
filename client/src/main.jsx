@@ -23,25 +23,31 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: (
-      <PublicRoute>
-        <SignUp />
-      </PublicRoute>
+      <AuthContextProvider>
+        <PublicRoute>
+          <SignUp />
+        </PublicRoute>
+      </AuthContextProvider>
     ),
   },
   {
     path: "/email-verification",
     element: (
-      <PublicRoute>
-        <EmailVerification />
-      </PublicRoute>
+      <AuthContextProvider>
+        <PublicRoute>
+          <EmailVerification />
+        </PublicRoute>
+      </AuthContextProvider>
     ),
   },
   {
     path: "/activate/:token",
     element: (
-      <PublicRoute>
-        <AccountActivated />
-      </PublicRoute>
+      <AuthContextProvider>
+        <PublicRoute>
+          <AccountActivated />
+        </PublicRoute>
+      </AuthContextProvider>
     ),
   },
 
