@@ -1,14 +1,18 @@
 import styles from "./projects.module.css";
 import { useTasks } from "../../context/TaskContext";
 import { Title } from "../ui/Title";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/buttons/Button";
 import AddProject from "./AddProject";
 import Header from "../Header.jsx";
 
 function Projects() {
-  const { projects, addProject } = useTasks();
+  const { projects, addProject, fetchProjects } = useTasks();
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   const setFormProject = ({ name, description }) => {
     addProject(name, description);
@@ -40,15 +44,20 @@ function Projects() {
       {projects.length > 0 ? (
         <ol className={styles.olProject}>
           {projects.map((project) => {
-            const firstLetterOfProject = project.name.substr(0, 1);
+            const firstLetterOfProject = project.name
+              .substr(0, 1)
+              .toUpperCase();
             return (
               <li className={styles.liProject} key={project.id}>
                 <div className={styles.imageProject}>
                   {firstLetterOfProject}
                 </div>
-                <div>
-                  {project.name}
-                  <h3>{project.description}</h3>
+                <div className={styles.textProject}>
+                  <h4>{project.name}</h4>
+
+                  <h3 title={project.description || "no description"}>
+                    {project.description || "no description"}
+                  </h3>
                 </div>
               </li>
             );

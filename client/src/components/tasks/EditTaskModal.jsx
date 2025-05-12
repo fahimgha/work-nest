@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { HiChevronDown } from "react-icons/hi";
 import { useTasks } from "../../context/TaskContext";
 import Checkbox from "../ui/Checkbox";
@@ -22,6 +22,7 @@ function EditTaskModal({ task, onSubmit, onClose }) {
     onSubmit({ name, checked, project_id: projectId });
   };
 
+  console.log(task.project_id);
   return (
     <div
       className="modal-overlay"

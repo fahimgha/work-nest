@@ -50,7 +50,11 @@ function Task({ checked, task, taskId, hideCheckbox }) {
 
       {isEditing && (
         <EditTaskModal
-          task={{ id: taskId, name: task, checked }}
+          task={{
+            id: taskId,
+            name: task,
+            checked,
+          }}
           onSubmit={handleEditSubmit}
           onClose={handleModalClose}
         />

@@ -19,6 +19,24 @@
   align-items: center;
   gap: 1rem; /* Espace entre Pagination et Button */
 }
+.textProject {
+  display: flex;
+  flex-direction: column;
+
+  height: 3.5rem;
+  align-self: center;
+  /* justify-content: space-around; */
+}
+.textProject h3 {
+  font-size: 0.75rem;
+  font-weight: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  max-width: 100%;
+  cursor: pointer;
+  position: relative;
+}
 
 /* font-size: clamp(2rem, 5vw, 4rem); */
 .olProject {
@@ -39,12 +57,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   background-color: #efefef;
   border-radius: 0.5rem;
   width: 425px;
   text-align: start;
-  height: 85px;
+  height: 90px;
   overflow: hidden;
   box-sizing: border-box;
   cursor: pointer;
@@ -65,17 +83,19 @@
   }
 }
 .imageProject {
-  /* padding: 1.8rem; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
   width: 3.5rem;
   height: 3.5rem;
-  background-color: rgb(143, 105, 178);
+  background-color: rgb(255, 255, 255);
   border-radius: 0.5rem;
   flex-shrink: 0;
 }
 
 .liProject h3 {
   font-size: 0.75rem;
-
   font-weight: normal;
   /* margin: 0.2rem 0; */
   overflow: hidden;

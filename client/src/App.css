@@ -9,6 +9,10 @@
   width: 100%;
 }
 
+h4 {
+  font-weight: normal;
+}
+
 .notebook-line {
   position: absolute;
   bottom: 0;
@@ -506,6 +510,7 @@ olHeaderRight {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
+  gap: 0.5rem;
 }
 .form-field-checkbox label {
   font-size: 0.9rem;

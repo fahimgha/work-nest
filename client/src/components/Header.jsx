@@ -28,12 +28,12 @@ export default function Header({ children }) {
           >
             <li>My Projects</li>
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/promodoro"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
             <li>Promodoro</li>
-          </NavLink>
+          </NavLink> */}
         </ol>
         <div
           className="rightNavBar"
