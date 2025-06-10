@@ -11,7 +11,7 @@ export default function MenuList({ activeFilters, onFilterClick }) {
   return (
     <ol className={styles.MenuList}>
       {menuItems.map((item) => (
-        <li
+        <button
           key={item}
           onClick={() => onFilterClick(item)}
           className={
@@ -21,7 +21,7 @@ export default function MenuList({ activeFilters, onFilterClick }) {
           }
         >
           {item}
-        </li>
+        </button>
       ))}
     </ol>
   );
