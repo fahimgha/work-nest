@@ -290,7 +290,6 @@ nav {
     cursor: pointer;
   }
 }
-
 .navBar {
   max-width: 100%;
   margin: 0 auto;
@@ -299,32 +298,17 @@ nav {
   flex-direction: row;
   justify-content: space-between;
   align-self: center;
-  flex-wrap: wrap;
-  row-gap: 1rem;
 }
 
-.menu-toggle,
-.userIcon {
-  order: 1;
-}
-.userIcon {
+.UserIcon {
   display: flex;
-  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
 }
-.Children {
+.rightNavBar {
   display: flex;
-  align-self: center;
   gap: 1rem;
-}
-/* Sur mobile/tablet : pagination en dessous */
-@media (max-width: 768px) {
-  .Children {
-    flex-basis: 100%;
-    justify-content: flex-end;
-    order: 2;
-  }
 }
 
 .olHeaderLeft a {

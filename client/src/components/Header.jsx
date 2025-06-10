@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import UserIcon from "./user/UserIcon";
-import { Button } from "../components/ui/buttons/Button";
 import { AuthContext } from "../context/AuthContext";
 import { Link, NavLink } from "react-router-dom";
 
@@ -30,12 +29,16 @@ export default function Header({ children }) {
           >
             <li>My Projects</li>
           </NavLink>
+          {/* <NavLink
+            to="/promodoro"
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+          >
+            <li>Promodoro</li>
+          </NavLink> */}
         </ol>
+        <div className="rightNavBar">
+          <div className="UserIcon">{children}</div>
 
-        <div className="Children">{children}</div>
-
-        <div className="userIcon">
-          <Button>Add Project</Button>
           {user ? (
             <UserIcon />
           ) : (
