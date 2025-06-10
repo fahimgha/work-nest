@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 const UiButton = styled.button`
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.6rem;
+  height: 29px;
   font-size: 0.9rem;
   border: none;
   border-radius: 0.4rem;

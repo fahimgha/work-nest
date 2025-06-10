@@ -80,9 +80,6 @@ export default function Board() {
             currentStartDate={currentStartDate}
             setCurrentStartDate={setCurrentStartDate}
           />
-          <Button onClick={() => setShowAddProjectModal(true)}>
-            Créer un projet
-          </Button>
         </Header>
 
         {showAddProjectModal ? (

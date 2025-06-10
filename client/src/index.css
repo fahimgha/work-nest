@@ -7,6 +7,10 @@
   background-color: #ffffff;
 }
 
+Button {
+  border: none;
+  white-space: nowrap;
+}
 html,
 body {
   margin: 0;

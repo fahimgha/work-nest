@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import styles from "./Pomodoro.module.css"; // Importer le fichier CSS module
+import styles from "./pomodoro.module.css"; // Importer le fichier CSS module
 
 const initialState = {
   minutes: 25,

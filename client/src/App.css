@@ -246,8 +246,6 @@ Button {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  /* margin: 0 20px; */
-  /* margin-bottom: 0.5rem; */
   gap: 1rem;
 }
 .paginations div {
@@ -279,19 +277,54 @@ nav {
 .menu-toggle {
   display: none;
   align-items: center;
+  margin-right: 1rem;
 
   button {
     border-radius: 0.25rem;
-    padding: 0.25rem 0.5rem;
+    width: min-content;
+    height: min-content;
+    padding: 0.4rem;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
   }
 }
+
 .navBar {
-  max-width: 100%; /* ou 96% si tu préfères, ou clamp() */
+  max-width: 100%;
   margin: 0 auto;
   padding: 0.2rem 2rem;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-self: center;
+  flex-wrap: wrap;
+  row-gap: 1rem;
+}
+
+.menu-toggle,
+.userIcon {
+  order: 1;
+}
+.userIcon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+.Children {
+  display: flex;
+  align-self: center;
+  gap: 1rem;
+}
+/* Sur mobile/tablet : pagination en dessous */
+@media (max-width: 768px) {
+  .Children {
+    flex-basis: 100%;
+    justify-content: flex-end;
+    order: 2;
+  }
 }
 
 .olHeaderLeft a {

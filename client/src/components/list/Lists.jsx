@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTasks } from "../../context/TaskContext";
 import Task from "../tasks/Task";
 import styles from "./lists.module.css";
-import MenuList from "./menuList";
+import MenuList from "./MenuList";
 import { EmptyLines } from "../ui/EmptyLines";
 import Pomodoro from "../pomodoro/Pomodoro";
 

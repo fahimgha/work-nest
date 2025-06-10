@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
 import UserIcon from "./user/UserIcon";
+import { Button } from "../components/ui/buttons/Button";
 import { AuthContext } from "../context/AuthContext";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Header({ children }) {
   const { user } = useContext(AuthContext);
@@ -15,6 +16,7 @@ export default function Header({ children }) {
         <div className="menu-toggle">
           <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </div>
+
         <ol className={`olHeaderLeft ${menuOpen ? "show" : ""}`}>
           <NavLink
             to="/board"
@@ -28,24 +30,12 @@ export default function Header({ children }) {
           >
             <li>My Projects</li>
           </NavLink>
-          {/* <NavLink
-            to="/promodoro"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <li>Promodoro</li>
-          </NavLink> */}
         </ol>
-        <div
-          className="rightNavBar"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "1rem",
-          }}
-        >
-          {children}
 
+        <div className="Children">{children}</div>
+
+        <div className="userIcon">
+          <Button>Add Project</Button>
           {user ? (
             <UserIcon />
           ) : (
