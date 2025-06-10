@@ -1,18 +1,34 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import UserIcon from "./user/UserIcon";
 import { AuthContext } from "../context/AuthContext";
 import { Link, NavLink } from "react-router-dom";
-
 export default function Header({ children }) {
   const { user } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  console.log(menuOpen);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        menuOpen &&
+        !e.target.closest(".olHeaderLeft") &&
+        !e.target.closest(".menu-toggle")
+      ) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.addEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <nav>
       <div className="navBar">
-        <div className="menu-toggle">
+        <div
+          className="menu-toggle"
+          onClick={(e) =>
+            e.target === e.currentTarget && setMenuOpen(!menuOpen)
+          }
+        >
           <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </div>
 
