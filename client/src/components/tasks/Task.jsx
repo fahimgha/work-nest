@@ -3,6 +3,7 @@ import Checkbox from "../ui/Checkbox";
 import DeleteButton from "../ui/buttons/DeleteTaskButton";
 import EditTaskButton from "../ui/buttons/EditTaskButton"; // Import the Edit button
 import EditTaskModal from "./EditTaskModal"; // Import the modal for editing
+import EditTaskInput from "./EditTaskInput";
 import { useTasks } from "../../context/TaskContext";
 
 function Task({ checked, task, taskId, hideCheckbox }) {
@@ -32,24 +33,39 @@ function Task({ checked, task, taskId, hideCheckbox }) {
   };
 
   return (
-    <div className="task-container">
-      <Checkbox
-        checked={checked}
-        onChangeCheck={handleCheckboxChange}
-        hideCheckbox={hideCheckbox}
-      />
-      <div
-        className="task"
-        style={{ textDecoration: checked ? "line-through" : "none" }}
-      >
-        {task}
-      </div>
+    <>
+      {!isEditing && (
+        <div onClick={handleEditClick} className="task-container">
+          <Checkbox
+            checked={checked}
+            onChangeCheck={handleCheckboxChange}
+            hideCheckbox={hideCheckbox}
+          />
+          <div
+            className="task"
+            style={{ textDecoration: checked ? "line-through" : "none" }}
+          >
+            {task}
+          </div>
 
-      <EditTaskButton onClick={handleEditClick} />
-      <DeleteButton onClick={handleDelete} />
-
-      {isEditing && (
-        <EditTaskModal
+          {/* <EditTaskButton onClick={handleEditClick} /> */}
+          <DeleteButton onClick={handleDelete} />
+        </div>
+      )}
+      {
+        isEditing && (
+          <EditTaskInput
+            task={{
+              id: taskId,
+              name: task,
+              checked,
+              project_id: task.project_id,
+            }}
+            onSubmit={handleEditSubmit}
+            onClose={handleModalClose}
+          />
+        )
+        /* <EditTaskModal
           task={{
             id: taskId,
             name: task,
@@ -57,9 +73,9 @@ function Task({ checked, task, taskId, hideCheckbox }) {
           }}
           onSubmit={handleEditSubmit}
           onClose={handleModalClose}
-        />
-      )}
-    </div>
+        /> */
+      }
+    </>
   );
 }
 
