@@ -63,12 +63,7 @@ function TaskList({ title, tasks, className, hideCheckbox }) {
           {tasks.length > 0 &&
             tasks.map((task) => (
               <li key={task.id} className="li-tasks">
-                <Task
-                  checked={task.checked}
-                  task={task.name}
-                  taskId={task.id}
-                  hideCheckbox={hideCheckbox}
-                />
+                <Task task={task} hideCheckbox={hideCheckbox} />
               </li>
             ))}
           <EmptyLines tasks={tasks} minTotalItems={8} />

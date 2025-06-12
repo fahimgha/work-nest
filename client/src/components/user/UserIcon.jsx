@@ -31,7 +31,6 @@ export default function UserIcon() {
   }
   let userData = user;
 
-  console.log();
   const userName = userData.user[0].name || "Utilisateur";
   const userEmail = userData.user[0].email || "Aucun email";
 

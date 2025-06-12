@@ -65,6 +65,9 @@ h4 {
   .del-button {
     display: flex;
   }
+  .task-tag {
+    right: 1.5rem;
+  }
   .edit-button {
     display: flex;
   }
@@ -106,6 +109,7 @@ h4 {
   padding-left: 0.25rem;
   transition: white-space 0.3s ease;
 }
+
 /* inputTask component*/
 .todo-input {
   position: relative;
@@ -113,32 +117,44 @@ h4 {
   flex-direction: column;
   align-items: center;
   justify-content: start;
-  height: 30px;
   width: 100%;
+}
+
+.addInput {
+  height: 29px;
+  border-bottom: 0.08rem solid rgb(49, 105, 145);
+  width: 95%;
+}
+.input-container {
+  display: flex;
+  position: relative;
+  width: 98%;
+}
+
+.edit {
+  padding-top: 4px;
+  border-bottom: 0.08rem solid rgb(49, 105, 145);
+  width: 95%;
+  height: 50px;
 }
 
 input {
   border: none;
   padding: 0;
-  /* border: 1 solid red; */
 }
 textarea {
   max-height: 150px;
   min-height: fit-content;
   max-width: 90%;
-  min-width: 90%;
 }
 .input-name-task {
   display: flex;
   position: relative;
   align-items: center;
   background-color: white;
-  border-bottom: 0.08rem solid rgb(49, 105, 145);
   appearance: none;
   font-size: 0.9rem;
   outline: none;
-  padding-left: 0.5rem;
-  /* padding: 7px 10px; */
   height: 100%;
   width: 95%;
 }
@@ -541,9 +557,6 @@ olHeaderRight {
   margin-bottom: 5px;
 }
 
-.checkbox-field {
-}
-
 .checkbox-container {
   display: flex;
   align-items: center;
@@ -647,18 +660,6 @@ olHeaderRight {
 .edit-button:hover .edit-icon {
   color: white;
 }
-.edit-task-form {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.input-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 95%;
-}
 
 .edit-task-input {
   flex: 1;
@@ -670,92 +671,47 @@ olHeaderRight {
 }
 
 .project-selector {
-  position: relative;
-  margin-left: 5px;
-}
-
-.project-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-}
-
-.project-button:hover {
-  color: #333;
-}
-
-.projects-dropdown {
   position: absolute;
-  right: 0;
-  top: 100%;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  min-width: 150px;
-  max-height: 200px;
-  overflow-y: auto;
+  height: 19px;
+  bottom: 2px;
+  right: 2px;
 }
 
-.project-option {
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.project-option:hover {
-  background-color: #f5f5f5;
-}
-
-.project-option.selected {
-  background-color: #e0e0e0;
-  font-weight: bold;
-}
-
-.edit-task-form {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.input-container {
+.project-tag {
+  position: absolute;
+  height: 19px;
+  bottom: 2px;
+  left: 2px;
   display: flex;
   align-items: center;
-  position: relative;
-  width: 95%;
+  font-size: 0.7rem;
+  color: #000000;
+  background-color: rgba(255, 98, 0, 0.2);
+  backdrop-filter: blur(4px);
+  padding: 0rem 0.2rem;
+  border-radius: 0.25rem;
 }
-
-.edit-task-input {
-  flex: 1;
-  border: none;
-  border-bottom: 0.08rem solid rgb(49, 105, 145);
-  padding: 5px 35px 5px 10px;
-  font-size: 0.9rem;
-  outline: none;
+.task-tag {
+  position: absolute;
+  right: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #000000;
+  background-color: rgba(255, 98, 0, 0.2);
+  backdrop-filter: blur(10px);
+  height: 18px;
+  width: 18px;
+  border-radius: 0.2rem;
 }
-
-.project-selector {
-  position: relative;
-  margin-left: 5px;
-}
-
 .project-button {
   background: none;
   border: none;
   cursor: pointer;
   color: #666;
   font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
+  padding: 0;
 }
 
 .project-button:hover {

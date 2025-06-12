@@ -15,7 +15,7 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       let userData = await checkAuth();
-      console.log(userData);
+      // console.log(userData);
       if (!userData) {
         const refreshed = await refreshAccessToken();
         if (refreshed) {
@@ -24,7 +24,7 @@ export const AuthContextProvider = ({ children }) => {
       }
       if (!userData) {
         navigate("/login");
-        console.log("Utilisateur non connecté");
+        // console.log("Utilisateur non connecté");
       } else {
         setUser(userData);
       }

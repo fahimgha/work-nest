@@ -1,80 +1,63 @@
 import React, { memo, useState } from "react";
 import Checkbox from "../ui/Checkbox";
 import DeleteButton from "../ui/buttons/DeleteTaskButton";
-import EditTaskButton from "../ui/buttons/EditTaskButton"; // Import the Edit button
-import EditTaskModal from "./EditTaskModal"; // Import the modal for editing
 import EditTaskInput from "./EditTaskInput";
 import { useTasks } from "../../context/TaskContext";
 
-function Task({ checked, task, taskId, hideCheckbox }) {
-  const { removeTask, editTask } = useTasks();
+function Task({ task, hideCheckbox }) {
+  const { removeTask, editTask, projects } = useTasks();
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleDelete = () => removeTask(taskId);
+  const handleDelete = () => removeTask(task.id);
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+  const handleEditClick = () => setIsEditing(true);
 
   const handleEditSubmit = (updatedTask) => {
-    editTask(taskId, updatedTask);
-    setIsEditing(false);
-  };
-  const handleCheckboxChange = (isChecked) => {
-    editTask(taskId, {
-      name: task,
-      checked: isChecked,
-      date: task.date,
-      project_id: task.project_id,
-    });
-  };
-  const handleModalClose = () => {
+    editTask(task.id, updatedTask);
     setIsEditing(false);
   };
 
+  const handleCheckboxChange = (isChecked) => {
+    editTask(task.id, {
+      ...task,
+      checked: isChecked,
+    });
+  };
+
+  const handleModalClose = () => setIsEditing(false);
+  const project = projects.find((p) => p.id === task.project_id);
+  const firstLetterOfProject = project?.name.substr(0, 1).toUpperCase();
   return (
     <>
       {!isEditing && (
-        <div onClick={handleEditClick} className="task-container">
+        <div className="task-container">
           <Checkbox
-            checked={checked}
+            checked={task.checked}
             onChangeCheck={handleCheckboxChange}
             hideCheckbox={hideCheckbox}
           />
           <div
+            onClick={handleEditClick}
             className="task"
-            style={{ textDecoration: checked ? "line-through" : "none" }}
+            style={{ textDecoration: task.checked ? "line-through" : "none" }}
           >
-            {task}
+            {task.name}
           </div>
-
-          {/* <EditTaskButton onClick={handleEditClick} /> */}
+          {project ? (
+            <div className="task-tag">{firstLetterOfProject}</div>
+          ) : (
+            ""
+          )}
           <DeleteButton onClick={handleDelete} />
         </div>
       )}
-      {
-        isEditing && (
-          <EditTaskInput
-            task={{
-              id: taskId,
-              name: task,
-              checked,
-              project_id: task.project_id,
-            }}
-            onSubmit={handleEditSubmit}
-            onClose={handleModalClose}
-          />
-        )
-        /* <EditTaskModal
-          task={{
-            id: taskId,
-            name: task,
-            checked,
-          }}
+      {isEditing && (
+        <EditTaskInput
+          task={task}
           onSubmit={handleEditSubmit}
           onClose={handleModalClose}
-        /> */
-      }
+        />
+      )}
     </>
   );
 }

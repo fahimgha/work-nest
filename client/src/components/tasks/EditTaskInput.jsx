@@ -4,14 +4,13 @@ import { HiOutlineFolder } from "react-icons/hi";
 
 export default function EditTaskInput({ task, onSubmit, onClose }) {
   const [name, setName] = useState(task.name);
-  const [projectId, setProjectId] = useState(task.project_id || "");
+  const [projectId, setProjectId] = useState(task.project_id || null);
   const [menuOpen, setMenuOpen] = useState(false);
   const { projects } = useTasks();
+
   const inputRef = useRef(null);
   const menuRef = useRef(null);
-  useEffect(() => {
-    setProjectId(task.project_id || null);
-  }, [task.project_id]);
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -36,62 +35,68 @@ export default function EditTaskInput({ task, onSubmit, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ name, project_id: projectId });
+
+    onSubmit({ ...task, name, project_id: projectId });
   };
 
-  const handleProjectSelect = (projectId) => {
-    setProjectId(projectId);
+  const handleProjectSelect = (id) => {
+    setProjectId(id);
     setMenuOpen(false);
   };
-
   return (
     <form
       onSubmit={handleSubmit}
-      className="edit-task-form"
+      className="todo-input edit"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="input-container">
         <input
           ref={inputRef}
-          className="edit-task-input"
+          className="input-name-task"
           value={name}
           onChange={(e) => setName(e.target.value)}
           type="text"
           placeholder="Edit Task"
         />
-        <div className="project-selector" ref={menuRef}>
-          <button
-            type="button"
-            className="project-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen(!menuOpen);
-            }}
-          >
-            <HiOutlineFolder />
-          </button>
-          {menuOpen && (
-            <div className="projects-dropdown">
-              <div
-                className={`project-option ${!projectId ? "selected" : ""}`}
-                onClick={() => handleProjectSelect("")}
-              >
-                Aucun projet
-              </div>
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className={`project-option ${
-                    projectId === project.id ? "selected" : ""
-                  }`}
-                  onClick={() => handleProjectSelect(project.id)}
-                >
-                  {project.name}
-                </div>
-              ))}
+      </div>
+      <div className="project-tag">
+        {projectId
+          ? projects.find((p) => p.id === projectId)?.name ||
+            "Projet introuvable"
+          : "Aucun projet"}
+      </div>
+      <div className="project-selector" ref={menuRef}>
+        <button
+          type="button"
+          className="project-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen);
+          }}
+        >
+          <HiOutlineFolder />
+        </button>
+        {menuOpen && (
+          <div className="projects-dropdown">
+            <div
+              className={`project-option ${!projectId ? "selected" : ""}`}
+              onClick={() => handleProjectSelect(null)}
+            >
+              Aucun projet
             </div>
-          )}
-        </div>
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className={`project-option ${
+                  projectId === project.id ? "selected" : ""
+                }`}
+                onClick={() => handleProjectSelect(project.id)}
+              >
+                {project.name}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </form>
   );
