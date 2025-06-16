@@ -17,7 +17,7 @@ const app = new Hono<{ Variables: Variables }>();
 app.use(
   "/*",
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     credentials: true,
   })
 );
@@ -84,7 +84,7 @@ app.post("/signup", async (c) => {
       to: email,
       subject: "Verify Email",
       text: `Please activate your account by clicking the following link: 
-      http://localhost:5173/activate/${token}`,
+      http://localhost:5174/activate/${token}`,
     });
 
     if (error) {

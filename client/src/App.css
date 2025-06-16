@@ -28,26 +28,24 @@ h4 {
   text-align: center;
   flex: 1;
   max-width: calc(100% - 20px);
+  min-width: 0;
   width: 100%;
-  /* Hauteur automatique */
   height: auto;
-  min-height: 300px; /* Hauteur minimale pour des colonnes cohérentes */
+  min-height: 300px;
   margin: 0 0.3rem;
-  overflow: visible; /* Supprime tout défilement */
+  overflow: visible;
 }
 
 .ol-tasks {
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* min-width: 180px; */
   padding: 0;
   margin: 0;
 }
 
 .column-header {
   margin-bottom: 0.5rem;
-  /* border-radius: 0.5rem; */
   padding: 0.5rem;
   flex-shrink: 0;
   background-color: #efefef;
@@ -60,6 +58,7 @@ h4 {
   width: 100%;
   position: relative;
   box-sizing: border-box;
+  min-width: 0;
 }
 .li-tasks:hover {
   .del-button {
@@ -86,7 +85,7 @@ h4 {
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
-  /* height: auto; */
+  min-width: 0;
 }
 
 .task-container:hover {
@@ -101,12 +100,13 @@ h4 {
 .task {
   display: flex;
   align-items: center;
-  width: 100%;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.9rem;
   padding-left: 0.25rem;
+  margin-right: 1rem;
   transition: white-space 0.3s ease;
 }
 
@@ -198,6 +198,7 @@ Button {
   height: 20px;
   position: absolute;
   right: 0.1rem;
+  z-index: 1;
 }
 .del-button:hover {
   background: #cf352e;
