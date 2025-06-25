@@ -58,7 +58,6 @@ h4 {
   width: 100%;
   position: relative;
   box-sizing: border-box;
-  min-width: 0;
 }
 .li-tasks:hover {
   .del-button {
@@ -84,7 +83,7 @@ h4 {
   padding-right: 0.25rem;
   box-sizing: border-box;
   overflow: hidden;
-  position: relative;
+
   min-width: 0;
 }
 

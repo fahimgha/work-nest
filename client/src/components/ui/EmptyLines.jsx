@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-export const EmptyLines = ({ tasks, maxTaskCount, minTotalItems }) => {
+export const EmptyLines = ({ tasks, maxTaskCount }) => {
   const [linesToShow, setLinesToShow] = useState(5); // Valeur par défaut
 
+  const safeMaxTaskCount =
+    typeof maxTaskCount === "number" && !isNaN(maxTaskCount) ? maxTaskCount : 0;
+  const taskLength = Array.isArray(tasks) ? tasks.length : 0;
+
+  console.log(safeMaxTaskCount);
   useEffect(() => {
     // Fonction pour calculer le nombre de lignes vides
     function updateLines() {
@@ -24,7 +29,7 @@ export const EmptyLines = ({ tasks, maxTaskCount, minTotalItems }) => {
       }
 
       // On soustrait les tâches existantes pour avoir le nombre de lignes vides
-      const emptyLines = Math.max(1, baseLines - tasks.length);
+      const emptyLines = Math.max(0, safeMaxTaskCount - taskLength);
 
       setLinesToShow(emptyLines);
     }
@@ -33,7 +38,7 @@ export const EmptyLines = ({ tasks, maxTaskCount, minTotalItems }) => {
     window.addEventListener("resize", updateLines);
 
     return () => window.removeEventListener("resize", updateLines);
-  }, [tasks.length]);
+  }, [taskLength]);
 
   return Array(linesToShow)
     .fill(0)

@@ -58,15 +58,12 @@ export default function Board() {
   };
 
   const maxTaskCount = useMemo(() => {
-    // Utiliser daysDisplay au lieu de dates qui n'existe pas
     return Math.max(
       ...daysDisplay.map((day) => {
-        const formattedDate = format(day, "yyyy-MM-dd");
-        // Accéder aux tâches pour cette date
-
-        return (tasks[formattedDate]?.tasks || []).length;
+        const dateKey = format(day, "yyyy-MM-dd");
+        return tasks[dateKey]?.length || 0;
       }),
-      0 // Valeur par défaut si aucune tâche
+      0
     );
   }, [daysDisplay, tasks]);
 

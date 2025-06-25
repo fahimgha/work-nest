@@ -45,7 +45,7 @@ function DateColumn({ date, tasks, maxTaskCount }) {
       <ol className="ol-tasks">
         {tasks.map((task) => (
           <li className="li-tasks" key={task.id}>
-            <Task task={task} /> {/* ✅ on passe l'objet entier */}
+            <Task task={task} />
           </li>
         ))}
 
@@ -61,11 +61,7 @@ function DateColumn({ date, tasks, maxTaskCount }) {
           )}
         </li>
 
-        <EmptyLines
-          tasks={tasks}
-          maxTaskCount={maxTaskCount}
-          minTotalItems={8}
-        />
+        {/* <EmptyLines tasks={tasks} maxTaskCount={maxTaskCount} /> */}
       </ol>
     </div>
   );
