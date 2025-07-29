@@ -1,13 +1,14 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
 
 import {
-  deleteTask,
   getProjects,
   getTasks,
   newProject,
+  putProject,
+  deleteProject,
   newtask,
   putTask,
-  getTasksWithoutProject,
+  deleteTask,
   getTasksNextWeek,
 } from "../utils/api";
 
@@ -16,7 +17,6 @@ const TaskContext = createContext();
 const initialState = {
   tasks: {},
   projects: [],
-  tasksWithoutProject: [],
   tasksNextWeek: [],
   loading: false,
   error: null,
@@ -28,6 +28,22 @@ function taskReducer(state, action) {
       return { ...state, projects: action.payload };
     case "ADD_PROJECTS":
       return state;
+    case "EDIT_PROJECT":
+      return {
+        ...state,
+        projects: state.projects.map((p) =>
+          p.id === action.payload.id
+            ? { ...p, ...action.payload.editedProject }
+            : p
+        ),
+      };
+    case "DELETE_PROJECT":
+      return {
+        ...state,
+        projects: state.projects.filter(
+          (project) => project.id !== action.payload.projectId
+        ),
+      };
     case "FETCH_TASKS":
       return { ...state, tasks: action.payload, loading: false };
     case "ADD_TASK":
@@ -70,8 +86,6 @@ function taskReducer(state, action) {
         tasks: updatedTasks,
         loading: false,
       };
-    case "FETCH_TASKS_WITHOUT_PROJECT":
-      return { ...state, tasksWithoutProject: action.payload, loading: false };
     case "FETCH_TASKS_NEXT_WEEK":
       return { ...state, tasksNextWeek: action.payload, loading: false };
     default:
@@ -104,6 +118,35 @@ export function TaskProvider({ children }) {
     [fetchProjects]
   );
 
+  const editProject = useCallback(
+    async (projectId, editedProject) => {
+      try {
+        await putProject(
+          projectId,
+          editedProject.name,
+          editedProject.description
+        );
+        dispatch({
+          type: "EDIT_PROJECT",
+          payload: {
+            editedProject,
+            id: projectId,
+          },
+        });
+      } catch (error) {
+        console.error("Erreur lors de l'édition du project:", error);
+      }
+    },
+    [state.projects]
+  );
+  const removeProject = useCallback(async (projectId) => {
+    try {
+      await deleteProject(projectId);
+      dispatch({ type: "DELETE_PROJECT", payload: { projectId } });
+    } catch (error) {
+      console.error("Erreur lors de la suppression du project", error);
+    }
+  }, []);
   const fetchTasks = useCallback(async () => {
     try {
       const data = await getTasks();
@@ -127,7 +170,6 @@ export function TaskProvider({ children }) {
           date: columnId,
         };
         dispatch({ type: "ADD_TASK", payload: newTask });
-        fetchTasksWithoutProject();
         fetchTasksNextWeek();
       }
     } catch (error) {
@@ -139,7 +181,6 @@ export function TaskProvider({ children }) {
     try {
       await deleteTask(taskId);
       dispatch({ type: "DELETE_TASK", payload: { taskId } });
-      fetchTasksWithoutProject();
       fetchTasksNextWeek();
     } catch (error) {
       console.error("Erreur lors de la suppression de la tâche:", error);
@@ -163,7 +204,6 @@ export function TaskProvider({ children }) {
             id: taskId,
           },
         });
-        fetchTasksWithoutProject();
         fetchTasksNextWeek();
       } catch (error) {
         console.error("Erreur lors de l'édition de la tâche:", error);
@@ -171,19 +211,6 @@ export function TaskProvider({ children }) {
     },
     [state.tasks]
   );
-
-  const fetchTasksWithoutProject = useCallback(async () => {
-    try {
-      const tasksWithoutProject = await getTasksWithoutProject();
-
-      dispatch({
-        type: "FETCH_TASKS_WITHOUT_PROJECT",
-        payload: tasksWithoutProject,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
 
   const fetchTasksNextWeek = useCallback(async () => {
     try {
@@ -200,15 +227,15 @@ export function TaskProvider({ children }) {
 
   const value = {
     tasks: state.tasks,
-    tasksWithoutProject: state.tasksWithoutProject,
     tasksNextWeek: state.tasksNextWeek,
     projects: state.projects,
     loading: state.loading,
     error: state.error,
     fetchProjects,
     addProject,
+    editProject,
+    removeProject,
     fetchTasks,
-    fetchTasksWithoutProject,
     fetchTasksNextWeek,
     addTask,
     removeTask,

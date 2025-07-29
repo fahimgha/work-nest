@@ -48,7 +48,7 @@ function Task({ task, hideCheckbox }) {
           ) : (
             ""
           )}
-          <DeleteButton onClick={handleDelete} />
+          <DeleteButton onClick={handleDelete} className={"del-button"} />
         </div>
       )}
       {isEditing && (

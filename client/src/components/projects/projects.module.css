@@ -59,7 +59,7 @@
   gap: 1rem;
   padding: 0.25rem 0.75rem;
   background-color: #efefef;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   width: 425px;
   text-align: start;
   height: 90px;
@@ -73,6 +73,9 @@
   transform: translateY(-1px);
 }
 
+.li-tasks:hover .edit-button {
+  display: flex;
+}
 .liProject:active {
   transform: translateY(0);
 }
@@ -90,7 +93,7 @@
   width: 3.5rem;
   height: 3.5rem;
   background-color: rgb(255, 255, 255);
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   flex-shrink: 0;
 }
 

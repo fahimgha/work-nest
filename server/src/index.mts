@@ -373,7 +373,6 @@ app.post("/projects", async (c) => {
     );
   }
 });
-
 // GET /projects - Récupérer tous les projets d'un utilisateur
 app.get("/projects", async (c) => {
   const user = c.get("user");
@@ -394,7 +393,6 @@ app.get("/projects", async (c) => {
     );
   }
 });
-
 // GET /projects/:id - Récupérer un projet spécifique par son ID
 app.get("/projects/:id", async (c) => {
   const user = c.get("user");
@@ -429,6 +427,83 @@ app.get("/projects/:id", async (c) => {
     );
   }
 });
+
+app.put("/projects/:id", async (c) => {
+  const user = c.get("user");
+  const projectId = c.req.param("id");
+  const updates = await c.req.json();
+
+  try {
+    // Vérifier si le project existe et appartient à l'utilisateur
+    const existingProjectResult = await sql`
+      SELECT * FROM projects WHERE id = ${projectId} AND user_id = ${user.id}
+    `;
+
+    if (existingProjectResult.length === 0) {
+      return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
+    }
+
+    const existingProject = existingProjectResult[0];
+
+    // Préparer les données de mise à jour en ne modifiant que les champs fournis
+    const name =
+      updates.name !== undefined ? updates.name : existingProject.name;
+    const description =
+      updates.description !== undefined
+        ? updates.description
+        : existingProject.description;
+
+    if (name === "") {
+      return c.json({ error: "le nom est obligatoire" }, 404);
+    }
+    // Mettre à jour la tâche avec les valeurs fusionnées
+    const [updatedTask] = await sql`
+      UPDATE projects 
+      SET name = ${name}, description = ${description}
+      WHERE id = ${projectId} AND user_id = ${user.id}
+      RETURNING id, name, description
+    `;
+
+    return c.json({
+      message: "Projet mise à jour avec succès",
+      task: updatedTask,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour:", error);
+    return c.json({ error: "Erreur lors de la mise à jour du projet" }, 500);
+  }
+});
+
+app.delete("/projects/:id", async (c) => {
+  const user = c.get("user");
+  const projectId = c.req.param("id");
+  try {
+    console.log(
+      `Tentative de suppression du projet ${projectId} pour l'utilisateur ${user.id}`
+    );
+
+    // Reste du code...
+    const task = await sql`
+      SELECT id FROM projects WHERE id = ${projectId} AND user_id = ${user.id}
+    `;
+
+    if (task.length === 0) {
+      return c.json({ error: "Projet non trouvée ou non autorisée" }, 404);
+    }
+
+    await sql`DELETE FROM projects WHERE id = ${projectId}`;
+    return c.json({ message: "Projet supprimée avec succès" });
+  } catch (error) {
+    console.error("Erreur détaillée:", error);
+    return c.json(
+      {
+        error: "Erreur lors de la suppression du projet",
+      },
+      500
+    );
+  }
+});
+
 app.get("/tasks", async (c) => {
   const user = c.get("user");
   const projectId = c.req.query("project_id"); // Optionnel: filtrer par projet
@@ -439,16 +514,18 @@ app.get("/tasks", async (c) => {
     if (projectId) {
       // Si un project_id est fourni, récupérer seulement les tâches de ce projet
       tasks = await sql`
-        SELECT id, name, checked, date, project_id 
+        SELECT id, name, checked, date, project_id, position
         FROM tasks 
         WHERE user_id=${user.id} AND project_id=${projectId}
+        ORDER BY position
       `;
     } else {
       // Sinon récupérer toutes les tâches de l'utilisateur
       tasks = await sql`
-        SELECT id, name, checked, date, project_id 
+        SELECT id, name, checked, date, project_id, position
         FROM tasks 
         WHERE user_id=${user.id}
+        ORDER BY position
       `;
     }
 
@@ -466,6 +543,7 @@ app.get("/tasks", async (c) => {
         checked: task.checked,
         date: task.date,
         project_id: task.project_id,
+        position: task.position,
       });
 
       return acc;
@@ -511,10 +589,22 @@ app.post("/tasks", async (c) => {
       }
     }
 
+    const [result] = await sql`
+      SELECT COALESCE(MAX(position), 0) + 1 AS next_position
+      FROM tasks
+      WHERE user_id = ${user.id}
+        AND date = ${date}
+        ${project_id ? sql`AND project_id = ${project_id}` : sql``}
+    `;
+    const position = result.next_position;
+
+    // Création de la tâche avec la bonne position
     const [newTask] = await sql`
-      INSERT INTO tasks(user_id, name, checked, date, project_id) 
-      VALUES (${user.id}, ${name}, ${isChecked}, ${date}, ${project_id || null})
-      RETURNING id, name, checked, date, project_id
+      INSERT INTO tasks(user_id, name, checked, date, project_id, position) 
+      VALUES (${user.id}, ${name}, ${isChecked}, ${date}, ${
+      project_id || null
+    }, ${position})
+      RETURNING id, name, checked, date, project_id, position
     `;
 
     return c.json({
@@ -536,7 +626,7 @@ app.get("/tasks/:id", async (c) => {
 
   try {
     const task = await sql`
-      SELECT id, name, checked, date, project_id FROM tasks 
+      SELECT id, name, checked, date, project_id,position FROM tasks 
       WHERE id = ${taskId} AND user_id = ${user.id}
     `;
 
@@ -581,7 +671,8 @@ app.put("/tasks/:id", async (c) => {
           ? null
           : updates.project_id
         : existingTask.project_id;
-
+    const position =
+      updates.position !== undefined ? updates.position : existingTask.position;
     // Si un project_id est fourni, vérifier qu'il existe et appartient à l'utilisateur
     if (
       updates.project_id !== undefined &&
@@ -600,9 +691,9 @@ app.put("/tasks/:id", async (c) => {
     // Mettre à jour la tâche avec les valeurs fusionnées
     const [updatedTask] = await sql`
       UPDATE tasks 
-      SET name = ${name}, checked = ${checked}, date = ${date}, project_id = ${project_id}
+      SET name = ${name}, checked = ${checked}, date = ${date}, project_id = ${project_id}, position = ${position}
       WHERE id = ${taskId} AND user_id = ${user.id}
-      RETURNING id, name, checked, date, project_id
+      RETURNING id, name, checked, date, project_id, position
     `;
 
     return c.json({

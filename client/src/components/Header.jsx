@@ -2,6 +2,8 @@ import { useContext, useState, useEffect, useRef } from "react";
 import UserIcon from "./user/UserIcon";
 import { AuthContext } from "../context/AuthContext";
 import { Link, NavLink } from "react-router-dom";
+import { Button } from "./ui/buttons/Button";
+
 export default function Header({ children }) {
   const { user } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,27 +33,31 @@ export default function Header({ children }) {
         >
           <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </div>
-
-        <ol className={`olHeaderLeft ${menuOpen ? "show" : ""}`}>
-          <NavLink
-            to="/board"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <li>Home</li>
-          </NavLink>
-          <NavLink
-            to="/projects"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <li>My Projects</li>
-          </NavLink>
-          {/* <NavLink
-            to="/promodoro"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <li>Promodoro</li>
-          </NavLink> */}
-        </ol>
+        {user ? (
+          <ol className={`olHeaderLeft ${menuOpen ? "show" : ""}`}>
+            <NavLink
+              to="/app/board"
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+            >
+              <li>Board</li>
+            </NavLink>
+            <NavLink
+              to="/app/projects"
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+            >
+              <li>My Projects</li>
+            </NavLink>
+          </ol>
+        ) : (
+          <ol className={`olHeaderLeft`}>
+            <NavLink
+              to="/"
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+            >
+              <li>Work Nest</li>
+            </NavLink>
+          </ol>
+        )}
         <div className="rightNavBar">
           <div className="UserIcon">{children}</div>
 
@@ -60,10 +66,10 @@ export default function Header({ children }) {
           ) : (
             <ol className="olHeaderRight">
               <Link to="/signup">
-                <li>Sign Up</li>
+                <Button>Sign Up</Button>
               </Link>
               <Link to="/login">
-                <li>Login</li>
+                <Button>Login</Button>
               </Link>
             </ol>
           )}

@@ -21,10 +21,10 @@ export default function Login() {
     }
     try {
       const response = await login(email, password);
-      setUser(response.user);
+      setUser(response.user[0]);
 
       alert(response.message);
-      navigate("/board");
+      navigate("/app/board");
     } catch (err) {
       setError(err.message);
       alert(error);

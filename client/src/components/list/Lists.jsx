@@ -3,7 +3,7 @@ import { useTasks } from "../../context/TaskContext";
 import Task from "../tasks/Task";
 import styles from "./lists.module.css";
 import MenuList from "./MenuList";
-import { EmptyLines } from "../ui/EmptyLines";
+import EmptyLines from "../ui/EmptyLines";
 import Pomodoro from "../pomodoro/Pomodoro";
 
 function Lists() {
@@ -42,9 +42,9 @@ function Lists() {
         onFilterClick={handleFilterClick}
       />
       <div className={styles.listsContainer}>
-        {shouldDisplay("No Project Assigned") && (
+        {/* {shouldDisplay("No Project Assigned") && (
           <TaskList title="No Project Assigned" tasks={tasksWithoutProject} />
-        )}
+        )} */}
         {shouldDisplay("To Do Next Week") && (
           <TaskList title="To Do Next Week" tasks={tasksNextWeek} />
         )}
@@ -64,6 +64,7 @@ function TaskList({ title, tasks, className, hideCheckbox }) {
             tasks.map((task) => (
               <li key={task.id} className="li-tasks">
                 <Task task={task} hideCheckbox={hideCheckbox} />
+                <div className="task-spacer"></div>
               </li>
             ))}
           <EmptyLines tasks={tasks} minTotalItems={8} />

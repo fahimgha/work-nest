@@ -1,11 +1,11 @@
 import { format } from "date-fns";
-import React, { useState, useRef, useCallback, memo } from "react";
+import { useState, useRef, useCallback, memo } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import TaskInput from "../tasks/TaskInput.jsx";
 import AddTaskButton from "../ui/buttons/AddTaskButton";
 import { useTasks } from "../../context/TaskContext";
 import Task from "../tasks/Task.jsx";
-import { EmptyLines } from "../ui/EmptyLines.jsx";
+import EmptyLines from "../ui/EmptyLines.jsx";
 
 function DateColumn({ date, tasks, maxTaskCount }) {
   const inputRef = useRef(null);
@@ -13,6 +13,8 @@ function DateColumn({ date, tasks, maxTaskCount }) {
   const day = format(date, "EEEE");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isShowingInput, setIsShowedInput] = useState(true);
+  const today = new Date();
+  const formattedDate = format(today, "yyyy-MM-dd");
 
   useClickOutside(inputRef, () => {
     if (inputRef.current.querySelector("input").value !== "") {
@@ -37,15 +39,18 @@ function DateColumn({ date, tasks, maxTaskCount }) {
 
   return (
     <div className="column">
-      <div className="column-header">
+      <div
+        className={`column-header + ${date === formattedDate ? "today" : ""}`}
+      >
         <h3>{date}</h3>
         <h2>{day}</h2>
       </div>
 
       <ol className="ol-tasks">
         {tasks.map((task) => (
-          <li className="li-tasks" key={task.id}>
+          <li className="li-tasks" key={task.position}>
             <Task task={task} />
+            <div className="task-spacer"></div>
           </li>
         ))}
 
@@ -61,7 +66,7 @@ function DateColumn({ date, tasks, maxTaskCount }) {
           )}
         </li>
 
-        {/* <EmptyLines tasks={tasks} maxTaskCount={maxTaskCount} /> */}
+        <EmptyLines tasks={tasks} maxTaskCount={maxTaskCount} />
       </ol>
     </div>
   );

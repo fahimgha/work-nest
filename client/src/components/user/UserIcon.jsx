@@ -31,8 +31,8 @@ export default function UserIcon() {
   }
   let userData = user;
 
-  const userName = userData.user[0].name || "Utilisateur";
-  const userEmail = userData.user[0].email || "Aucun email";
+  const userName = userData?.name || "Utilisateur";
+  const userEmail = userData?.email || "Aucun email";
 
   return (
     <div className={styles.profilIconContainer}>

@@ -75,6 +75,23 @@ export const getProjects = async () => {
 export const newProject = async (name, description) => {
   return await fetchApi("/projects", "POST", { name, description });
 };
+// Fonction pour modifier une tâche de l'utilisateur
+export const putProject = async (ProjectId, name, description) => {
+  try {
+    const response = await fetchApi(`/projects/${ProjectId}`, "PUT", {
+      name,
+      description,
+    });
+    return response;
+  } catch (error) {
+    console.error("Error in putProject:", error);
+    throw error;
+  }
+};
+
+export const deleteProject = async (projectId) => {
+  return await fetchApi(`/projects/${projectId}`, "DELETE");
+};
 export const newtask = async (name, checked, date, project_id) => {
   return await fetchApi("/tasks", "POST", { name, checked, date, project_id });
 };
@@ -148,20 +165,6 @@ export const checkAuth = async () => {
 };
 
 // AJOUT DES FONCTIONS POUR LES LISTES SPÉCIFIQUES
-
-export const getTasksWithoutProject = async () => {
-  const tasks = await getTasks();
-  if (!tasks.columns) {
-    return [];
-  }
-  const allTasks = [];
-
-  // Parcourir chaque colonne
-  Object.values(tasks.columns).forEach((column) => {
-    allTasks.push(...column.filter((task) => !task.project_id));
-  });
-  return allTasks;
-};
 
 export const getTasksNextWeek = async () => {
   const tasks = await getTasks();

@@ -42,6 +42,8 @@ h4 {
   width: 100%;
   padding: 0;
   margin: 0;
+
+  position: relative;
 }
 
 .column-header {
@@ -51,29 +53,32 @@ h4 {
   background-color: #efefef;
   border-radius: 0.5rem;
 }
+.today {
+  color: #35b2b2;
+  /* background-color: rgba(53, 178, 178, 0.9); */
+}
 .li-tasks {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  position: relative;
   box-sizing: border-box;
+  position: relative;
 }
-.li-tasks:hover {
-  .del-button {
-    display: flex;
-  }
-  .task-tag {
-    right: 1.5rem;
-  }
-  .edit-button {
-    display: flex;
-  }
+.li-tasks:hover .del-button {
+  display: flex;
+}
+.li-tasks:hover .task-tag {
+  right: 1.5rem;
+}
+.li-tasks:hover .edit-button {
+  display: flex;
 }
 
 /* task.jsx */
 .task-container {
   display: flex;
+
   text-align: start;
   align-items: center;
   border-bottom: 0.08rem solid rgb(180, 180, 180);
@@ -83,16 +88,22 @@ h4 {
   padding-right: 0.25rem;
   box-sizing: border-box;
   overflow: hidden;
-
   min-width: 0;
+  position: relative;
+  transition: all 0.3s ease;
+  z-index: 1;
+  transform-origin: top;
 }
-
-.task-container:hover {
-  padding-right: 0.25rem;
-  height: 100%;
+.li-tasks:hover .task-container {
+  position: absolute;
+  top: 0;
+  z-index: 5;
+  width: 100%;
 }
-
-.task-container:hover .task {
+.li-tasks:hover .task-spacer {
+  margin-top: 30px;
+}
+.li-tasks:hover .task {
   white-space: normal;
 }
 
@@ -100,6 +111,7 @@ h4 {
   display: flex;
   align-items: center;
   min-width: 0;
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -107,6 +119,7 @@ h4 {
   padding-left: 0.25rem;
   margin-right: 1rem;
   transition: white-space 0.3s ease;
+  cursor: pointer;
 }
 
 /* inputTask component*/
@@ -183,6 +196,7 @@ Button {
     display: flex;
   }
 }
+
 .del-button {
   background-color: white;
   border: 0.1rem solid #929292;
@@ -207,7 +221,31 @@ Button {
     transition: background 0.2s, stroke-dashoffset 0.3s;
   }
 }
-
+.del-project {
+  background-color: white;
+  border: 0.1rem solid #929292;
+  border-radius: 0.1rem;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+}
+.del-project:hover {
+  background: #cf352e;
+  border-color: #cf352e;
+  .hix-icon {
+    color: white;
+    transition: background 0.2s, stroke-dashoffset 0.3s;
+  }
+}
 /* checkbox */
 
 .checkbox {
@@ -339,7 +377,7 @@ nav {
 a:hover {
   color: inherit;
 }
-olHeaderRight {
+.olHeaderRight {
   display: flex;
   margin: 0.1rem 0;
   gap: 1.5rem;
@@ -637,14 +675,15 @@ olHeaderRight {
   border-radius: 0.1rem;
   cursor: pointer;
   padding: 0;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease;
   width: 20px;
   height: 20px;
   position: absolute;
-  right: 1.5rem;
+  top: 1rem;
+  right: 2.5rem;
 }
 
 .edit-button:hover {
@@ -745,4 +784,92 @@ olHeaderRight {
 .project-option.selected {
   background-color: #e0e0e0;
   font-weight: bold;
+}
+
+.home-container {
+  display: grid;
+  grid-template-rows: 20px 1fr 20px;
+  justify-items: center;
+  /* min-height: 100vh; */
+  padding: 2rem;
+  padding-bottom: 5rem;
+  gap: 4rem;
+}
+
+.home-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  grid-row-start: 2;
+  align-items: center;
+  text-align: center;
+}
+
+.home-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20rem; /* 80 (tailwind) = 320px */
+}
+
+.home-title {
+  font-weight: 600;
+  font-size: 1.5rem; /* text-xl */
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-description {
+  text-align: center;
+}
+
+.home-tools {
+  text-align: center;
+}
+
+.tools-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 1rem 0;
+}
+
+a {
+  color: black;
+}
+
+.tools-list {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.feature-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #dcf8f8;
+  padding: 1.25rem 1rem;
+  width: 14rem;
+  height: 100px;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.feature-card:hover {
+  background-color: #a4efef; /* Tailwind orange-100 */
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+
+.feature-description {
+  font-size: 1rem;
+  font-size: 0.75rem;
 }

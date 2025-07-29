@@ -15,26 +15,7 @@ function App() {
           width: "100%",
           flexWrap: "nowrap",
         }}
-      >
-        {/* <section
-            style={{
-              width: "20%",
-              minWidth: "250px",
-              flexGrow: 1,
-            }}
-          >
-            <Promodoro />
-          </section> */}
-        {/* <section
-            style={{
-              width: "75%",
-              minWidth: "300px",
-              flexGrow: 1,
-            }}
-          >
-            <Project />
-          </section> */}
-      </div>
+      ></div>
     </>
   );
 }

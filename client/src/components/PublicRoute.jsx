@@ -8,10 +8,8 @@ export default function PublicRoute({ children }) {
   if (loading) return <p>Chargement...</p>;
 
   if (user) {
-    // Redirect to board if already authenticated
-    return <Navigate to="/board" replace />;
+    return <Navigate to="/app/board" replace />;
   }
 
   return children;
-
 }

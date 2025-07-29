@@ -17,7 +17,6 @@ export default function Board() {
     fetchTasks,
     fetchProjects,
     addProject,
-    fetchTasksWithoutProject,
     fetchTasksNextWeek,
   } = useTasks();
 
@@ -26,7 +25,6 @@ export default function Board() {
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
   useEffect(() => {
-    fetchTasksWithoutProject();
     fetchTasksNextWeek();
     fetchProjects();
     fetchTasks();

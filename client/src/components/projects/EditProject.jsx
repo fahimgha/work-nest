@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "./addProject.module.css";
 
-export default function AddProject({ setFormProject, onClose }) {
+export default function EditProject({ project, onSubmit, onClose }) {
+  const [name, setName] = useState(project.name);
+  const [description, setDescription] = useState(project.description);
+
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
@@ -15,18 +18,13 @@ export default function AddProject({ setFormProject, onClose }) {
 
   const onSubmitProject = (e) => {
     e.preventDefault();
-    const data = new FormData(e.target);
-    const name = data.get("name")?.trim();
-    const description = data.get("description")?.trim();
-    if (name) {
-      setFormProject({
-        name: name,
-        description: description,
-      });
-      if (onClose) onClose();
-
-      e.target.reset();
-    }
+    if (name.trim() === "") return;
+    onSubmit({
+      ...project,
+      name: name,
+      description: description,
+    });
+    // if (onClose) onClose();
   };
 
   return (
@@ -36,11 +34,11 @@ export default function AddProject({ setFormProject, onClose }) {
       )}
       <div
         className={styles.modal}
-        onClick={(e) => e.target === e.currentTarget && onClose()}
+        // onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <div className={styles.container}>
           <div className={styles.projectFormContainer}>
-            <h2>Add Project</h2>
+            <h2>Edit project</h2>
             <h3
               style={{
                 fontSize: "0.8rem",
@@ -48,7 +46,7 @@ export default function AddProject({ setFormProject, onClose }) {
                 fontWeight: "500",
               }}
             >
-              Complete the form below to add a project.
+              Complete the form below to edit a project.
             </h3>
             <form className={styles.projectForm} onSubmit={onSubmitProject}>
               <label className={styles.labelStyle} htmlFor="name">
@@ -56,6 +54,8 @@ export default function AddProject({ setFormProject, onClose }) {
               </label>
               <input
                 className={styles.inputField}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 name="name"
                 type="text"
                 placeholder="Project name"
@@ -66,6 +66,8 @@ export default function AddProject({ setFormProject, onClose }) {
               <textarea
                 className={styles.inputField}
                 name="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 type="text"
                 placeholder="Description"
               />
@@ -77,8 +79,16 @@ export default function AddProject({ setFormProject, onClose }) {
                 >
                   Cancel
                 </button>
-                <button className="save-button" type="submit">
-                  Add Project
+                <button
+                  className="save-button"
+                  type="submit"
+                  disabled={name.trim() === ""}
+                  style={{
+                    opacity: name.trim() === "" ? 0.5 : 1,
+                    cursor: name.trim() === "" ? "not-allowed" : "pointer",
+                  }}
+                >
+                  Edit
                 </button>
               </div>
             </form>

@@ -1,7 +1,8 @@
 import { HiX } from "react-icons/hi";
-export default function DeleteTaskButton({ onClick }) {
+
+export default function DeleteTaskButton({ onClick, className }) {
   return (
-    <button onClick={onClick} className="del-button">
+    <button onClick={onClick} className={className}>
       <HiX className="hix-icon" size={12} strokeWidth="0.05rem" />
     </button>
   );

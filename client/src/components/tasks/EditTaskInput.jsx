@@ -10,6 +10,7 @@ export default function EditTaskInput({ task, onSubmit, onClose }) {
 
   const inputRef = useRef(null);
   const menuRef = useRef(null);
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -22,9 +23,16 @@ export default function EditTaskInput({ task, onSubmit, onClose }) {
       }
       if (
         inputRef.current &&
+        formRef.current &&
+        !formRef.current.contains(e.target) &&
         !inputRef.current.contains(e.target) &&
         !menuRef.current?.contains(e.target)
       ) {
+        onSubmit({
+          ...task,
+          name: inputRef.current?.value || name,
+          project_id: projectId,
+        });
         onClose();
       }
     };
@@ -36,21 +44,28 @@ export default function EditTaskInput({ task, onSubmit, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    onSubmit({ ...task, name, project_id: projectId });
+    onSubmit({
+      ...task,
+      name: inputRef.current?.value || name,
+      project_id: projectId,
+    });
   };
 
   const handleProjectSelect = (id) => {
     setProjectId(id);
+    onSubmit({ ...task, name, project_id: id });
     setMenuOpen(false);
   };
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
       className="todo-input edit"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="input-container">
         <input
+          id="taskName"
           ref={inputRef}
           className="input-name-task"
           value={name}
@@ -59,6 +74,7 @@ export default function EditTaskInput({ task, onSubmit, onClose }) {
           placeholder="Edit Task"
         />
       </div>
+
       <div className="project-tag">
         {projectId
           ? projects.find((p) => p.id === projectId)?.name ||
