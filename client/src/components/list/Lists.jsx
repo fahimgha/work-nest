@@ -5,6 +5,7 @@ import styles from "./lists.module.css";
 import MenuList from "./MenuList";
 import EmptyLines from "../ui/EmptyLines";
 import Pomodoro from "../pomodoro/Pomodoro";
+import Timer from "../timer/timer";
 
 function Lists() {
   const { tasksWithoutProject, tasksNextWeek } = useTasks();
@@ -42,13 +43,10 @@ function Lists() {
         onFilterClick={handleFilterClick}
       />
       <div className={styles.listsContainer}>
-        {/* {shouldDisplay("No Project Assigned") && (
-          <TaskList title="No Project Assigned" tasks={tasksWithoutProject} />
-        )} */}
         {shouldDisplay("To Do Next Week") && (
           <TaskList title="To Do Next Week" tasks={tasksNextWeek} />
         )}
-        {/* {shouldDisplay("My Pomodoro") && <Pomodoro />} */}
+        {shouldDisplay("My Timer") && <Timer />}
       </div>
     </div>
   );

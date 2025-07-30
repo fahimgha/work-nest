@@ -37,8 +37,6 @@
   cursor: pointer;
   position: relative;
 }
-
-/* font-size: clamp(2rem, 5vw, 4rem); */
 .olProject {
   display: flex;
   align-self: center;
@@ -47,7 +45,6 @@
   flex-direction: row;
   row-gap: 1rem;
   column-gap: 1rem;
-  overflow: auto;
   box-sizing: border-box;
   padding-top: 1rem;
   /* padding-left: 1rem; */
@@ -59,25 +56,15 @@
   gap: 1rem;
   padding: 0.25rem 0.75rem;
   background-color: #efefef;
-  border-radius: 0.2rem;
+  border-radius: 0.4rem;
   width: 425px;
   text-align: start;
   height: 90px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
   box-sizing: border-box;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.liProject:hover {
-  transform: translateY(-1px);
-}
-
-.li-tasks:hover .edit-button {
-  display: flex;
-}
-.liProject:active {
-  transform: translateY(0);
+  z-index: 10;
 }
 
 @media (max-width: 768px) {

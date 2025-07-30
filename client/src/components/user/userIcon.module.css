@@ -68,12 +68,11 @@
   cursor: pointer;
 }
 
-.menuTitle:hover {
-  background-color: #18181b54;
+.menuTitle:hover,
+.menuLogout:hover {
+  background-color: rgba(55, 53, 47, 0.08);
 }
 .menuLogout:hover {
-  background-color: #18181b54;
-  /* font-weight: 600; */
   color: rgb(214, 0, 0);
 }
 

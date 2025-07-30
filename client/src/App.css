@@ -173,6 +173,7 @@ textarea {
 
 Button {
   border: none;
+  user-select: none;
 }
 
 .addButton {
@@ -344,6 +345,53 @@ nav {
     cursor: pointer;
   }
 }
+.toggle-menu-action {
+  position: absolute;
+  top: 1.2rem;
+  right: 0;
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+
+  button {
+    border-radius: 0.25rem;
+    width: min-content;
+    height: min-content;
+    padding: 0.4rem;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+}
+.menu-actions {
+  display: none;
+  flex-direction: column;
+  gap: 0.1rem;
+  background-color: #fff;
+  width: 75px;
+  position: absolute;
+  top: 2.4rem;
+  right: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  z-index: 100;
+}
+.menu-actions li {
+  text-align: start;
+  padding: 0.2rem 0.6rem;
+}
+.menu-actions li:hover {
+  background-color: rgba(55, 53, 47, 0.08);
+}
+.menu-actions li:active {
+  background-color: rgba(55, 53, 47, 0.16);
+}
+.menu-actions.show {
+  display: flex;
+}
+
 .navBar {
   max-width: 100%;
   margin: 0 auto;
