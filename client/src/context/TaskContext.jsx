@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useReducer } from "react";
 
 import {
   getProjects,
+  ApiGetProject,
   getTasks,
   newProject,
   putProject,
@@ -17,6 +18,8 @@ const TaskContext = createContext();
 const initialState = {
   tasks: {},
   projects: [],
+  currentProject: null,
+  currentProjectTasks: [],
   tasksNextWeek: [],
   loading: false,
   error: null,
@@ -26,6 +29,12 @@ function taskReducer(state, action) {
   switch (action.type) {
     case "FETCH_PROJECTS":
       return { ...state, projects: action.payload };
+    case "GET_PROJECT":
+      return {
+        ...state,
+        currentProject: action.payload.project,
+        currentProjectTasks: action.payload.tasks,
+      };
     case "ADD_PROJECTS":
       return state;
     case "EDIT_PROJECT":
@@ -105,6 +114,15 @@ export function TaskProvider({ children }) {
     }
   }, []);
 
+  const getProject = useCallback(async (projectId) => {
+    try {
+      const data = await ApiGetProject(projectId);
+      dispatch({ type: "GET_PROJECT", payload: data });
+    } catch (error) {
+      console.error("Erreur lors de la recuperation du projet", error);
+    }
+  }, []);
+
   const addProject = useCallback(
     async (name, description) => {
       try {
@@ -124,7 +142,8 @@ export function TaskProvider({ children }) {
         await putProject(
           projectId,
           editedProject.name,
-          editedProject.description
+          editedProject.description,
+          editedProject.worktime
         );
         dispatch({
           type: "EDIT_PROJECT",
@@ -228,10 +247,13 @@ export function TaskProvider({ children }) {
   const value = {
     tasks: state.tasks,
     tasksNextWeek: state.tasksNextWeek,
+    currentProject: state.currentProject,
+    currentProjectTasks: state.currentProjectTasks,
     projects: state.projects,
     loading: state.loading,
     error: state.error,
     fetchProjects,
+    getProject,
     addProject,
     editProject,
     removeProject,

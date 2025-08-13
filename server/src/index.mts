@@ -349,7 +349,7 @@ app.use("/projects/*", async (c, next) => {
 });
 app.post("/projects", async (c) => {
   const user = c.get("user");
-  const { name, description } = await c.req.json();
+  const { name, description, worktime } = await c.req.json();
 
   try {
     if (!name) {
@@ -357,9 +357,9 @@ app.post("/projects", async (c) => {
     }
 
     const [newProject] = await sql`
-      INSERT INTO projects (user_id, name, description) 
-      VALUES (${user.id}, ${name}, ${description || ""})
-      RETURNING id, name, description
+      INSERT INTO projects (user_id, name, description, worktime) 
+      VALUES (${user.id}, ${name}, ${description || ""},  ${worktime})
+      RETURNING id, name, description, worktime
     `;
 
     return c.json({
@@ -379,7 +379,7 @@ app.get("/projects", async (c) => {
 
   try {
     const projects = await sql`
-      SELECT id, name, description 
+      SELECT id, name, description, worktime
       FROM projects 
       WHERE user_id = ${user.id}
       ORDER BY id DESC
@@ -400,7 +400,7 @@ app.get("/projects/:id", async (c) => {
 
   try {
     const project = await sql`
-      SELECT id, name, description 
+      SELECT id, name, description , worktime
       FROM projects 
       WHERE id = ${projectId} AND user_id = ${user.id}
     `;
@@ -411,7 +411,7 @@ app.get("/projects/:id", async (c) => {
 
     // Récupérer également les tâches associées à ce projet
     const tasks = await sql`
-      SELECT id, name, checked, date 
+      SELECT id, name, checked, date
       FROM tasks 
       WHERE project_id = ${projectId} AND user_id = ${user.id}
     `;
@@ -452,6 +452,10 @@ app.put("/projects/:id", async (c) => {
       updates.description !== undefined
         ? updates.description
         : existingProject.description;
+    const worktime =
+      updates.worktime !== undefined
+        ? updates.worktime
+        : existingProject.worktime;
 
     if (name === "") {
       return c.json({ error: "le nom est obligatoire" }, 404);
@@ -459,9 +463,9 @@ app.put("/projects/:id", async (c) => {
     // Mettre à jour la tâche avec les valeurs fusionnées
     const [updatedTask] = await sql`
       UPDATE projects 
-      SET name = ${name}, description = ${description}
+      SET name = ${name}, description = ${description}, worktime =${worktime}
       WHERE id = ${projectId} AND user_id = ${user.id}
-      RETURNING id, name, description
+      RETURNING id, name, description, worktime
     `;
 
     return c.json({
@@ -626,7 +630,7 @@ app.get("/tasks/:id", async (c) => {
 
   try {
     const task = await sql`
-      SELECT id, name, checked, date, project_id,position FROM tasks 
+      SELECT id, name, checked, date, project_id, position FROM tasks 
       WHERE id = ${taskId} AND user_id = ${user.id}
     `;
 

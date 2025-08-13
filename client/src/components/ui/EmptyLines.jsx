@@ -6,7 +6,7 @@ const EmptyLines = ({ tasks, maxTaskCount }) => {
   const taskLength = Array.isArray(tasks) ? tasks.length : 0;
 
   const screenHeight = window.innerHeight;
-  let baseLines = 7;
+  let baseLines = 6;
 
   if (screenHeight < 600) {
     baseLines = 4;

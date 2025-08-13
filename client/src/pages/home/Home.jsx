@@ -20,8 +20,8 @@ function Home() {
           </section>
 
           <section id="Tools" className="home-tools">
-            <h1 className="tools-title">All features</h1>
-            <div className="tools-list">
+            {/* <h1 className="tools-title">All features</h1> */}
+            {/* <div className="tools-list">
               <FeatureCard
                 name="Daily Planner"
                 src="/fusionicon.svg"
@@ -34,7 +34,7 @@ function Home() {
                 href="/app/board"
                 description="Stay focused with a smart task timer"
               />
-            </div>
+            </div> */}
           </section>
         </main>
       </div>

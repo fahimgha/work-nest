@@ -75,12 +75,18 @@ export const getProjects = async () => {
 export const newProject = async (name, description) => {
   return await fetchApi("/projects", "POST", { name, description });
 };
+
+export const ApiGetProject = async (projectId) => {
+  return await fetchApi(`/projects/${projectId}`);
+};
+
 // Fonction pour modifier une tâche de l'utilisateur
-export const putProject = async (ProjectId, name, description) => {
+export const putProject = async (ProjectId, name, description, worktime) => {
   try {
     const response = await fetchApi(`/projects/${ProjectId}`, "PUT", {
       name,
       description,
+      worktime,
     });
     return response;
   } catch (error) {

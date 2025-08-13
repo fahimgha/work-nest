@@ -13,8 +13,6 @@ export const AuthContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  console.log(user);
-
   useEffect(() => {
     if (user !== null) {
       setLoading(false); // Arrête le "chargement"

@@ -6,6 +6,7 @@ import { Button } from "../ui/buttons/Button";
 import AddProject from "./AddProject";
 import EditProject from "./EditProject.jsx";
 import Header from "../Header.jsx";
+import { formatSeconds } from "../timer/Timer.jsx";
 import { HiDotsHorizontal } from "react-icons/hi";
 
 function Projects() {
@@ -79,7 +80,18 @@ function Projects() {
                   {firstLetterOfProject}
                 </div>
                 <div className={styles.textProject}>
-                  <h4>{project.name}</h4>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "3rem",
+                    }}
+                  >
+                    <h4>{project.name}</h4>
+                    <h5 style={{ margin: 0 }}>
+                      {formatSeconds(project.worktime)}
+                    </h5>
+                  </div>
 
                   <h3 title={project.description || "no description"}>
                     {project.description || "no description"}

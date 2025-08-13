@@ -8,11 +8,9 @@
   position: relative;
   width: 100%;
 }
-
 h4 {
   font-weight: normal;
 }
-
 .notebook-line {
   position: absolute;
   bottom: 0;
@@ -211,8 +209,13 @@ Button {
   width: 20px;
   height: 20px;
   position: absolute;
-  right: 0.1rem;
+  right: 0.2rem;
   z-index: 1;
+}
+.del-button.always-visible {
+  display: flex !important;
+  top: 0.4rem;
+  right: 0.4rem;
 }
 .del-button:hover {
   background: #cf352e;
@@ -619,7 +622,10 @@ a:hover {
 }
 
 .form-field {
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  /* margin-bottom: 15px; */
 }
 .form-title {
   text-align: center;
@@ -635,12 +641,14 @@ a:hover {
   font-size: 0.9rem;
   color: #555;
   margin-bottom: 5px;
+  text-align: start !important;
 }
 .form-field label {
+  text-align: center;
   display: block;
   font-size: 0.9rem;
   color: #555;
-  margin-bottom: 5px;
+  margin-bottom: 0.3rem;
 }
 
 .checkbox-container {
@@ -893,31 +901,46 @@ a {
   gap: 0.5rem;
 }
 
-.feature-card {
+/* select */
+select,
+select::picker(select) {
+  appearance: base-select;
+}
+select {
+  background-color: #efefef;
+  padding: 0.5rem 0.6rem;
+  min-width: 25rem;
+  font-size: 0.9rem;
+  border: none;
   cursor: pointer;
+}
+select option {
+  border-radius: 0.4rem;
+  padding: 0.2rem 0;
+}
+select option:hover,
+select option:focus {
+  background-color: rgba(55, 53, 47, 0.08);
+  /* outline: none; */
+}
+select::picker-icon {
+  display: none;
+}
+select button {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
   align-items: center;
-  background-color: #dcf8f8;
-  padding: 1.25rem 1rem;
-  width: 14rem;
-  height: 100px;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s ease;
-  text-decoration: none;
+  width: 100%;
 }
-
-.feature-card:hover {
-  background-color: #a4efef; /* Tailwind orange-100 */
+select::picker(select) {
+  border: none;
+  border-radius: 0.3rem;
+  background-color: #efefef;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
 }
-
-.feature-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0.5rem 0;
-}
-
-.feature-description {
-  font-size: 1rem;
-  font-size: 0.75rem;
+option::checkmark {
+  content: "";
 }
