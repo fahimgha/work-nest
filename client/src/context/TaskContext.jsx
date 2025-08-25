@@ -18,8 +18,7 @@ const TaskContext = createContext();
 const initialState = {
   tasks: {},
   projects: [],
-  currentProject: null,
-  currentProjectTasks: [],
+  currentProjectId: null,
   tasksNextWeek: [],
   loading: false,
   error: null,
@@ -32,8 +31,10 @@ function taskReducer(state, action) {
     case "GET_PROJECT":
       return {
         ...state,
-        currentProject: action.payload.project,
-        currentProjectTasks: action.payload.tasks,
+        currentProjectId: action.payload.project.id,
+        projects: state.projects.some((p) => p.id === action.payload.project.id)
+          ? state.projects
+          : [...state.projects, action.payload.project],
       };
     case "ADD_PROJECTS":
       return state;
@@ -104,6 +105,14 @@ function taskReducer(state, action) {
 
 export function TaskProvider({ children }) {
   const [state, dispatch] = useReducer(taskReducer, initialState);
+
+  const getCurrentProject = () =>
+    state.projects.find((p) => p.id === state.currentProjectId) || null;
+
+  const getCurrentProjectTasks = () =>
+    Object.values(state.tasks)
+      .flat()
+      .filter((t) => t.project_id === state.currentProjectId);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -247,8 +256,8 @@ export function TaskProvider({ children }) {
   const value = {
     tasks: state.tasks,
     tasksNextWeek: state.tasksNextWeek,
-    currentProject: state.currentProject,
-    currentProjectTasks: state.currentProjectTasks,
+    currentProject: getCurrentProject(),
+    currentProjectTasks: getCurrentProjectTasks(),
     projects: state.projects,
     loading: state.loading,
     error: state.error,

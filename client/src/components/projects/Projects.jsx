@@ -6,7 +6,7 @@ import { Button } from "../ui/buttons/Button";
 import AddProject from "./AddProject";
 import EditProject from "./EditProject.jsx";
 import Header from "../Header.jsx";
-import { formatSeconds } from "../timer/Timer.jsx";
+import { formatSeconds } from "../../utils/time";
 import { HiDotsHorizontal } from "react-icons/hi";
 
 function Projects() {

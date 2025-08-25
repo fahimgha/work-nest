@@ -3,18 +3,10 @@ import styles from "./timer.module.css";
 import { Button } from "../ui/buttons/Button";
 import DeleteButton from "../ui/buttons/DeleteTaskButton";
 import { useTasks } from "../../context/TaskContext";
+import { formatSeconds, formatTime } from "../../utils/time";
 import { initialState, timerReducer } from "./TimerReducer";
 import ProjectSelector from "./ProjectSelector";
 import TasksSelector from "./TasksSelector";
-
-export const formatSeconds = (totalSeconds) => {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return [hours, minutes, seconds]
-    .map((u) => String(u).padStart(2, "0"))
-    .join(":");
-};
 
 export default function Timer({ title }) {
   const [state, dispatch] = useReducer(timerReducer, initialState);
@@ -26,19 +18,14 @@ export default function Timer({ title }) {
     currentProjectTasks,
     getProject,
     editProject,
+    editTask,
   } = useTasks();
 
-  const formatTime = (time) => (time < 10 ? `0${time}` : time);
-
-  useEffect(
-    () => {
-      if (projectId) {
-        getProject(projectId);
-      }
-    },
-    [projectId],
-    getProject
-  );
+  useEffect(() => {
+    if (projectId) {
+      getProject(projectId);
+    }
+  }, [projectId]);
 
   useEffect(() => {
     let interval;
@@ -64,23 +51,23 @@ export default function Timer({ title }) {
   const removeTask = (taskId) => {
     setAddedTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
-  const handleSaveSession = async () => {
+  const handleSaveSession = () => {
     if (!currentProject) {
       console.log("Aucun projet sélectionné, session non enregistrée");
       return;
     }
-    await editProject(currentProject.id, {
-      name: currentProject.name,
-      description: currentProject.description,
+    addedTasks.map((task) =>
+      editTask(task.id, {
+        ...task,
+        checked: true,
+      })
+    );
+
+    editProject(currentProject.id, {
+      ...currentProject,
       worktime: state.totalWorktime,
     });
-  };
-
-  const handleCheckboxChange = (isChecked) => {
-    editTask(task.id, {
-      ...task,
-      checked: isChecked,
-    });
+    setAddedTasks([]);
   };
 
   return (
@@ -101,7 +88,6 @@ export default function Timer({ title }) {
                   " " +
                   formatSeconds(state.worktimeSession)}
               </h2>
-
               <TasksSelector
                 onChange={handleTaskSelection}
                 tasks={currentProjectTasks}

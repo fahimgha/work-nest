@@ -1,4 +1,4 @@
-import { addMinutes, format } from "date-fns";
+import { useEffect, useReducer } from "react";
 
 export const initialState = {
   minutes: 25,
@@ -51,17 +51,34 @@ export function timerReducer(state, action) {
         seconds: 0,
         worktimeSession: 0,
       };
-    case "ACTION_CANCEL":
-      return {
-        ...state,
-        isRunning: false,
-        hasSessionStopped: true,
-        projectId: "",
-        minutes: 25,
-        seconds: 0,
-        tasks: [],
-      };
     default:
       return state;
   }
+}
+export function useTimer(defaultMinutes = 25) {
+  const [state, dispatch] = useReducer(timerReducer, {
+    ...initialState,
+    minutes: defaultMinutes,
+  });
+
+  useEffect(() => {
+    let interval;
+    if (state.isRunning) {
+      interval = setInterval(() => {
+        dispatch({ type: "ACTION_TICK" });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [state.isRunning]);
+
+  const start = (projectId, existingWorktime = 0) =>
+    dispatch({
+      type: "ACTION_START",
+      payload: { projectId, existingWorktime },
+    });
+  const stop = () => dispatch({ type: "ACTION_STOP" });
+  const end = () => dispatch({ type: "ACTION_END" });
+  const cancel = () => dispatch({ type: "ACTION_CANCEL" });
+
+  return { state, start, stop, end, cancel, dispatch };
 }
