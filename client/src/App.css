@@ -8,9 +8,6 @@
   position: relative;
   width: 100%;
 }
-h4 {
-  font-weight: normal;
-}
 .notebook-line {
   position: absolute;
   bottom: 0;
@@ -33,14 +30,12 @@ h4 {
   margin: 0 0.3rem;
   overflow: visible;
 }
-
 .ol-tasks {
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 0;
   margin: 0;
-
   position: relative;
 }
 
@@ -53,7 +48,6 @@ h4 {
 }
 .today {
   color: #35b2b2;
-  /* background-color: rgba(53, 178, 178, 0.9); */
 }
 .li-tasks {
   display: flex;
@@ -67,16 +61,14 @@ h4 {
   display: flex;
 }
 .li-tasks:hover .task-tag {
-  right: 1.5rem;
+  right: 1.7rem;
 }
 .li-tasks:hover .edit-button {
   display: flex;
 }
-
 /* task.jsx */
 .task-container {
   display: flex;
-
   text-align: start;
   align-items: center;
   border-bottom: 0.08rem solid rgb(180, 180, 180);
@@ -104,7 +96,6 @@ h4 {
 .li-tasks:hover .task {
   white-space: normal;
 }
-
 .task {
   display: flex;
   align-items: center;
@@ -119,7 +110,6 @@ h4 {
   transition: white-space 0.3s ease;
   cursor: pointer;
 }
-
 /* inputTask component*/
 .todo-input {
   position: relative;
@@ -129,7 +119,6 @@ h4 {
   justify-content: start;
   width: 100%;
 }
-
 .addInput {
   height: 29px;
   border-bottom: 0.08rem solid rgb(49, 105, 145);
@@ -140,22 +129,11 @@ h4 {
   position: relative;
   width: 98%;
 }
-
 .edit {
   padding-top: 4px;
   border-bottom: 0.08rem solid rgb(49, 105, 145);
   width: 95%;
   height: 50px;
-}
-
-input {
-  border: none;
-  padding: 0;
-}
-textarea {
-  max-height: 150px;
-  min-height: fit-content;
-  max-width: 90%;
 }
 .input-name-task {
   display: flex;
@@ -168,12 +146,6 @@ textarea {
   height: 100%;
   width: 95%;
 }
-
-Button {
-  border: none;
-  user-select: none;
-}
-
 .addButton {
   display: flex;
   border-bottom: 0.08rem solid rgb(220, 220, 220);
@@ -195,7 +167,6 @@ Button {
     display: flex;
   }
 }
-
 .del-button {
   background-color: white;
   border: 0.1rem solid #929292;
@@ -250,32 +221,26 @@ Button {
     transition: background 0.2s, stroke-dashoffset 0.3s;
   }
 }
-/* checkbox */
 
+/* checkbox */
 .checkbox {
   display: grid;
   margin-right: 0.3rem;
-
   cursor: pointer;
 }
-
 .checkbox:hover .checkbox_check {
   background: #37b2b2;
 }
-
 .checkbox_input {
   margin: 0;
   width: 0;
   height: 0;
   opacity: 0;
 }
-
 .checkbox_input:checked + .checkbox_check {
   background: #37b2b2;
-
   stroke-dashoffset: 0;
 }
-
 .checkbox_check {
   border: 0.1rem solid #929292;
   stroke: #f9f9f9;
@@ -287,7 +252,6 @@ Button {
   fill: none;
   transition: background 0.2s, stroke-dashoffset 0.3s;
 }
-
 .today-button {
   border: 0;
   padding: 0.4rem;
@@ -309,7 +273,6 @@ Button {
 .paginations div {
   display: flex;
 }
-
 .promodoro-container {
   background-color: #fafafa;
   border: 0.01rem solid #8d918d84;
@@ -611,11 +574,9 @@ a:hover {
   color: #999;
   cursor: pointer;
 }
-
 .close-button:hover {
   color: #333;
 }
-
 .edit-form {
   display: flex;
   flex-direction: column;
@@ -625,12 +586,10 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: start;
-  /* margin-bottom: 15px; */
 }
 .form-title {
   text-align: center;
 }
-
 .form-field-checkbox {
   display: flex;
   align-items: center;
@@ -788,7 +747,7 @@ a:hover {
 }
 .task-tag {
   position: absolute;
-  right: 0.3rem;
+  right: 0.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -909,10 +868,11 @@ select::picker(select) {
 select {
   background-color: #efefef;
   padding: 0.5rem 0.6rem;
-  min-width: 25rem;
+  width: 18rem;
   font-size: 0.9rem;
   border: none;
   cursor: pointer;
+  border-radius: 0.2rem;
 }
 select option {
   border-radius: 0.4rem;
@@ -921,18 +881,16 @@ select option {
 select option:hover,
 select option:focus {
   background-color: rgba(55, 53, 47, 0.08);
-  /* outline: none; */
 }
-select::picker-icon {
-  display: none;
-}
-select button {
+/* select::picker-icon {
+  } */
+/* select button {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
   width: 100%;
-}
+} */
 select::picker(select) {
   border: none;
   border-radius: 0.3rem;

@@ -349,7 +349,7 @@ app.use("/projects/*", async (c, next) => {
 });
 app.post("/projects", async (c) => {
   const user = c.get("user");
-  const { name, description, worktime } = await c.req.json();
+  const { name, description } = await c.req.json();
 
   try {
     if (!name) {
@@ -357,9 +357,9 @@ app.post("/projects", async (c) => {
     }
 
     const [newProject] = await sql`
-      INSERT INTO projects (user_id, name, description, worktime) 
-      VALUES (${user.id}, ${name}, ${description || ""},  ${worktime})
-      RETURNING id, name, description, worktime
+      INSERT INTO projects (user_id, name, description ) 
+      VALUES (${user.id}, ${name}, ${description || ""})
+      RETURNING id, name, description
     `;
 
     return c.json({

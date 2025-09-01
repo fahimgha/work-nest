@@ -4,10 +4,10 @@ import Task from "../tasks/Task";
 import styles from "./lists.module.css";
 import MenuList from "./MenuList";
 import EmptyLines from "../ui/EmptyLines";
-import Timer from "../timer/Timer";
+import Timer from "../timer/timer";
 
 function Lists() {
-  const { tasksWithoutProject, tasksNextWeek } = useTasks();
+  const { tasksNextWeek } = useTasks();
   const [activeFilters, setActiveFilters] = useState(["All"]);
 
   const handleFilterClick = (filter) => {
@@ -64,7 +64,7 @@ function TaskList({ title, tasks, className, hideCheckbox }) {
                 <div className="task-spacer"></div>
               </li>
             ))}
-          <EmptyLines tasks={tasks} minTotalItems={8} />
+          <EmptyLines tasks={tasks} maxTaskCount={7} />
         </ol>
       </div>
     </div>

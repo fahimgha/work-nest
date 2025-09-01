@@ -10,7 +10,7 @@ import TasksSelector from "./TasksSelector";
 
 export default function Timer({ title }) {
   const [state, dispatch] = useReducer(timerReducer, initialState);
-  const [projectId, setProjectId] = useState(null);
+  const [projectId, setProjectId] = useState();
   const [addedTasks, setAddedTasks] = useState([]);
   const {
     projects,
@@ -25,9 +25,6 @@ export default function Timer({ title }) {
     if (projectId) {
       getProject(projectId);
     }
-  }, [projectId]);
-
-  useEffect(() => {
     let interval;
     if (state.isRunning) {
       interval = setInterval(() => {
@@ -68,101 +65,90 @@ export default function Timer({ title }) {
       worktime: state.totalWorktime,
     });
     setAddedTasks([]);
+    setProjectId();
   };
 
   return (
-    <section
-      className={
-        styles.timerSection + (state.hasSessionStopped ? " " + styles.full : "")
-      }
-    >
+    <section className={styles.timerSection}>
       <h4 className={styles.taskListTitle}>{title}</h4>
-      <div className={styles.container}>
-        {state.hasSessionStopped ? (
-          <div className={styles.selectTasksContainer}>
-            <div>
-              <h2>
-                Session Completed for
-                {" " +
-                  currentProject?.name +
-                  " " +
-                  formatSeconds(state.worktimeSession)}
-              </h2>
-              <TasksSelector
-                onChange={handleTaskSelection}
-                tasks={currentProjectTasks}
-                selectedTaskIds={addedTasks.map((task) => task.id)}
-              />
-              <div className={styles.buttonContainer}>
-                <Button
-                  onClick={() => {
-                    handleSaveSession();
-                    dispatch({ type: "ACTION_END" });
-                  }}
-                >
-                  Save Session
-                </Button>
-              </div>
-            </div>
 
-            {addedTasks.length > 0 ? (
-              <ol>
-                {addedTasks.map((task) => (
-                  <li className={styles.listOfSelectTasks} key={task.id}>
-                    <span>{task.name}</span>
-                    <DeleteButton
-                      onClick={() => removeTask(task.id)}
-                      className="always-visible"
-                    />
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              ""
-            )}
+      {state.hasSessionStopped ? (
+        <div className={styles.selectTasksContainer}>
+          <h2 style={{ textAlign: "center" }}>
+            Session completed
+            <br />
+            {currentProject?.name} – {formatSeconds(state.worktimeSession)}
+          </h2>
+          <TasksSelector
+            onChange={handleTaskSelection}
+            tasks={currentProjectTasks}
+            selectedTaskIds={addedTasks.map((task) => task.id)}
+          />
+          <div className={styles.buttonContainer}>
+            <Button
+              onClick={() => {
+                handleSaveSession();
+                dispatch({ type: "ACTION_END" });
+              }}
+            >
+              Save Session
+            </Button>
           </div>
-        ) : (
-          <div className={styles.selectContainer}>
-            <div className={styles.timerDisplay}>
-              <div className={styles.time}>
-                <span className={styles.timeUnit}>
-                  {formatTime(state.minutes)}
-                </span>
-                <span className={styles.timeSeparator}>:</span>
-                <span className={styles.timeUnit}>
-                  {formatTime(state.seconds)}
-                </span>
-              </div>
+          {addedTasks.length > 0 ? (
+            <ol>
+              {addedTasks.map((task) => (
+                <li className={styles.listOfSelectTasks} key={task.id}>
+                  <span>{task.name}</span>
+                  <DeleteButton
+                    onClick={() => removeTask(task.id)}
+                    className="always-visible"
+                  />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            "no selected tasks"
+          )}
+        </div>
+      ) : (
+        <div className={styles.selectContainer}>
+          <div className={styles.timerDisplay}>
+            <div className={styles.time}>
+              <span className={styles.timeUnit}>
+                {formatTime(state.minutes)}
+              </span>
+              <span className={styles.timeSeparator}>:</span>
+              <span className={styles.timeUnit}>
+                {formatTime(state.seconds)}
+              </span>
             </div>
-
-            <ProjectSelector
-              value={projectId}
-              onChange={(e) => setProjectId(Number(e.target.value))}
-              projects={projects}
-            />
-
-            {!state.isRunning ? (
-              <Button
-                onClick={() =>
-                  dispatch({
-                    type: "ACTION_START",
-                    payload: {
-                      projectId,
-                      existingWorktime: currentProject?.worktime || 0,
-                    },
-                  })
-                }
-              >
-                Start
-              </Button>
-            ) : (
-              <Button onClick={() => dispatch({ type: "ACTION_STOP" })}>
-                Stop
-              </Button>
-            )}
           </div>
-        )}
-      </div>
+          <ProjectSelector
+            value={projectId}
+            onChange={(e) => setProjectId(Number(e.target.value))}
+            projects={projects}
+          />
+          {!state.isRunning ? (
+            <Button
+              onClick={() =>
+                dispatch({
+                  type: "ACTION_START",
+                  payload: {
+                    projectId,
+                    existingWorktime: currentProject?.worktime || 0,
+                  },
+                })
+              }
+            >
+              Start Session
+            </Button>
+          ) : (
+            <Button onClick={() => dispatch({ type: "ACTION_STOP" })}>
+              Stop
+            </Button>
+          )}
+        </div>
+      )}
     </section>
   );
 }

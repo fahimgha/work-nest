@@ -1,11 +1,9 @@
 /* Container */
 
 .timerSection {
-  padding: 1rem;
+  min-width: 400px;
+  padding: 1rem 0.5rem;
   border-right: 1px solid #ddd;
-}
-.full {
-  width: 68%;
 }
 .taskListTitle {
   font-weight: 500;
@@ -13,21 +11,13 @@
   text-align: start;
 }
 .container {
-  padding: 1rem;
   overflow: hidden;
 }
-
 .selectTasksContainer {
-  display: flex;
-  justify-self: center;
-  justify-content: space-between;
-  width: 95%;
-  gap: 1.5rem;
-}
-.selectTasksContainer div {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
 }
 .selectTasksContainer p {
@@ -56,12 +46,13 @@
 .listOfSelectTasks {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* align-items: center; */
   text-align: start;
   width: 90%;
   background-color: #efefef;
   padding: 0.4rem 0.6rem;
   border-radius: 0.3rem;
+  font-size: 0.9rem;
 }
 .buttonContainer {
   display: flex;
@@ -70,7 +61,6 @@
   gap: 1rem;
 }
 /* Timer Display */
-
 .time {
   font-size: 3rem;
   font-weight: bold;

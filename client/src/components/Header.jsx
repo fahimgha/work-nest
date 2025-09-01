@@ -47,6 +47,12 @@ export default function Header({ children }) {
             >
               <li>My Projects</li>
             </NavLink>
+            {/* <NavLink
+              to="/app/timer"
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+            >
+              <li>Timer</li>
+            </NavLink> */}
           </ol>
         ) : (
           <ol className={`olHeaderLeft`}>

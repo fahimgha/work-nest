@@ -71,39 +71,32 @@ function Projects() {
       {projects.length > 0 ? (
         <ol className={styles.olProject}>
           {projects.map((project) => {
-            const firstLetterOfProject = project.name
-              .substr(0, 1)
-              .toUpperCase();
             return (
-              <li className={styles.liProject} key={project.id}>
-                <div className={styles.imageProject}>
-                  {firstLetterOfProject}
-                </div>
-                <div className={styles.textProject}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "3rem",
-                    }}
-                  >
-                    <h4>{project.name}</h4>
-                    <h5 style={{ margin: 0 }}>
+              <li className={styles.CardProject} key={project.id}>
+                <div className={styles.headerCard}>
+                  <h4>{project.name}</h4>
+                  {project.worktime ? (
+                    <span className={styles.timerTag}>
                       {formatSeconds(project.worktime)}
-                    </h5>
-                  </div>
-
-                  <h3 title={project.description || "no description"}>
-                    {project.description || "no description"}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className={styles.border}></div>
+                <div className={styles.CardDescription}>
+                  <h3 title={project.description || "No description provided"}>
+                    {project.description || "No description provided"}
                   </h3>
                 </div>
+
                 <div
                   onClick={(e) => {
                     e.stopPropagation();
                     if (menuOpenId === project.id) {
-                      setMenuOpenId(null); // fermer si déjà ouvert
+                      setMenuOpenId(null);
                     } else {
-                      setMenuOpenId(project.id); // ouvrir pour ce projet
+                      setMenuOpenId(project.id);
                     }
                   }}
                   className="toggle-menu-action"

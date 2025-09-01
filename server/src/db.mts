@@ -7,7 +7,7 @@ const sql = postgres({
   port: 5432,
   database: "postgres",
   username: "postgres",
-  password: "faroudja",
+  password: "password",
 });
 console.log("✅ Connected to Postgres");
 

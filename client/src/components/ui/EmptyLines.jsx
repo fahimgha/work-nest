@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from "react";
+import { memo } from "react";
 const EmptyLines = ({ tasks, maxTaskCount }) => {
   const safeMaxTaskCount =
     typeof maxTaskCount === "number" && !isNaN(maxTaskCount) ? maxTaskCount : 0;
@@ -11,7 +11,7 @@ const EmptyLines = ({ tasks, maxTaskCount }) => {
   if (screenHeight < 600) {
     baseLines = 4;
   } else if (screenHeight >= 900) {
-    baseLines = 10;
+    baseLines = 12;
   }
   const totalTarget = Math.max(safeMaxTaskCount, baseLines);
   const linesToShow = Math.max(0, totalTarget - taskLength);
