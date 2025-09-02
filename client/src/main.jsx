@@ -17,6 +17,7 @@ import SharedLayout from "./components/SharedLayout.jsx";
 import Board from "./pages/board/Board.jsx";
 import AccountActivated from "./pages/EmailVerification/AccountActivated.jsx";
 import EmailVerification from "./pages/EmailVerification/EmailVerification.jsx";
+import { TimerProvider } from "./components/timer/TimerContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -103,7 +104,9 @@ createRoot(document.getElementById("root")).render(
   // <StrictMode>
 
   <TaskProvider>
-    <RouterProvider router={router} />
+    <TimerProvider>
+      <RouterProvider router={router} />
+    </TimerProvider>
   </TaskProvider>
 
   // </StrictMode>

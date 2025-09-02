@@ -1,7 +1,9 @@
-import { useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useContext } from "react";
 
+const TimerContext = createContext();
+const DEFAULT_MINUTES = 25;
 export const initialState = {
-  minutes: 25,
+  minutes: DEFAULT_MINUTES,
   seconds: 0,
   projectId: "",
   tasks: [],
@@ -25,13 +27,23 @@ export function timerReducer(state, action) {
         tasks: [],
       };
     case "ACTION_TICK":
+      const remainingSeconds = state.minutes * 60 + state.seconds;
+      const elapsedSeconds = DEFAULT_MINUTES * 60 - remainingSeconds;
       if (state.seconds > 0) return { ...state, seconds: state.seconds - 1 };
       else if (state.minutes > 0)
         return { ...state, minutes: state.minutes - 1, seconds: 59 };
-      return state;
+      else {
+        return {
+          ...state,
+          isRunning: false,
+          hasSessionStopped: true,
+          worktimeSession: elapsedSeconds,
+          totalWorktime: state.totalWorktime + elapsedSeconds,
+        };
+      }
     case "ACTION_STOP": {
       const remainingSeconds = state.minutes * 60 + state.seconds;
-      const elapsedSeconds = 25 * 60 - remainingSeconds;
+      const elapsedSeconds = DEFAULT_MINUTES * 60 - remainingSeconds;
 
       return {
         ...state,
@@ -47,7 +59,7 @@ export function timerReducer(state, action) {
         isRunning: false,
         hasSessionStopped: false,
         projectId: "",
-        minutes: 25,
+        minutes: DEFAULT_MINUTES,
         seconds: 0,
         worktimeSession: 0,
       };
@@ -55,10 +67,9 @@ export function timerReducer(state, action) {
       return state;
   }
 }
-export function useTimer(defaultMinutes = 25) {
+export function TimerProvider({ children }) {
   const [state, dispatch] = useReducer(timerReducer, {
     ...initialState,
-    minutes: defaultMinutes,
   });
 
   useEffect(() => {
@@ -76,9 +87,29 @@ export function useTimer(defaultMinutes = 25) {
       type: "ACTION_START",
       payload: { projectId, existingWorktime },
     });
-  const stop = () => dispatch({ type: "ACTION_STOP" });
-  const end = () => dispatch({ type: "ACTION_END" });
-  const cancel = () => dispatch({ type: "ACTION_CANCEL" });
 
-  return { state, start, stop, end, cancel, dispatch };
+  const stop = () => dispatch({ type: "ACTION_STOP" });
+
+  const end = () => dispatch({ type: "ACTION_END" });
+
+  const value = {
+    minutes: state.minutes,
+    seconds: state.seconds,
+    projectId: state.projectId,
+    tasks: state.tasks,
+    worktimeSession: state.worktimeSession,
+    totalWorktime: state.totalWorktime,
+    isRunning: state.isRunning,
+    hasSessionStopped: state.hasSessionStopped,
+    start,
+    stop,
+    end,
+  };
+  return (
+    <TimerContext.Provider value={value}>{children}</TimerContext.Provider>
+  );
+}
+
+export function useTimer() {
+  return useContext(TimerContext);
 }

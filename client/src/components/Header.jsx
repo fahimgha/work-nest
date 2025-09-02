@@ -3,9 +3,15 @@ import UserIcon from "./user/UserIcon";
 import { AuthContext } from "../context/AuthContext";
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "./ui/buttons/Button";
+import { useTimer } from "./timer/TimerContext";
+import { formatTime } from "../utils/time";
+import { useTasks } from "../context/TaskContext";
 
 export default function Header({ children }) {
   const { user } = useContext(AuthContext);
+  const { currentProject } = useTasks();
+  const { minutes, seconds, isRunning } = useTimer();
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -47,12 +53,6 @@ export default function Header({ children }) {
             >
               <li>My Projects</li>
             </NavLink>
-            {/* <NavLink
-              to="/app/timer"
-              className={({ isActive }) => (isActive ? "active-link" : "")}
-            >
-              <li>Timer</li>
-            </NavLink> */}
           </ol>
         ) : (
           <ol className={`olHeaderLeft`}>
@@ -65,6 +65,16 @@ export default function Header({ children }) {
           </ol>
         )}
         <div className="rightNavBar">
+          <Link to="/app/board">
+            {isRunning ? (
+              <span className="timerTag">
+                ⏳ {formatTime(minutes)}:{formatTime(seconds)}
+              </span>
+            ) : (
+              ""
+            )}
+          </Link>
+
           <div className="UserIcon">{children}</div>
 
           {user ? (

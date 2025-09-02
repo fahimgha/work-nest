@@ -759,6 +759,21 @@ a:hover {
   width: 18px;
   border-radius: 0.2rem;
 }
+.timerTag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  text-align: center;
+  font-size: 0.9rem;
+  background-color: #ffe494;
+  padding: 0 0.5rem;
+  border-radius: 0.4rem;
+  max-height: 30px;
+  height: 100%;
+  cursor: pointer;
+  white-space: nowrap;
+}
 .project-button {
   background: none;
   border: none;
