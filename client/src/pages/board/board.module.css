@@ -13,7 +13,12 @@
   align-items: center;
   gap: 1rem;
 }
-
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
 .columnContainer {
   display: flex;
   justify-content: center;

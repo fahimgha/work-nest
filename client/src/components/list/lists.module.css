@@ -1,6 +1,7 @@
 .container {
   margin-top: 2rem;
-  height: calc(100vh - 2rem);
+  height: 40vh;
+  min-height: 400px;
   margin: 0 20px;
   display: flex;
   flex-direction: column;
@@ -37,14 +38,14 @@
 .listsContainer {
   display: flex;
   flex: 1;
-  overflow: hidden; 
+  overflow: hidden;
   margin-top: 0.5rem;
   border-top: 1px solid #ddd;
   border-radius: 0.1rem;
 }
 
 .taskList {
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   max-width: 400px;

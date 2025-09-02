@@ -89,22 +89,24 @@ export default function Board() {
           ""
         )}
       </div>
-      <section className={styles.columnContainer}>
-        {daysDisplay.map((day) => {
-          const formattedDate = format(day, "yyyy-MM-dd");
-          const columnTasks = tasks[formattedDate] || [];
+      <div className={styles.app}>
+        <section className={styles.columnContainer}>
+          {daysDisplay.map((day) => {
+            const formattedDate = format(day, "yyyy-MM-dd");
+            const columnTasks = tasks[formattedDate] || [];
 
-          return (
-            <ColumnTask
-              key={formattedDate}
-              tasks={columnTasks}
-              date={formattedDate}
-              maxTaskCount={maxTaskCount}
-            />
-          );
-        })}
-      </section>
-      <Lists />
+            return (
+              <ColumnTask
+                key={formattedDate}
+                tasks={columnTasks}
+                date={formattedDate}
+                maxTaskCount={maxTaskCount}
+              />
+            );
+          })}
+        </section>
+        <Lists />
+      </div>
     </>
   );
 }

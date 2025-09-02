@@ -64,7 +64,7 @@ function TaskList({ title, tasks, className, hideCheckbox }) {
                 <div className="task-spacer"></div>
               </li>
             ))}
-          <EmptyLines tasks={tasks} maxTaskCount={7} />
+          {/* <EmptyLines tasks={tasks} /> */}
         </ol>
       </div>
     </div>
