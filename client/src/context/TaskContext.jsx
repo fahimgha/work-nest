@@ -243,7 +243,6 @@ export function TaskProvider({ children }) {
   const fetchTasksNextWeek = useCallback(async () => {
     try {
       const data = await getTasksNextWeek();
-      // console.log(data);
       dispatch({
         type: "FETCH_TASKS_NEXT_WEEK",
         payload: data,

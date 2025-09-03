@@ -8,10 +8,14 @@ import EditProject from "./EditProject.jsx";
 import Header from "../Header.jsx";
 import { formatSeconds } from "../../utils/time";
 import { HiDotsHorizontal } from "react-icons/hi";
+import ConfirmDialog from "../ui/ConfirmDialog/ConfirmDialog.jsx";
 
 function Projects() {
   const { projects, addProject, fetchProjects, editProject, removeProject } =
     useTasks();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -41,9 +45,21 @@ function Projects() {
 
   const handleEditProject = (updatedTask) => {
     editProject(selectedProject.id, updatedTask);
-
     setShowEditProjectModal(false);
     setSelectedProject(null);
+  };
+
+  const handleDeleteClick = (project) => {
+    setProjectToDelete(project);
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (projectToDelete) {
+      await removeProject(projectToDelete);
+      setProjectToDelete(null);
+      setShowConfirm(false);
+    }
   };
 
   return (
@@ -119,7 +135,7 @@ function Projects() {
                   </li>
                   <li
                     onClick={() => {
-                      removeProject(project.id);
+                      handleDeleteClick(project);
                       setMenuOpenId(null);
                     }}
                   >
@@ -149,6 +165,17 @@ function Projects() {
         />
       ) : (
         ""
+      )}
+
+      {showConfirm && (
+        <ConfirmDialog
+          title="Confirm Delete Project"
+          onCancel={() => setShowConfirm(false)}
+          onConfirm={confirmDelete}
+        >
+          Delete <strong>{projectToDelete?.name}</strong> and all its tasks and
+          sessions?
+        </ConfirmDialog>
       )}
     </div>
   );

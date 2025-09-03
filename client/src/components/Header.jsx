@@ -9,7 +9,6 @@ import { useTasks } from "../context/TaskContext";
 
 export default function Header({ children }) {
   const { user } = useContext(AuthContext);
-  const { currentProject } = useTasks();
   const { minutes, seconds, isRunning } = useTimer();
 
   const [menuOpen, setMenuOpen] = useState(false);

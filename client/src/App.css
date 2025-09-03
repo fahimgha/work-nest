@@ -273,19 +273,6 @@
 .paginations div {
   display: flex;
 }
-.promodoro-container {
-  background-color: #fafafa;
-  border: 0.01rem solid #8d918d84;
-  border-radius: 0.3rem;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  flex: 1;
-  max-width: calc(100% / 3);
-  width: 100%;
-  min-height: 21rem;
-  overflow: hidden;
-}
 nav {
   position: fixed;
   top: 0;
