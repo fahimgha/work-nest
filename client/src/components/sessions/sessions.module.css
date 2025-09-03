@@ -1,0 +1,72 @@
+/* Container */
+.container {
+  min-width: 400px;
+  padding: 1rem 0.5rem;
+  border-right: 1px solid #ddd;
+}
+.title {
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-align: start;
+}
+.historyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1rem;
+  flex: 1;
+}
+.historyContainer ol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.card {
+  padding: 0.75rem;
+
+  width: 90%;
+}
+.buttonContainer {
+  display: flex;
+  align-self: center;
+  gap: 0.5rem;
+}
+.listOfSessions {
+  display: flex;
+  justify-content: space-between;
+  text-align: start;
+  width: 90%;
+  background-color: #f0f0f0;
+  padding: 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+}
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+}
+.item span {
+  font-size: 0.7rem;
+  color: #424a50;
+}
+.timerTag {
+  text-align: center;
+  margin: auto 0;
+  font-size: 0.9rem;
+  background-color: #ffe494;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.3rem;
+}
+.emptySessions {
+  display: flex;
+  align-self: center;
+  margin: 2rem;
+}

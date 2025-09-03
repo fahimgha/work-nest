@@ -68,6 +68,19 @@ export const signup = async (name, email, password) => {
     password,
   });
 };
+
+export const getSessions = async () => {
+  return await fetchApi("/sessions");
+};
+
+export const newSessions = async (projectId, worktime, tasksCount) => {
+  return await fetchApi("/sessions", "POST", {
+    projectId,
+    worktime,
+    tasksCount,
+  });
+};
+
 export const getProjects = async () => {
   return await fetchApi("/projects");
 };

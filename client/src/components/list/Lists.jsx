@@ -5,6 +5,7 @@ import styles from "./lists.module.css";
 import MenuList from "./MenuList";
 import EmptyLines from "../ui/EmptyLines";
 import Timer from "../timer/timer";
+import Sessions from "../sessions/Sessions";
 
 function Lists() {
   const { tasksNextWeek } = useTasks();
@@ -19,7 +20,6 @@ function Lists() {
         if (prevFilters.includes("All")) {
           return [filter];
         }
-
         // Ajouter ou retirer le filtre cliqué
         if (prevFilters.includes(filter)) {
           const updatedFilters = prevFilters.filter((f) => f !== filter);
@@ -46,6 +46,7 @@ function Lists() {
           <TaskList title="To Do Next Week" tasks={tasksNextWeek} />
         )}
         {shouldDisplay("My Timer") && <Timer title="Timer" />}
+        {shouldDisplay("Sessions") && <Sessions title="Sessions" />}
       </div>
     </div>
   );
@@ -64,7 +65,7 @@ function TaskList({ title, tasks, className, hideCheckbox }) {
                 <div className="task-spacer"></div>
               </li>
             ))}
-          {/* <EmptyLines tasks={tasks} /> */}
+          <EmptyLines tasks={tasks} />
         </ol>
       </div>
     </div>

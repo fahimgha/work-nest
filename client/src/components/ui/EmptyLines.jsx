@@ -2,11 +2,9 @@ import { memo, useEffect, useState } from "react";
 const EmptyLines = ({ tasks, maxTaskCount }) => {
   const safeMaxTaskCount =
     typeof maxTaskCount === "number" && !isNaN(maxTaskCount) ? maxTaskCount : 0;
-
   const taskLength = Array.isArray(tasks) ? tasks.length : 0;
-
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
-  console.log(screenHeight);
+
   useEffect(() => {
     const handleResize = () => setScreenHeight(window.innerHeight);
     window.addEventListener("resize", handleResize);

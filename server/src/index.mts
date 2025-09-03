@@ -8,11 +8,12 @@ import { logger } from "hono/logger";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { Resend } from "resend";
-import { EmailTemplate } from "./emails/EmailTemplate.tsx";
+import { authMiddleware } from "./authMiddleware.mts";
 
 type Variables = {
   user: { id: number; email: string; role: string; exp: number };
 };
+
 const app = new Hono<{ Variables: Variables }>();
 app.use(
   "/*",
@@ -24,6 +25,27 @@ app.use(
 app.use(logger());
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+app.use("/projects/*", authMiddleware);
+app.use("/tasks/*", authMiddleware);
+app.use("/user/*", authMiddleware);
+app.use("/sessions/*", authMiddleware);
+
+app.get("/user", async (c) => {
+  const userData = c.get("user");
+  console.log(userData);
+  try {
+    const [user] =
+      await sql`SELECT id, name, email, created_at FROM users WHERE id=${userData.id}`;
+
+    if (!user) {
+      return c.json({ error: "Utilisateur non trouvé" }, 404);
+    }
+
+    return c.json({ message: `Bienvenue ${userData.email}`, user: [user] });
+  } catch (error) {
+    return c.json({ error: "voici l'erreur" + error }, 500);
+  }
+});
 app.post("/signup", async (c) => {
   const { name, email, password } = await c.req.json();
   try {
@@ -104,6 +126,7 @@ app.post("/signup", async (c) => {
     );
   }
 });
+
 app.get("/activate/:token", async (c) => {
   const token = c.req.param("token");
 
@@ -256,6 +279,7 @@ app.post("/refresh-token", async (c) => {
     return c.json({ error: "Refresh token invalide" }, 401);
   }
 });
+
 app.post("/logout", (c) => {
   try {
     // Supprimer le cookie du token
@@ -276,107 +300,10 @@ app.post("/logout", (c) => {
     return c.json({ error: "Erreur lors de la déconnexion" }, 500);
   }
 });
-app.use("/tasks/*", async (c, next) => {
-  console.log("🔄 Middleware d'authentification exécuté");
-  const token = getCookie(c, "token");
 
-  if (!token) {
-    return c.json({ error: "Non autorisé : token manquant" }, 401);
-  }
-  try {
-    const secret = process.env.SECRET_KEY || "";
-    const payload = await verify(token, secret);
-
-    const userPayload = payload as {
-      id: number;
-      email: string;
-      role: string;
-      exp: number;
-    };
-    c.set("user", userPayload);
-    await next();
-  } catch (err) {
-    console.error("Erreur de vérification du token", err);
-    return c.json({ error: "Token invalide" }, 401);
-  }
-});
-app.use("/user", async (c, next) => {
-  const token = getCookie(c, "token");
-
-  if (!token) {
-    return c.json({ error: "Non autorisé : token manquant" }, 401);
-  }
-  try {
-    const secret = process.env.SECRET_KEY || "";
-    const payload = await verify(token, secret);
-
-    const userPayload = payload as {
-      id: number;
-      email: string;
-      role: string;
-      exp: number;
-    };
-    c.set("user", userPayload);
-    await next();
-  } catch (err) {
-    console.error("Erreur de vérification du token", err);
-    return c.json({ error: "Token invalide" }, 401);
-  }
-});
-
-app.use("/projects/*", async (c, next) => {
-  const token = getCookie(c, "token");
-
-  if (!token) {
-    return c.json({ error: "Non autorisé : token manquant" }, 401);
-  }
-  try {
-    const secret = process.env.SECRET_KEY || "";
-    const payload = await verify(token, secret);
-
-    const userPayload = payload as {
-      id: number;
-      email: string;
-      role: string;
-      exp: number;
-    };
-    c.set("user", userPayload);
-    await next();
-  } catch (err) {
-    console.error("Erreur de vérification du token", err);
-    return c.json({ error: "Token invalide" }, 401);
-  }
-});
-app.post("/projects", async (c) => {
-  const user = c.get("user");
-  const { name, description } = await c.req.json();
-
-  try {
-    if (!name) {
-      return c.json({ error: "Le nom du projet est requis" }, 400);
-    }
-
-    const [newProject] = await sql`
-      INSERT INTO projects (user_id, name, description ) 
-      VALUES (${user.id}, ${name}, ${description || ""})
-      RETURNING id, name, description
-    `;
-
-    return c.json({
-      message: "Projet créé avec succès",
-      project: newProject,
-    });
-  } catch (error) {
-    return c.json(
-      { error: "Erreur lors de la création du projet: " + error },
-      500
-    );
-  }
-});
 // GET /projects - Récupérer tous les projets d'un utilisateur
 app.get("/projects", async (c) => {
   const user = c.get("user");
-
   try {
     const projects = await sql`
       SELECT id, name, description, worktime
@@ -384,7 +311,6 @@ app.get("/projects", async (c) => {
       WHERE user_id = ${user.id}
       ORDER BY id DESC
     `;
-
     return c.json({ projects });
   } catch (error) {
     return c.json(
@@ -393,6 +319,7 @@ app.get("/projects", async (c) => {
     );
   }
 });
+
 // GET /projects/:id - Récupérer un projet spécifique par son ID
 app.get("/projects/:id", async (c) => {
   const user = c.get("user");
@@ -423,6 +350,33 @@ app.get("/projects/:id", async (c) => {
   } catch (error) {
     return c.json(
       { error: "Erreur lors de la récupération du projet: " + error },
+      500
+    );
+  }
+});
+
+app.post("/projects", async (c) => {
+  const user = c.get("user");
+  const { name, description } = await c.req.json();
+
+  try {
+    if (!name) {
+      return c.json({ error: "Le nom du projet est requis" }, 400);
+    }
+
+    const [newProject] = await sql`
+      INSERT INTO projects (user_id, name, description ) 
+      VALUES (${user.id}, ${name}, ${description || ""})
+      RETURNING id, name, description
+    `;
+
+    return c.json({
+      message: "Projet créé avec succès",
+      project: newProject,
+    });
+  } catch (error) {
+    return c.json(
+      { error: "Erreur lors de la création du projet: " + error },
       500
     );
   }
@@ -558,21 +512,24 @@ app.get("/tasks", async (c) => {
     return c.json({ error: "Erreur: " + error }, 500);
   }
 });
+// GET /tasks/:id - Récupérer une tâche spécifique par son ID
+app.get("/tasks/:id", async (c) => {
+  const user = c.get("user");
+  const taskId = c.req.param("id");
 
-app.get("/user", async (c) => {
-  const userData = c.get("user");
-  console.log(userData);
   try {
-    const [user] =
-      await sql`SELECT id, name, email, created_at FROM users WHERE id=${userData.id}`;
+    const task = await sql`
+      SELECT id, name, checked, date, project_id, position FROM tasks 
+      WHERE id = ${taskId} AND user_id = ${user.id}
+    `;
 
-    if (!user) {
-      return c.json({ error: "Utilisateur non trouvé" }, 404);
+    if (task.length === 0) {
+      return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
     }
 
-    return c.json({ message: `Bienvenue ${userData.email}`, user: [user] });
+    return c.json(task[0]);
   } catch (error) {
-    return c.json({ error: "voici l'erreur" + error }, 500);
+    return c.json({ error: "Erreur lors de la récupération de la tâche" }, 500);
   }
 });
 
@@ -620,27 +577,6 @@ app.post("/tasks", async (c) => {
       { error: "Erreur lors de l'ajout d'une tâche: " + error },
       500
     );
-  }
-});
-
-// GET /tasks/:id - Récupérer une tâche spécifique par son ID
-app.get("/tasks/:id", async (c) => {
-  const user = c.get("user");
-  const taskId = c.req.param("id");
-
-  try {
-    const task = await sql`
-      SELECT id, name, checked, date, project_id, position FROM tasks 
-      WHERE id = ${taskId} AND user_id = ${user.id}
-    `;
-
-    if (task.length === 0) {
-      return c.json({ error: "Tâche non trouvée ou non autorisée" }, 404);
-    }
-
-    return c.json(task[0]);
-  } catch (error) {
-    return c.json({ error: "Erreur lors de la récupération de la tâche" }, 500);
   }
 });
 
@@ -709,6 +645,7 @@ app.put("/tasks/:id", async (c) => {
     return c.json({ error: "Erreur lors de la mise à jour de la tâche" }, 500);
   }
 });
+
 app.delete("/tasks/:id", async (c) => {
   const user = c.get("user");
   const taskId = c.req.param("id");
@@ -734,6 +671,44 @@ app.delete("/tasks/:id", async (c) => {
       {
         error: "Erreur lors de la suppression de la tâche",
       },
+      500
+    );
+  }
+});
+
+app.get("/sessions", async (c) => {
+  try {
+    const sessions = await sql`
+      SELECT id, project_id, worktime, tasks_count,created_at
+      FROM sessions 
+      ORDER BY id DESC
+    `;
+    return c.json({ sessions });
+  } catch (error) {
+    return c.json(
+      {
+        error: "Erreur lors de la récupération des sessions: " + error,
+      },
+      500
+    );
+  }
+});
+
+app.post("/sessions", async (c) => {
+  const { projectId, worktime, tasksCount } = await c.req.json();
+  try {
+    const [newSession] = await sql`
+      INSERT INTO sessions ( project_id, worktime,tasks_count ) 
+      VALUES (${projectId}, ${worktime}, ${tasksCount || ""})
+      RETURNING id, project_id, worktime,tasks_count
+    `;
+    return c.json({
+      message: "session enregistrer avec succès",
+      session: newSession,
+    });
+  } catch (error) {
+    return c.json(
+      { error: "Erreur lors de l'enregistrement de la session: " + error },
       500
     );
   }

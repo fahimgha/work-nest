@@ -7,6 +7,7 @@ import { formatSeconds, formatTime } from "../../utils/time";
 import ProjectSelector from "./ProjectSelector";
 import TasksSelector from "./TasksSelector";
 import { useTimer } from "./TimerContext";
+import Sessions from "../sessions/Sessions";
 
 export default function Timer({ title }) {
   const {
@@ -30,6 +31,7 @@ export default function Timer({ title }) {
     getProject,
     editProject,
     editTask,
+    addSession,
   } = useTasks();
 
   useEffect(() => {
@@ -68,6 +70,8 @@ export default function Timer({ title }) {
       ...currentProject,
       worktime: totalWorktime,
     });
+    addSession(5, totalWorktime, 1);
+
     setAddedTasks([]);
     setProjectId();
   };

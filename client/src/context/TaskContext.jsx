@@ -11,6 +11,8 @@ import {
   putTask,
   deleteTask,
   getTasksNextWeek,
+  getSessions,
+  newSessions,
 } from "../utils/api";
 
 const TaskContext = createContext();
@@ -18,6 +20,7 @@ const TaskContext = createContext();
 const initialState = {
   tasks: {},
   projects: [],
+  sessions: [],
   currentProjectId: null,
   tasksNextWeek: [],
   loading: false,
@@ -28,6 +31,7 @@ function taskReducer(state, action) {
   switch (action.type) {
     case "FETCH_PROJECTS":
       return { ...state, projects: action.payload };
+
     case "GET_PROJECT":
       return {
         ...state,
@@ -98,6 +102,10 @@ function taskReducer(state, action) {
       };
     case "FETCH_TASKS_NEXT_WEEK":
       return { ...state, tasksNextWeek: action.payload, loading: false };
+    case "GET_SESSIONS":
+      return { ...state, sessions: action.payload };
+    case "ADD_SESSION":
+      return state;
     default:
       return state;
   }
@@ -113,6 +121,24 @@ export function TaskProvider({ children }) {
     Object.values(state.tasks)
       .flat()
       .filter((t) => t.project_id === state.currentProjectId);
+
+  const getAllSessions = useCallback(async () => {
+    try {
+      const data = await getSessions();
+      dispatch({ type: "GET_SESSIONS", payload: data.sessions });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const addSession = useCallback(async (projectId, worktime, taskCount) => {
+    try {
+      await newSessions(projectId, worktime, taskCount);
+      dispatch({ type: "ADD_SESSION" });
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -258,6 +284,7 @@ export function TaskProvider({ children }) {
     currentProject: getCurrentProject(),
     currentProjectTasks: getCurrentProjectTasks(),
     projects: state.projects,
+    sessions: state.sessions,
     loading: state.loading,
     error: state.error,
     fetchProjects,
@@ -270,6 +297,8 @@ export function TaskProvider({ children }) {
     addTask,
     removeTask,
     editTask,
+    getAllSessions,
+    addSession,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

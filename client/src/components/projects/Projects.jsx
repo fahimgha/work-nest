@@ -50,7 +50,7 @@ function Projects() {
   };
 
   const handleDeleteClick = (project) => {
-    setProjectToDelete(project);
+    setProjectToDelete(project.id);
     setShowConfirm(true);
   };
 
