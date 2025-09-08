@@ -22,7 +22,7 @@ export default function Timer({ title }) {
     stop,
     end,
   } = useTimer();
-  const [projectId, setProjectId] = useState();
+  const [projectId, setProjectId] = useState(contextProjectId || "");
   const [addedTasks, setAddedTasks] = useState([]);
   const {
     projects,
@@ -70,7 +70,7 @@ export default function Timer({ title }) {
       ...currentProject,
       worktime: totalWorktime,
     });
-    addSession(5, totalWorktime, 1);
+    addSession(currentProject, totalWorktime, addedTasks.length);
 
     setAddedTasks([]);
     setProjectId();
@@ -128,7 +128,7 @@ export default function Timer({ title }) {
             </div>
           </div>
           <ProjectSelector
-            value={contextProjectId}
+            value={projectId || ""}
             onChange={(e) => setProjectId(Number(e.target.value))}
             projects={projects}
           />
