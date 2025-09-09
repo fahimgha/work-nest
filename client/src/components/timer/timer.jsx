@@ -65,12 +65,12 @@ export default function Timer({ title }) {
         checked: true,
       })
     );
+    addSession(currentProject.id, totalWorktime, addedTasks.length);
 
     editProject(currentProject.id, {
       ...currentProject,
-      worktime: totalWorktime,
+      worktime: (currentProject.worktime || 0) + totalWorktime,
     });
-    addSession(currentProject, totalWorktime, addedTasks.length);
 
     setAddedTasks([]);
     setProjectId();
@@ -93,6 +93,7 @@ export default function Timer({ title }) {
             selectedTaskIds={addedTasks.map((task) => task.id)}
           />
           <div className={styles.buttonContainer}>
+            <Button onClick={() => end()}>Cancel</Button>
             <Button
               onClick={() => {
                 handleSaveSession();

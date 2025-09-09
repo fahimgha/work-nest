@@ -16,6 +16,7 @@ export default function Board() {
     error,
     fetchTasks,
     fetchProjects,
+    getAllSessions,
     addProject,
     fetchTasksNextWeek,
   } = useTasks();
@@ -28,6 +29,7 @@ export default function Board() {
     fetchTasksNextWeek();
     fetchProjects();
     fetchTasks();
+    getAllSessions();
   }, []);
 
   useEffect(() => {

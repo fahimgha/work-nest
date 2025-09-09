@@ -13,8 +13,7 @@ export const refreshAccessToken = async () => {
     }
 
     const data = await response.json();
-    // Sauvegarder le nouveau token d'accès
-    document.cookie = `token=${data.token}; path=/; Secure; HttpOnly; SameSite=Strict`;
+
     return true;
   } catch (error) {
     console.error("Erreur lors du rafraîchissement du token:", error);

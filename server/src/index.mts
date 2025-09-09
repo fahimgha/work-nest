@@ -699,7 +699,7 @@ app.post("/sessions", async (c) => {
   try {
     const [newSession] = await sql`
       INSERT INTO sessions ( project_id, worktime,tasks_count ) 
-      VALUES (${projectId}, ${worktime}, ${tasksCount || ""})
+      VALUES (${projectId}, ${worktime}, ${tasksCount || 0})
       RETURNING id, project_id, worktime,tasks_count
     `;
     return c.json({
